@@ -1,9 +1,84 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Eye, TrendingUp, Play, ExternalLink } from 'lucide-react';
+import { Eye, TrendingUp, Play, ExternalLink, ArrowLeft, Sparkles } from 'lucide-react';
 import { portfolioItems, categories } from '../data/portfolio';
 import { SectionTitle, ScrollReveal } from '../components/ui';
+
+const FeaturedProject = ({ item }) => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
+  return (
+    <motion.div ref={ref} className="mb-20">
+      <Link to={`/portfolio/${item.id}`}>
+        <div className="relative h-[70vh] min-h-[500px] rounded-3xl overflow-hidden group cursor-pointer">
+          <motion.div className="absolute inset-0" style={{ y }}>
+            <img
+              src={item.thumbnail}
+              alt={item.title}
+              className="w-full h-[120%] object-cover group-hover:scale-105 transition-transform duration-1000"
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/40 to-transparent" />
+          
+          <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="px-4 py-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-sm font-bold flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                پروژه ویژه
+              </span>
+              <span className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm">
+                {item.industry}
+              </span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 group-hover:text-primary-400 transition-colors">
+              {item.title}
+            </h2>
+            
+            <p className="text-xl text-dark-300 mb-6 max-w-2xl">
+              {item.description}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex items-center gap-2 text-white">
+                <Eye className="w-5 h-5 text-primary-400" />
+                <span className="font-bold">{item.views}</span>
+                <span className="text-dark-400">ویو</span>
+              </div>
+              <div className="flex items-center gap-2 text-green-400">
+                <TrendingUp className="w-5 h-5" />
+                <span className="font-bold">{item.growth}</span>
+                <span className="text-dark-400">رشد</span>
+              </div>
+              <motion.div 
+                className="flex items-center gap-2 text-primary-400 font-medium"
+                whileHover={{ x: -5 }}
+              >
+                <span>مشاهده پروژه</span>
+                <ArrowLeft className="w-5 h-5" />
+              </motion.div>
+            </div>
+          </div>
+
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            whileHover={{ scale: 1.1 }}
+          >
+            <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center">
+              <Play className="w-10 h-10 text-white mr-[-4px]" fill="white" />
+            </div>
+          </motion.div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
 
 const PortfolioCard = ({ item, index }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -19,17 +94,17 @@ const PortfolioCard = ({ item, index }) => {
       <Link to={`/portfolio/${item.id}`}>
         <motion.div 
           whileHover={{ y: -8 }}
-          className="relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10 group cursor-pointer h-full"
+          className="relative rounded-2xl overflow-hidden group cursor-pointer h-full"
         >
-          <div className="relative aspect-[4/3] overflow-hidden">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
             <motion.img
               src={item.thumbnail}
               alt={item.title}
               className="w-full h-full object-cover"
               animate={{ scale: isHovered ? 1.1 : 1 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.7 }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent opacity-80" />
             
             <motion.div
               className="absolute inset-0 flex items-center justify-center"
@@ -38,61 +113,32 @@ const PortfolioCard = ({ item, index }) => {
             >
               <motion.div
                 whileHover={{ scale: 1.1 }}
-                className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg shadow-primary-500/30"
+                className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center"
               >
                 <Play className="w-6 h-6 text-white mr-[-2px]" fill="white" />
               </motion.div>
             </motion.div>
             
             <div className="absolute top-4 right-4 flex gap-2">
-              <span className="px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-xl text-white text-xs flex items-center gap-1.5 font-medium">
+              <span className="px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-xl text-white text-xs flex items-center gap-1.5 font-medium">
                 <Eye className="w-3.5 h-3.5" />
                 {item.views}
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-green-500/20 backdrop-blur-xl text-green-400 text-xs flex items-center gap-1.5 font-medium">
-                <TrendingUp className="w-3.5 h-3.5" />
-                {item.growth}
-              </span>
             </div>
 
-            {item.featured && (
-              <div className="absolute top-4 left-4">
-                <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-xs font-bold">
-                  ویژه
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm text-white text-xs">
+                  {item.industry}
+                </span>
+                <span className="px-2 py-1 rounded-md bg-green-500/20 text-green-400 text-xs flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  {item.growth}
                 </span>
               </div>
-            )}
-          </div>
-          
-          <div className="p-6">
-            <div className="flex items-start justify-between mb-2">
               <h3 className="text-xl font-bold text-white group-hover:text-primary-400 transition-colors">
                 {item.title}
               </h3>
-              <ExternalLink className="w-4 h-4 text-dark-500 group-hover:text-primary-400 transition-colors" />
-            </div>
-            <p className="text-dark-400 mb-4 line-clamp-2">
-              {item.description}
-            </p>
-            
-            <div className="flex flex-wrap gap-2 mb-4">
-              {item.tags?.slice(0, 3).map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-2.5 py-1 rounded-lg bg-white/5 text-dark-300 text-xs border border-white/5"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-4 pt-4 border-t border-white/5">
-              <div className="text-xs text-dark-400">
-                <span className="text-dark-500">مدت:</span> {item.duration}
-              </div>
-              <div className="text-xs text-dark-400">
-                <span className="text-dark-500">صنعت:</span> {item.industry}
-              </div>
             </div>
           </div>
         </motion.div>
@@ -107,6 +153,11 @@ const Portfolio = () => {
   const filteredItems = activeCategory === 'all' 
     ? portfolioItems 
     : portfolioItems.filter(item => item.category === activeCategory);
+
+  const featuredItem = portfolioItems.find(item => item.featured);
+  const regularItems = activeCategory === 'all' 
+    ? filteredItems.filter(item => !item.featured)
+    : filteredItems;
 
   return (
     <div className="pt-24">
@@ -132,7 +183,13 @@ const Portfolio = () => {
             />
           </ScrollReveal>
 
-          <ScrollReveal delay={0.1}>
+          {activeCategory === 'all' && featuredItem && (
+            <ScrollReveal delay={0.1}>
+              <FeaturedProject item={featuredItem} />
+            </ScrollReveal>
+          )}
+
+          <ScrollReveal delay={0.2}>
             <div className="flex flex-wrap justify-center gap-3 mb-12">
               {categories.map((category) => {
                 const IconComponent = category.icon;
@@ -164,7 +221,7 @@ const Portfolio = () => {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
-              {filteredItems.map((item, index) => (
+              {regularItems.map((item, index) => (
                 <PortfolioCard key={item.id} item={item} index={index} />
               ))}
             </motion.div>

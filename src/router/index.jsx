@@ -17,6 +17,11 @@ import {
   ThankYou,
   NotFound,
   Process,
+  CaseStudies,
+  Awards,
+  Partners,
+  Industries,
+  Industry,
 } from '../pages';
 
 export const router = createBrowserRouter([
@@ -36,6 +41,11 @@ export const router = createBrowserRouter([
       { path: 'blog/:slug', element: <BlogPost /> },
       { path: 'faq', element: <FAQ /> },
       { path: 'process', element: <Process /> },
+      { path: 'case-studies', element: <CaseStudies /> },
+      { path: 'awards', element: <Awards /> },
+      { path: 'partners', element: <Partners /> },
+      { path: 'industries', element: <Industries /> },
+      { path: 'industries/:slug', element: <Industry /> },
       { path: 'locations/:locationSlug', element: <Location /> },
       { path: 'start', element: <Start /> },
       { path: 'thank-you', element: <ThankYou /> },

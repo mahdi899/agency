@@ -1,0 +1,85 @@
+import { Award, Trophy, Medal, Star, Crown, Gem } from 'lucide-react';
+
+export const awards = [
+  {
+    id: 1,
+    title: 'بهترین آژانس دیجیتال مارکتینگ',
+    organization: 'جشنواره تبلیغات ایران',
+    year: '۱۴۰۲',
+    icon: Trophy,
+    color: 'from-yellow-500 to-amber-500',
+    description: 'کسب رتبه اول در بخش آژانس‌های دیجیتال مارکتینگ',
+    image: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=400&q=80',
+  },
+  {
+    id: 2,
+    title: 'برترین تولیدکننده محتوای ویدیویی',
+    organization: 'انجمن تبلیغات دیجیتال',
+    year: '۱۴۰۲',
+    icon: Award,
+    color: 'from-purple-500 to-violet-500',
+    description: 'تقدیر برای خلاقیت و کیفیت در تولید محتوای ویدیویی',
+    image: 'https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=400&q=80',
+  },
+  {
+    id: 3,
+    title: 'جایزه نوآوری در سوشال مدیا',
+    organization: 'کنفرانس بین‌المللی مارکتینگ',
+    year: '۱۴۰۱',
+    icon: Star,
+    color: 'from-blue-500 to-cyan-500',
+    description: 'برای استراتژی‌های نوآورانه در شبکه‌های اجتماعی',
+    image: 'https://images.unsplash.com/photo-1569098644584-210bcd375b59?w=400&q=80',
+  },
+  {
+    id: 4,
+    title: 'بهترین کمپین تبلیغاتی سال',
+    organization: 'جایزه طلایی تبلیغات',
+    year: '۱۴۰۱',
+    icon: Crown,
+    color: 'from-orange-500 to-red-500',
+    description: 'برای کمپین موفق کافه لمیز با بیش از ۱۰ میلیون ویو',
+    image: 'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=400&q=80',
+  },
+  {
+    id: 5,
+    title: 'تندیس برتر خلاقیت',
+    organization: 'جشنواره خلاقیت ایران',
+    year: '۱۴۰۰',
+    icon: Gem,
+    color: 'from-pink-500 to-rose-500',
+    description: 'تقدیر برای خلاقیت در طراحی و تولید محتوا',
+    image: 'https://images.unsplash.com/photo-1578269174936-2709b6aeb913?w=400&q=80',
+  },
+  {
+    id: 6,
+    title: 'گواهی کیفیت ISO',
+    organization: 'سازمان استاندارد',
+    year: '۱۴۰۰',
+    icon: Medal,
+    color: 'from-emerald-500 to-teal-500',
+    description: 'دریافت گواهی ISO 9001 برای کیفیت خدمات',
+    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80',
+  },
+];
+
+export const certifications = [
+  {
+    id: 1,
+    title: 'Google Partner',
+    logo: 'https://www.gstatic.com/partners/badge/images/2022/PartnerBadgeClickable.svg',
+    description: 'شریک رسمی گوگل در تبلیغات',
+  },
+  {
+    id: 2,
+    title: 'Meta Business Partner',
+    logo: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=100&h=100&fit=crop&q=80',
+    description: 'شریک رسمی متا (فیسبوک و اینستاگرام)',
+  },
+  {
+    id: 3,
+    title: 'HubSpot Certified',
+    logo: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=100&h=100&fit=crop&q=80',
+    description: 'گواهی تخصصی هاب‌اسپات',
+  },
+];

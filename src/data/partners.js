@@ -1,0 +1,83 @@
+export const partners = [
+  {
+    id: 1,
+    name: 'گوگل',
+    logo: 'https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=200&h=200&fit=crop&q=80',
+    type: 'تکنولوژی',
+    description: 'شریک رسمی گوگل در تبلیغات',
+    website: 'https://google.com',
+    color: 'from-blue-500 to-green-500',
+  },
+  {
+    id: 2,
+    name: 'متا',
+    logo: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&h=200&fit=crop&q=80',
+    type: 'شبکه اجتماعی',
+    description: 'شریک رسمی متا (فیسبوک و اینستاگرام)',
+    website: 'https://meta.com',
+    color: 'from-blue-600 to-purple-600',
+  },
+  {
+    id: 3,
+    name: 'ادوبی',
+    logo: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=200&h=200&fit=crop&q=80',
+    type: 'نرم‌افزار',
+    description: 'استفاده از ابزارهای حرفه‌ای ادوبی',
+    website: 'https://adobe.com',
+    color: 'from-red-500 to-pink-500',
+  },
+  {
+    id: 4,
+    name: 'هاب‌اسپات',
+    logo: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=200&h=200&fit=crop&q=80',
+    type: 'مارکتینگ',
+    description: 'شریک رسمی هاب‌اسپات',
+    website: 'https://hubspot.com',
+    color: 'from-orange-500 to-red-500',
+  },
+  {
+    id: 5,
+    name: 'شاپیفای',
+    logo: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=200&h=200&fit=crop&q=80',
+    type: 'فروشگاه آنلاین',
+    description: 'توسعه‌دهنده رسمی شاپیفای',
+    website: 'https://shopify.com',
+    color: 'from-green-500 to-emerald-500',
+  },
+  {
+    id: 6,
+    name: 'میلرلایت',
+    logo: 'https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=200&h=200&fit=crop&q=80',
+    type: 'ایمیل مارکتینگ',
+    description: 'شریک رسمی میلرلایت',
+    website: 'https://mailerlite.com',
+    color: 'from-teal-500 to-cyan-500',
+  },
+];
+
+export const mediaPartners = [
+  {
+    id: 1,
+    name: 'دیجیاتو',
+    logo: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200&h=200&fit=crop&q=80',
+    type: 'رسانه',
+  },
+  {
+    id: 2,
+    name: 'زومیت',
+    logo: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=200&h=200&fit=crop&q=80',
+    type: 'رسانه',
+  },
+  {
+    id: 3,
+    name: 'تکراتو',
+    logo: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=200&h=200&fit=crop&q=80',
+    type: 'رسانه',
+  },
+  {
+    id: 4,
+    name: 'ویرگول',
+    logo: 'https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=200&h=200&fit=crop&q=80',
+    type: 'پلتفرم محتوا',
+  },
+];

@@ -1,5 +1,5 @@
-import { Hero, Services, Portfolio, Process, Testimonials, CTA, Clients, Features, Stats, Team } from '../components/home';
-import { ReelsShowcase } from '../components/ui';
+import { Hero, Services, Portfolio, Process, Testimonials, CTA, Clients, Features, Stats, Team, Results } from '../components/home';
+import { ReelsShowcase, Newsletter } from '../components/ui';
 
 const Home = () => {
   return (
@@ -10,10 +10,14 @@ const Home = () => {
       <Services />
       <ReelsShowcase />
       <Portfolio />
+      <Results />
       <Features />
       <Team />
       <Process />
       <Testimonials />
+      <div className="container-custom mx-auto px-4 md:px-8 py-16">
+        <Newsletter />
+      </div>
       <CTA />
     </>
   );

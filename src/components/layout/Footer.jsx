@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -7,7 +8,9 @@ import {
   Phone, 
   Mail, 
   MapPin,
-  ArrowUp 
+  ArrowUp,
+  Sparkles,
+  CheckCircle
 } from 'lucide-react';
 
 const footerLinks = {
@@ -22,17 +25,16 @@ const footerLinks = {
   company: [
     { name: 'درباره ما', path: '/about' },
     { name: 'نمونه کارها', path: '/portfolio' },
+    { name: 'داستان موفقیت', path: '/case-studies' },
+    { name: 'جوایز و افتخارات', path: '/awards' },
+    { name: 'همکاران ما', path: '/partners' },
     { name: 'پکیج‌ها و قیمت‌ها', path: '/pricing' },
-    { name: 'بلاگ', path: '/blog' },
-    { name: 'تماس با ما', path: '/contact' },
-    { name: 'همکاری با ما', path: '/careers' },
   ],
-  locations: [
-    { name: 'تهران', path: '/locations/tehran' },
-    { name: 'پاسداران', path: '/locations/pasdaran' },
-    { name: 'فرمانیه', path: '/locations/farmanieh' },
-    { name: 'قیطریه', path: '/locations/gheytarieh' },
-    { name: 'اندرزگو', path: '/locations/andarzgoo' },
+  support: [
+    { name: 'بلاگ', path: '/blog' },
+    { name: 'سوالات متداول', path: '/faq' },
+    { name: 'تماس با ما', path: '/contact' },
+    { name: 'فرآیند کار', path: '/process' },
   ],
 };
 
@@ -41,6 +43,52 @@ const socialLinks = [
   { icon: Send, href: 'https://t.me', label: 'تلگرام' },
   { icon: Linkedin, href: 'https://linkedin.com', label: 'لینکدین' },
 ];
+
+const NewsletterForm = () => {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setStatus('loading');
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setStatus('success');
+    setEmail('');
+    setTimeout(() => setStatus('idle'), 3000);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex gap-2 w-full md:w-auto">
+      <div className="relative flex-1 md:w-64">
+        <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-500" />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="ایمیل شما"
+          className="w-full pr-10 pl-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-dark-500 focus:outline-none focus:border-primary-500 transition-colors text-sm"
+          disabled={status === 'loading' || status === 'success'}
+        />
+      </div>
+      <motion.button
+        type="submit"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        disabled={status === 'loading' || status === 'success'}
+        className="px-6 py-3 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium disabled:opacity-50 flex items-center gap-2"
+      >
+        {status === 'loading' ? (
+          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+        ) : status === 'success' ? (
+          <CheckCircle className="w-5 h-5" />
+        ) : (
+          <Send className="w-5 h-5" />
+        )}
+      </motion.button>
+    </form>
+  );
+};
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -132,9 +180,9 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-6">مناطق تحت پوشش</h4>
+            <h4 className="text-white font-bold mb-6">پشتیبانی</h4>
             <ul className="space-y-3">
-              {footerLinks.locations.map((link) => (
+              {footerLinks.support.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
@@ -148,7 +196,20 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-12 p-8 rounded-2xl bg-gradient-to-r from-primary-500/10 via-secondary-500/10 to-accent-500/10 border border-white/10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-right">
+              <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                <Sparkles className="w-5 h-5 text-primary-400" />
+                <h4 className="text-white font-bold">عضو خبرنامه شوید</h4>
+              </div>
+              <p className="text-dark-400 text-sm">جدیدترین مقالات و ترندها را دریافت کنید</p>
+            </div>
+            <NewsletterForm />
+          </div>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-dark-500 text-sm">
             © ۱۴۰۳ آژانس خلاق. تمامی حقوق محفوظ است.
           </p>
@@ -163,15 +224,6 @@ const Footer = () => {
         </div>
       </div>
 
-      <motion.button
-        onClick={scrollToTop}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="fixed bottom-8 left-8 w-12 h-12 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center text-white shadow-lg shadow-primary-500/25 z-40"
-        aria-label="بازگشت به بالا"
-      >
-        <ArrowUp className="w-5 h-5" />
-      </motion.button>
     </footer>
   );
 };

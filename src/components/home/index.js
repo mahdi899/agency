@@ -8,3 +8,4 @@ export { default as Clients } from './Clients';
 export { default as Features } from './Features';
 export { default as Stats } from './Stats';
 export { default as Team } from './Team';
+export { default as Results } from './Results';

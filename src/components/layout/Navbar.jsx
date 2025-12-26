@@ -20,6 +20,26 @@ const navLinks = [
     ]
   },
   { name: 'نمونه کارها', path: '/portfolio' },
+  { 
+    name: 'صنایع', 
+    path: '/industries',
+    submenu: [
+      { name: 'کافه و رستوران', path: '/industries/cafe-restaurant' },
+      { name: 'خودرو', path: '/industries/automotive' },
+      { name: 'زیبایی و سلامت', path: '/industries/beauty-clinic' },
+      { name: 'مد و پوشاک', path: '/industries/fashion' },
+      { name: 'همه صنایع', path: '/industries' },
+    ]
+  },
+  { 
+    name: 'موفقیت‌ها', 
+    path: '/case-studies',
+    submenu: [
+      { name: 'داستان موفقیت', path: '/case-studies' },
+      { name: 'جوایز و افتخارات', path: '/awards' },
+      { name: 'همکاران ما', path: '/partners' },
+    ]
+  },
   { name: 'پکیج‌ها', path: '/pricing' },
   { name: 'درباره ما', path: '/about' },
   { name: 'بلاگ', path: '/blog' },
