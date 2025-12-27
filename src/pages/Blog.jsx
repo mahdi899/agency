@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Clock, User, ArrowLeft, TrendingUp, Sparkles } from 'lucide-react';
-import { blogPosts, blogCategories } from '../data/blog';
+import { blogCategories } from '../data/blog';
 import { SectionTitle, ScrollReveal } from '../components/ui';
+import api from '../services/api';
 
 const FeaturedPost = ({ post }) => (
   <Link to={`/blog/${post.slug}`}>
@@ -127,6 +128,39 @@ const BlogCard = ({ post, index }) => (
 
 const Blog = () => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlogPosts = async () => {
+      try {
+        const response = await api.getPublicBlogPosts();
+        // Transform data to match expected format
+        const transformedPosts = response.data.map(post => ({
+          id: post.id,
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.excerpt,
+          content: post.content,
+          thumbnail: post.thumbnail,
+          category: post.category,
+          tags: post.tags || [],
+          author: post.author,
+          authorAvatar: post.author_avatar,
+          readTime: post.read_time || 5,
+          date: new Date(post.created_at).toLocaleDateString('fa-IR'),
+          featured: post.is_featured || false
+        }));
+        setBlogPosts(transformedPosts);
+      } catch (error) {
+        console.error('Error fetching blog posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogPosts();
+  }, []);
 
   const filteredPosts = activeCategory === 'all'
     ? blogPosts
@@ -134,6 +168,16 @@ const Blog = () => {
 
   const featuredPosts = blogPosts.filter(post => post.featured);
   const regularPosts = filteredPosts.filter(post => !post.featured || activeCategory !== 'all');
+
+  if (loading) {
+    return (
+      <div className="pt-24">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24">

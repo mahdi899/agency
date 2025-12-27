@@ -1,12 +1,39 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Eye, TrendingUp, Users, Heart, Play, Quote } from 'lucide-react';
-import { getPortfolioById, portfolioItems } from '../data/portfolio';
 import { Button, Card, SectionTitle } from '../components/ui';
+import api from '../services/api';
+import { useState, useEffect } from 'react';
 
 const PortfolioDetail = () => {
   const { portfolioId } = useParams();
-  const project = getPortfolioById(portfolioId);
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [relatedProjects, setRelatedProjects] = useState([]);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getPortfolios();
+        if (response.success && response.data) {
+          const allProjects = response.data;
+          const currentProject = allProjects.find(p => p.id == portfolioId || p.slug === portfolioId);
+          
+          if (currentProject) {
+            setProject(currentProject);
+            const related = allProjects.filter(p => p.id !== currentProject.id && p.category === currentProject.category).slice(0, 3);
+            setRelatedProjects(related);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching project:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProject();
+  }, [portfolioId]);
 
   if (!project) {
     return (
@@ -21,7 +48,22 @@ const PortfolioDetail = () => {
     );
   }
 
-  const relatedProjects = portfolioItems.filter(p => p.id !== project.id && p.category === project.category).slice(0, 3);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">در حال بارگذاری...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const stats = [
+    { label: 'بازدید', value: project.views || '0', icon: Eye },
+    { label: 'رشد', value: project.growth || '0%', icon: TrendingUp },
+    { label: 'تعامل', value: project.results?.engagement || '0%', icon: Heart },
+  ];
 
   return (
     <div className="pt-24">
@@ -35,20 +77,6 @@ const PortfolioDetail = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <Link
-              to="/portfolio"
-              className="inline-flex items-center gap-2 text-dark-400 hover:text-white transition-colors"
-            >
-              <ArrowRight className="w-4 h-4" />
-              بازگشت به نمونه کارها
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
@@ -59,42 +87,48 @@ const PortfolioDetail = () => {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="relative rounded-2xl overflow-hidden mb-12"
-          >
-            <div className="aspect-video bg-gradient-to-br from-dark-800 to-dark-900 flex items-center justify-center">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-24 h-24 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center cursor-pointer shadow-lg shadow-primary-500/30"
-              >
-                <Play className="w-10 h-10 text-white mr-[-4px]" fill="white" />
-              </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            <div className="lg:col-span-2">
+              <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
+                {project.type === 'video' && project.video_url ? (
+                  <video
+                    src={project.video_url}
+                    poster={project.thumbnail}
+                    autoPlay
+                    muted
+                    loop
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={project.thumbnail}
+                    alt={project.title}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
             </div>
-          </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-            {[
-              { icon: Eye, label: 'ویو کل', value: project.results.views },
-              { icon: Users, label: 'رشد فالوور', value: project.results.followers },
-              { icon: Heart, label: 'نرخ تعامل', value: project.results.engagement },
-              { icon: TrendingUp, label: 'رشد', value: project.growth },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + index * 0.1 }}
-              >
-                <Card className="p-6 text-center">
-                  <stat.icon className="w-8 h-8 text-primary-400 mx-auto mb-3" />
-                  <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-                  <div className="text-sm text-dark-400">{stat.label}</div>
-                </Card>
-              </motion.div>
-            ))}
+            <div className="space-y-6">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-2xl font-bold text-white">{stat.value}</div>
+                        <div className="text-sm text-dark-400">{stat.label}</div>
+                      </div>
+                      <stat.icon className="w-8 h-8 text-primary-500" />
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
@@ -102,20 +136,14 @@ const PortfolioDetail = () => {
               <h2 className="text-2xl font-bold text-white mb-6">درباره پروژه</h2>
               <div className="prose prose-invert max-w-none">
                 <p className="text-dark-300 leading-relaxed mb-6">
-                  این پروژه با هدف افزایش آگاهی از برند و جذب مشتریان جدید طراحی و اجرا شد. 
-                  با استفاده از استراتژی محتوای هدفمند و تولید ویدیوهای جذاب، توانستیم نتایج 
-                  چشمگیری برای این کسب‌وکار رقم بزنیم.
-                </p>
-                <p className="text-dark-300 leading-relaxed">
-                  تیم ما با تحلیل دقیق مخاطبان هدف و رقبا، استراتژی محتوایی متناسب با برند 
-                  طراحی کرد و با تولید محتوای خلاقانه و ترند، موفق به جذب میلیون‌ها ویو شد.
+                  {project.full_description || project.description}
                 </p>
               </div>
 
               <div className="mt-8">
                 <h3 className="text-xl font-bold text-white mb-4">خدمات ارائه شده</h3>
                 <div className="flex flex-wrap gap-3">
-                  {project.services.map((service, index) => (
+                  {(project.services || []).map((service, index) => (
                     <span
                       key={index}
                       className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border border-primary-500/20 text-primary-400"
@@ -128,20 +156,22 @@ const PortfolioDetail = () => {
             </div>
 
             <div>
-              <Card className="p-8">
-                <Quote className="w-10 h-10 text-primary-500/30 mb-4" />
-                <p className="text-dark-300 leading-relaxed mb-6">
-                  "{project.testimonial.text}"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold">
-                    {project.testimonial.author.charAt(0)}
+              {project.testimonial && (
+                <Card className="p-8">
+                  <Quote className="w-10 h-10 text-primary-500/30 mb-4" />
+                  <p className="text-dark-300 leading-relaxed mb-6">
+                    "{project.testimonial.text}"
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold">
+                      {project.testimonial.author.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="font-bold text-white">{project.testimonial.author}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-bold text-white">{project.testimonial.author}</div>
-                  </div>
-                </div>
-              </Card>
+                </Card>
+              )}
 
               <div className="mt-6">
                 <Link to="/start">

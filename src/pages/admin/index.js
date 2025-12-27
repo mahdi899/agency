@@ -1,0 +1,12 @@
+export { default as Login } from './Login';
+export { default as Dashboard } from './Dashboard';
+export { default as Services } from './Services';
+export { default as Portfolios } from './Portfolios';
+export { default as Contacts } from './Contacts';
+export { default as Blog } from './Blog';
+export { default as Clients } from './Clients';
+export { default as Industries } from './Industries';
+export { default as Packages } from './Packages';
+export { default as Testimonials } from './Testimonials';
+export { default as Reels } from './Reels';
+export { default as HomeCards } from './HomeCards';

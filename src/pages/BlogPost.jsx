@@ -1,12 +1,74 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { ArrowRight, Clock, User, Calendar, Share2 } from 'lucide-react';
-import { getBlogBySlug, blogPosts } from '../data/blog';
+import { blogCategories } from '../data/blog';
 import { Button, Card } from '../components/ui';
+import api from '../services/api';
 
 const BlogPost = () => {
   const { slug } = useParams();
-  const post = getBlogBySlug(slug);
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [relatedPosts, setRelatedPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await api.getBlogPost(slug);
+        const postData = response.data;
+        
+        // Transform data to match expected format
+        const transformedPost = {
+          id: postData.id,
+          title: postData.title,
+          slug: postData.slug,
+          excerpt: postData.excerpt,
+          content: postData.content,
+          thumbnail: postData.thumbnail,
+          category: postData.category,
+          tags: postData.tags || [],
+          author: postData.author,
+          authorAvatar: postData.author_avatar,
+          readTime: postData.read_time || 5,
+          date: new Date(postData.created_at).toLocaleDateString('fa-IR'),
+          featured: postData.is_featured || false
+        };
+        
+        setPost(transformedPost);
+        
+        // Fetch related posts
+        const allPostsResponse = await api.getPublicBlogPosts();
+        const related = allPostsResponse.data
+          .filter(p => p.slug !== slug && p.category === postData.category)
+          .slice(0, 3)
+          .map(p => ({
+            id: p.id,
+            title: p.title,
+            slug: p.slug,
+            readTime: p.read_time || 5
+          }));
+        
+        setRelatedPosts(related);
+      } catch (error) {
+        console.error('Error fetching blog post:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="pt-24">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -20,8 +82,6 @@ const BlogPost = () => {
       </div>
     );
   }
-
-  const relatedPosts = blogPosts.filter(p => p.slug !== post.slug && p.category === post.category).slice(0, 3);
 
   return (
     <div className="pt-24">
@@ -99,32 +159,9 @@ const BlogPost = () => {
               transition={{ delay: 0.2 }}
               className="prose prose-invert prose-lg max-w-none mb-12"
             >
-              <p className="text-dark-300 leading-relaxed text-lg">
-                {post.excerpt}
-              </p>
-              
-              <h2 className="text-2xl font-bold text-white mt-8 mb-4">مقدمه</h2>
-              <p className="text-dark-300 leading-relaxed">
-                در دنیای امروز، حضور قوی در فضای دیجیتال برای هر کسب‌وکاری ضروری است. 
-                با رشد روزافزون شبکه‌های اجتماعی و تغییر رفتار مصرف‌کنندگان، برندها باید 
-                استراتژی‌های جدیدی برای جذب و نگهداشت مخاطبان خود اتخاذ کنند.
-              </p>
-
-              <h2 className="text-2xl font-bold text-white mt-8 mb-4">نکات کلیدی</h2>
-              <ul className="text-dark-300 space-y-2">
-                <li>شناخت دقیق مخاطبان هدف</li>
-                <li>تولید محتوای ارزشمند و مرتبط</li>
-                <li>استفاده از ترندهای روز</li>
-                <li>تعامل مستمر با مخاطبان</li>
-                <li>تحلیل و بهینه‌سازی مداوم</li>
-              </ul>
-
-              <h2 className="text-2xl font-bold text-white mt-8 mb-4">نتیجه‌گیری</h2>
-              <p className="text-dark-300 leading-relaxed">
-                موفقیت در فضای دیجیتال نیازمند ترکیبی از خلاقیت، استراتژی و اجرای دقیق است. 
-                با پیروی از اصول ذکر شده و تطبیق آن‌ها با نیازهای خاص کسب‌وکار خود، 
-                می‌توانید به نتایج چشمگیری دست یابید.
-              </p>
+              <div className="text-dark-300 leading-relaxed text-lg"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
             </motion.div>
 
             <Card className="p-6 mb-12">

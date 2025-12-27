@@ -77,7 +77,7 @@ const SocialProofPopup = () => {
           initial={{ opacity: 0, x: -100, y: 0 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           exit={{ opacity: 0, x: -100 }}
-          className="fixed bottom-24 left-6 z-30 max-w-xs"
+          className="fixed bottom-24 left-6 z-30 max-w-xs sm:max-w-sm"
         >
           <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="flex items-start gap-3">

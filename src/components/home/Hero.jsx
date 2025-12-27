@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Play, Sparkles, Rocket, Eye, Award } from 'lucide-react';
 import Button from '../ui/Button';
+import VideoPlayer from '../ui/VideoPlayer';
 import { AnimatedCounter, FloatingElements } from '../ui';
 
 const stats = [
@@ -156,21 +157,21 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid grid-cols-3 gap-6 max-w-3xl mx-auto"
+            className="grid grid-cols-3 gap-3 md:gap-6 max-w-3xl mx-auto"
           >
             {stats.map((stat, index) => (
               <motion.div 
                 key={index} 
-                className="text-center p-4 rounded-2xl bg-white/[0.03] backdrop-blur-sm border border-white/5"
+                className="text-center p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/[0.03] backdrop-blur-sm border border-white/5"
                 whileHover={{ scale: 1.05, y: -5 }}
               >
-                <div className={`w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-r ${stat.color} flex items-center justify-center`}>
-                  <stat.icon className="w-6 h-6 text-white" />
+                <div className={`w-10 h-10 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 rounded-lg md:rounded-xl bg-gradient-to-r ${stat.color} flex items-center justify-center`}>
+                  <stat.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
                 </div>
-                <div className="text-3xl md:text-4xl font-black text-white mb-1">
+                <div className="text-2xl md:text-4xl font-black text-white mb-1">
                   <AnimatedCounter end={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-sm text-dark-400">{stat.label}</div>
+                <div className="text-xs md:text-sm text-dark-400">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -180,34 +181,25 @@ const Hero = () => {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-20 relative"
+          className="mt-12 md:mt-20 relative"
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent z-10 pointer-events-none" />
           <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-primary-500/10">
-            <div className="aspect-video relative overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80"
-                alt="تیم آژانس خلاق"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-20 h-20 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center cursor-pointer shadow-lg shadow-primary-500/30"
-                >
-                  <Play className="w-8 h-8 text-white mr-[-4px]" fill="white" />
-                </motion.div>
+            <VideoPlayer
+              src="/storage/videos/sample/hero-video.mp4"
+              poster="/storage/hero/agency-team.jpg"
+              autoPlay={false}
+              muted={true}
+              loop={true}
+              controls={true}
+              className="w-full"
+            />
+            <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex items-center justify-between pointer-events-none">
+              <div>
+                <p className="text-white font-bold text-sm md:text-base lg:text-lg">شوریل آژانس خلاق</p>
+                <p className="text-dark-400 text-xs md:text-sm hidden sm:block">مشاهده نمونه کارها و پروژه‌های ما</p>
               </div>
-              <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
-                <div>
-                  <p className="text-white font-bold text-lg">شوریل آژانس خلاق</p>
-                  <p className="text-dark-400 text-sm">مشاهده نمونه کارها و پروژه‌های ما</p>
-                </div>
-                <div className="flex items-center gap-2 text-dark-400 text-sm">
-                  <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl">2:30</span>
-                </div>
+              <div className="flex items-center gap-2 text-dark-400 text-sm">
+                <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl text-xs md:text-sm">2:30</span>
               </div>
             </div>
           </div>

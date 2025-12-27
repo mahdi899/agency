@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Eye, TrendingUp, Play, ExternalLink, ArrowLeft, Sparkles } from 'lucide-react';
-import { portfolioItems, categories } from '../data/portfolio';
+import { Eye, TrendingUp, Play, ExternalLink, ArrowLeft, Sparkles, Target, Coffee, ShoppingBag, Car, Shirt } from 'lucide-react';
 import { SectionTitle, ScrollReveal } from '../components/ui';
+import { WebProjects } from '../components/home';
+import api from '../services/api';
 
 const FeaturedProject = ({ item }) => {
   const ref = useRef(null);
@@ -33,7 +34,7 @@ const FeaturedProject = ({ item }) => {
                 پروژه ویژه
               </span>
               <span className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm">
-                {item.industry}
+                {item.category}
               </span>
             </div>
             
@@ -129,11 +130,11 @@ const PortfolioCard = ({ item, index }) => {
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <div className="flex items-center gap-2 mb-2">
                 <span className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm text-white text-xs">
-                  {item.industry}
+                  {item.category}
                 </span>
                 <span className="px-2 py-1 rounded-md bg-green-500/20 text-green-400 text-xs flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" />
-                  {item.growth}
+                  {item.views || '0'}
                 </span>
               </div>
               <h3 className="text-xl font-bold text-white group-hover:text-primary-400 transition-colors">
@@ -147,17 +148,44 @@ const PortfolioCard = ({ item, index }) => {
   );
 };
 
+const categories = [
+  { id: 'all', title: 'همه', icon: Target },
+  { id: 'cafe', title: 'کافه و رستوران', icon: Coffee },
+  { id: 'shop', title: 'فروشگاهی', icon: ShoppingBag },
+  { id: 'automotive', title: 'خودرویی', icon: Car },
+  { id: 'fashion', title: 'استایل و لباس', icon: Shirt },
+];
+
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [portfolioItems, setPortfolioItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPortfolios = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getPortfolios();
+        if (response.success && response.data) {
+          setPortfolioItems(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching portfolios:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPortfolios();
+  }, []);
 
   const filteredItems = activeCategory === 'all' 
     ? portfolioItems 
     : portfolioItems.filter(item => item.category === activeCategory);
 
-  const featuredItem = portfolioItems.find(item => item.featured);
+  const featuredItem = portfolioItems.find(item => item.is_featured);
   const regularItems = activeCategory === 'all' 
-    ? filteredItems.filter(item => !item.featured)
-    : filteredItems;
+    ? portfolioItems.filter(item => !item.is_featured)
+    : portfolioItems.filter(item => item.category === activeCategory && !item.is_featured);
 
   return (
     <div className="pt-24">
@@ -228,6 +256,8 @@ const Portfolio = () => {
           </AnimatePresence>
         </div>
       </section>
+
+      <WebProjects />
     </div>
   );
 };

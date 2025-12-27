@@ -210,7 +210,7 @@ const About = () => {
             <ScrollReveal>
               <div className="relative rounded-2xl overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
+                  src="/storage/hero/agency-team.jpg"
                   alt="تیم آژانس خلاق"
                   className="w-full h-full object-cover rounded-2xl"
                 />

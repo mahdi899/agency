@@ -1,48 +1,15 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Heart, MessageCircle, Share2, Eye } from 'lucide-react';
+import VideoPlayer from './VideoPlayer';
+import api from '../../services/api';
 
-const reelsData = [
-  {
-    id: 1,
-    title: 'معرفی محصول جدید',
-    views: '۱۲.۵K',
-    likes: '۲.۳K',
-    comments: '۱۵۶',
-    gradient: 'from-rose-500 to-pink-600',
-  },
-  {
-    id: 2,
-    title: 'پشت صحنه تولید محتوا',
-    views: '۸.۲K',
-    likes: '۱.۸K',
-    comments: '۸۹',
-    gradient: 'from-violet-500 to-purple-600',
-  },
-  {
-    id: 3,
-    title: 'نکات طلایی اینستاگرام',
-    views: '۲۵.۱K',
-    likes: '۵.۴K',
-    comments: '۳۲۱',
-    gradient: 'from-blue-500 to-cyan-600',
-  },
-  {
-    id: 4,
-    title: 'ترند جدید ریلز',
-    views: '۱۸.۷K',
-    likes: '۴.۱K',
-    comments: '۲۱۸',
-    gradient: 'from-orange-500 to-amber-600',
-  },
-  {
-    id: 5,
-    title: 'آموزش ادیت حرفه‌ای',
-    views: '۱۵.۳K',
-    likes: '۳.۲K',
-    comments: '۱۷۴',
-    gradient: 'from-emerald-500 to-teal-600',
-  },
+const defaultReels = [
+  { id: 1, title: 'معرفی محصول جدید', views: '۱۲.۵K', likes: '۲.۳K', comments: '۱۵۶', gradient: 'from-rose-500 to-pink-600' },
+  { id: 2, title: 'پشت صحنه تولید محتوا', views: '۸.۲K', likes: '۱.۸K', comments: '۸۹', gradient: 'from-violet-500 to-purple-600' },
+  { id: 3, title: 'نکات طلایی اینستاگرام', views: '۲۵.۱K', likes: '۵.۴K', comments: '۳۲۱', gradient: 'from-blue-500 to-cyan-600' },
+  { id: 4, title: 'ترند جدید ریلز', views: '۱۸.۷K', likes: '۴.۱K', comments: '۲۱۸', gradient: 'from-orange-500 to-amber-600' },
+  { id: 5, title: 'آموزش ادیت حرفه‌ای', views: '۱۵.۳K', likes: '۳.۲K', comments: '۱۷۴', gradient: 'from-emerald-500 to-teal-600' },
 ];
 
 const ReelCard = ({ reel, index }) => {
@@ -145,6 +112,85 @@ const ReelCard = ({ reel, index }) => {
 
 const ReelsShowcase = () => {
   const scrollRef = useRef(null);
+  const [currentReel, setCurrentReel] = useState(0);
+  const [isInView, setIsInView] = useState(false);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [reels, setReels] = useState(defaultReels);
+
+  useEffect(() => {
+    const fetchReels = async () => {
+      try {
+        const response = await api.getReels('vertical');
+        if (response.success && response.data && response.data.length > 0) {
+          setReels(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching reels:', error);
+      }
+    };
+    fetchReels();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isInView && !isUserScrolling) {
+        setCurrentReel((prev) => {
+          const next = (prev + 1) % reels.length;
+          if (scrollRef.current) {
+            const reelElements = scrollRef.current.children;
+            if (reelElements[next]) {
+              reelElements[next].scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest'
+              });
+            }
+          }
+          return next;
+        });
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isInView, isUserScrolling, reels.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting);
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    if (scrollRef.current) {
+      observer.observe(scrollRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleUserScroll = () => {
+    setIsUserScrolling(true);
+    setTimeout(() => setIsUserScrolling(false), 5000); // Reset after 5 seconds
+  };
+
+  const scrollToReel = (index) => {
+    setCurrentReel(index);
+    setIsUserScrolling(true);
+    setTimeout(() => setIsUserScrolling(false), 5000);
+    if (scrollRef.current) {
+      const reelElements = scrollRef.current.children;
+      if (reelElements[index]) {
+        reelElements[index].scrollIntoView({
+          behavior: 'smooth',
+          inline: 'center',
+          block: 'nearest'
+        });
+      }
+    }
+  };
 
   return (
     <section className="py-24 relative overflow-hidden">
@@ -180,10 +226,11 @@ const ReelsShowcase = () => {
 
         <div 
           ref={scrollRef}
+          onScroll={handleUserScroll}
           className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide px-4 -mx-4"
           style={{ scrollSnapType: 'x mandatory' }}
         >
-          {reelsData.map((reel, index) => (
+          {reels.map((reel, index) => (
             <div key={reel.id} style={{ scrollSnapAlign: 'center' }}>
               <ReelCard reel={reel} index={index} />
             </div>
@@ -196,10 +243,15 @@ const ReelsShowcase = () => {
           viewport={{ once: true }}
           className="flex justify-center gap-2 mt-6"
         >
-          {reelsData.map((_, i) => (
-            <div
+          {reels.map((_, i) => (
+            <button
               key={i}
-              className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-pink-500' : 'bg-white/20'}`}
+              onClick={() => scrollToReel(i)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i === currentReel 
+                  ? 'bg-pink-500 w-8' 
+                  : 'bg-white/20 hover:bg-white/40'
+              }`}
             />
           ))}
         </motion.div>

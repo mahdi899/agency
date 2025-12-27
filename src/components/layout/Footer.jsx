@@ -102,43 +102,39 @@ const Footer = () => {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary-500/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative container-custom mx-auto px-4 md:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
-          <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-3 mb-6">
+      <div className="relative container-custom mx-auto px-4 md:px-8 py-12 md:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+          <div className="lg:col-span-2 text-center lg:text-right">
+            <Link to="/" className="inline-flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
                 <span className="text-white font-black text-2xl">آ</span>
               </div>
               <span className="text-2xl font-black text-white">آژانس خلاق</span>
             </Link>
-            <p className="text-dark-400 mb-6 leading-relaxed">
+            <p className="text-dark-400 mb-6 leading-relaxed max-w-md mx-auto lg:mx-0">
               ما یک آژانس خلاق در تهران هستیم که با ترکیب خلاقیت، دیتا و اجرای حرفه‌ای، 
               به کسب‌وکارها کمک می‌کنیم تا در فضای دیجیتال بدرخشند.
             </p>
             
-            <div className="space-y-3 mb-6">
-              <a href="tel:+982112345678" className="flex items-center gap-3 text-dark-400 hover:text-primary-400 transition-colors">
-                <Phone className="w-5 h-5" />
-                <span>۰۲۱-۱۲۳۴۵۶۷۸</span>
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
+              <a href="tel:+982112345678" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-dark-300 hover:text-primary-400 transition-colors">
+                <Phone className="w-4 h-4" />
+                <span className="text-sm">۰۲۱-۱۲۳۴۵۶۷۸</span>
               </a>
-              <a href="mailto:info@agency.ir" className="flex items-center gap-3 text-dark-400 hover:text-primary-400 transition-colors">
-                <Mail className="w-5 h-5" />
-                <span>info@agency.ir</span>
+              <a href="mailto:info@agency.ir" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-dark-300 hover:text-primary-400 transition-colors">
+                <Mail className="w-4 h-4" />
+                <span className="text-sm">info@agency.ir</span>
               </a>
-              <div className="flex items-center gap-3 text-dark-400">
-                <MapPin className="w-5 h-5" />
-                <span>تهران، پاسداران</span>
-              </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center lg:justify-start gap-3">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-dark-400 hover:text-white hover:bg-primary-500 transition-all duration-300"
+                  className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-dark-400 hover:text-white hover:bg-primary-500 transition-all duration-300"
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" />
@@ -147,52 +143,54 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
-            <h4 className="text-white font-bold mb-6">خدمات</h4>
-            <ul className="space-y-3">
-              {footerLinks.services.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="text-dark-400 hover:text-primary-400 transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="grid grid-cols-3 gap-6 lg:col-span-3">
+            <div className="text-center lg:text-right">
+              <h4 className="text-white font-bold mb-4 text-sm">خدمات</h4>
+              <ul className="space-y-2">
+                {footerLinks.services.map((link) => (
+                  <li key={link.path}>
+                    <Link
+                      to={link.path}
+                      className="text-dark-400 hover:text-primary-400 transition-colors text-sm"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h4 className="text-white font-bold mb-6">شرکت</h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="text-dark-400 hover:text-primary-400 transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <div className="text-center lg:text-right">
+              <h4 className="text-white font-bold mb-4 text-sm">شرکت</h4>
+              <ul className="space-y-2">
+                {footerLinks.company.map((link) => (
+                  <li key={link.path}>
+                    <Link
+                      to={link.path}
+                      className="text-dark-400 hover:text-primary-400 transition-colors text-sm"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h4 className="text-white font-bold mb-6">پشتیبانی</h4>
-            <ul className="space-y-3">
-              {footerLinks.support.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="text-dark-400 hover:text-primary-400 transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="text-center lg:text-right">
+              <h4 className="text-white font-bold mb-4 text-sm">پشتیبانی</h4>
+              <ul className="space-y-2">
+                {footerLinks.support.map((link) => (
+                  <li key={link.path}>
+                    <Link
+                      to={link.path}
+                      className="text-dark-400 hover:text-primary-400 transition-colors text-sm"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 

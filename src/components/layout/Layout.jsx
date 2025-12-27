@@ -12,11 +12,11 @@ const Layout = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col cursor-none lg:cursor-none">
+    <div className="min-h-screen flex flex-col mobile-overflow-hidden">
       <MouseFollower />
       <ScrollProgress />
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow mobile-overflow-hidden">
         <Outlet />
       </main>
       <Footer />

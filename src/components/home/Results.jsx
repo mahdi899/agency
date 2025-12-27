@@ -42,25 +42,25 @@ const caseHighlights = [
     client: 'کافه لمیز',
     metric: '+1600%',
     label: 'رشد فالوور',
-    image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=100&h=100&fit=crop&q=80',
+    image: '/storage/clients/cafe-lamiz.jpg',
   },
   {
     client: 'نمایشگاه پرشیا',
     metric: '+400%',
     label: 'رشد فروش',
-    image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=100&h=100&fit=crop&q=80',
+    image: '/storage/clients/auto-persia.jpg',
   },
   {
     client: 'بوتیک رز',
     metric: '65K',
     label: 'فالوور از صفر',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=100&fit=crop&q=80',
+    image: '/storage/clients/clinic-rose.jpg',
   },
   {
     client: 'کلینیک درسا',
     metric: '+300%',
     label: 'رشد نوبت‌دهی',
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=100&h=100&fit=crop&q=80',
+    image: '/storage/clients/fashion-aria.jpg',
   },
 ];
 
@@ -93,7 +93,7 @@ const Results = () => {
             <ScrollReveal key={index} delay={index * 0.1} variant="scaleUp">
               <motion.div
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="relative p-6 rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden group"
+                className="relative p-6 rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden group h-full"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   <div className={`absolute inset-0 bg-gradient-to-br ${metric.color} blur-3xl opacity-30`} />

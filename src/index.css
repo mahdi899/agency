@@ -21,6 +21,8 @@ body {
   color: #f8fafc;
   overflow-x: hidden;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::-webkit-scrollbar {
@@ -74,6 +76,16 @@ body {
     @apply max-w-7xl mx-auto;
   }
 
+  .mobile-safe-area {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-overflow-hidden {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .text-shadow-glow {
     text-shadow: 0 0 40px rgba(249, 115, 22, 0.5);
   }
@@ -110,6 +122,14 @@ body {
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
 }
 
 @keyframes float {
@@ -143,4 +163,27 @@ body {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
+}
+
+@keyframes scroll-right {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(-33.333%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-scroll-right {
+  animation: scroll-right 40s linear infinite;
+}
+
+.animate-scroll-left {
+  animation: scroll-left 45s linear infinite;
+}
+
+.animate-scroll-right:hover,
+.animate-scroll-left:hover {
+  animation-play-state: paused;
 }

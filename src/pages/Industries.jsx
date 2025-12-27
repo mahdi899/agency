@@ -1,10 +1,41 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
-import { industries } from '../data/industries';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Coffee, Car, Scissors, Stethoscope, ShoppingBag, Dumbbell } from 'lucide-react';
 import { SectionTitle, ScrollReveal } from '../components/ui';
+import api from '../services/api';
+import React from 'react';
+
+const iconMap = {
+  Coffee,
+  Car,
+  Scissors,
+  Stethoscope,
+  ShoppingBag,
+  Dumbbell,
+};
 
 const Industries = () => {
+  const [industries, setIndustries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchIndustries = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getIndustries();
+        if (response.success && response.data) {
+          setIndustries(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching industries:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchIndustries();
+  }, []);
+
   return (
     <div className="pt-24">
       <section className="section-padding relative overflow-hidden">
@@ -22,9 +53,13 @@ const Industries = () => {
             />
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {industries.map((industry, index) => {
-              const IconComponent = industry.icon;
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {industries.map((industry, index) => {
               return (
                 <ScrollReveal key={industry.id} delay={index * 0.1}>
                   <Link to={`/industries/${industry.slug}`}>
@@ -46,7 +81,9 @@ const Industries = () => {
                           className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${industry.color} flex items-center justify-center mb-4 shadow-lg`}
                           whileHover={{ rotate: [0, -5, 5, 0] }}
                         >
-                          <IconComponent className="w-8 h-8 text-white" />
+                          {industry.icon && iconMap[industry.icon] && 
+                            React.createElement(iconMap[industry.icon], { className: "w-8 h-8 text-white" })
+                          }
                         </motion.div>
 
                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
@@ -78,7 +115,8 @@ const Industries = () => {
                 </ScrollReveal>
               );
             })}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 

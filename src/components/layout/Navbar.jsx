@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronLeft, Phone, MessageCircle } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import Button from '../ui/Button';
 
@@ -31,18 +31,9 @@ const navLinks = [
       { name: 'همه صنایع', path: '/industries' },
     ]
   },
-  { 
-    name: 'موفقیت‌ها', 
-    path: '/case-studies',
-    submenu: [
-      { name: 'داستان موفقیت', path: '/case-studies' },
-      { name: 'جوایز و افتخارات', path: '/awards' },
-      { name: 'همکاران ما', path: '/partners' },
-    ]
-  },
-  { name: 'پکیج‌ها', path: '/pricing' },
   { name: 'درباره ما', path: '/about' },
   { name: 'بلاگ', path: '/blog' },
+  { name: 'تهران', path: '/tehran' },
   { name: 'تماس', path: '/contact' },
 ];
 
@@ -64,6 +55,17 @@ const Navbar = () => {
     setIsOpen(false);
     setActiveSubmenu(null);
   }, [location]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   return (
     <motion.header
@@ -140,7 +142,7 @@ const Navbar = () => {
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-white"
+            className="lg:hidden p-3 rounded-xl bg-white/5 text-white hover:bg-white/10 transition-colors"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -150,43 +152,112 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-dark-950/95 backdrop-blur-xl border-t border-white/5"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+            className="lg:hidden fixed inset-0 top-0 bg-dark-950/95 backdrop-blur-xl z-50"
           >
-            <div className="container-custom mx-auto px-4 py-6 space-y-2">
-              {navLinks.map((link) => (
-                <div key={link.path}>
-                  <Link
-                    to={link.path}
-                    className={cn(
-                      'block px-4 py-3 rounded-lg text-base font-medium transition-all',
-                      location.pathname === link.path
-                        ? 'text-primary-400 bg-primary-500/10'
-                        : 'text-dark-300 hover:text-white hover:bg-white/5'
-                    )}
-                  >
-                    {link.name}
-                  </Link>
-                  {link.submenu && (
-                    <div className="mr-4 mt-1 space-y-1">
-                      {link.submenu.map((sublink) => (
-                        <Link
-                          key={sublink.path}
-                          to={sublink.path}
-                          className="block px-4 py-2 text-sm text-dark-400 hover:text-white transition-colors"
+            <div className="flex flex-col h-full">
+              <div className="flex items-center justify-between p-4 border-b border-white/10">
+                <Link to="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
+                    <span className="text-white font-black text-xl">آ</span>
+                  </div>
+                  <span className="text-xl font-black text-white">آژانس خلاق</span>
+                </Link>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-3 rounded-xl bg-white/5 text-white hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto py-4 px-4 touch-pan-y">
+                {navLinks.map((link) => (
+                  <div key={link.path} className="mb-2">
+                    {link.submenu ? (
+                      <>
+                        <button
+                          onClick={() => setActiveSubmenu(activeSubmenu === link.path ? null : link.path)}
+                          className={cn(
+                            'w-full flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium transition-all touch-manipulation',
+                            activeSubmenu === link.path
+                              ? 'text-primary-400 bg-primary-500/10'
+                              : 'text-white hover:bg-white/5'
+                          )}
                         >
-                          {sublink.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                          <span>{link.name}</span>
+                          <ChevronDown className={cn(
+                            'w-5 h-5 transition-transform',
+                            activeSubmenu === link.path && 'rotate-180'
+                          )} />
+                        </button>
+                        <AnimatePresence>
+                          {activeSubmenu === link.path && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="pr-4 py-2 space-y-1">
+                                {link.submenu.map((sublink) => (
+                                  <Link
+                                    key={sublink.path}
+                                    to={sublink.path}
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-dark-300 hover:text-white hover:bg-white/5 transition-colors touch-manipulation"
+                                  >
+                                    <ChevronLeft className="w-4 h-4" />
+                                    {sublink.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    ) : (
+                      <Link
+                        to={link.path}
+                        onClick={() => setIsOpen(false)}
+                        className={cn(
+                          'block px-4 py-3 rounded-xl text-base font-medium transition-all touch-manipulation',
+                          location.pathname === link.path
+                            ? 'text-primary-400 bg-primary-500/10'
+                            : 'text-white hover:bg-white/5'
+                        )}
+                      >
+                        {link.name}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-4 border-t border-white/10 space-y-3">
+                <div className="flex gap-3">
+                  <a
+                    href="tel:+982191234567"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 text-white font-medium"
+                  >
+                    <Phone className="w-5 h-5" />
+                    تماس
+                  </a>
+                  <a
+                    href="https://wa.me/989121234567"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-green-500/20 text-green-400 font-medium"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    واتساپ
+                  </a>
                 </div>
-              ))}
-              <div className="pt-4">
-                <Link to="/start" className="block">
-                  <Button className="w-full">شروع پروژه</Button>
+                <Link to="/start" onClick={() => setIsOpen(false)} className="block">
+                  <Button className="w-full py-3">شروع پروژه رایگان</Button>
                 </Link>
               </div>
             </div>

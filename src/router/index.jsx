@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Layout } from '../components/layout';
+import AdminLayout from '../components/admin/AdminLayout';
 import {
   Home,
   Services,
@@ -22,7 +23,22 @@ import {
   Partners,
   Industries,
   Industry,
+  TehranAgency,
 } from '../pages';
+import {
+  Login as AdminLogin,
+  Dashboard as AdminDashboard,
+  Services as AdminServices,
+  Portfolios as AdminPortfolios,
+  Contacts as AdminContacts,
+  Blog as AdminBlog,
+  Clients as AdminClients,
+  Industries as AdminIndustries,
+  Packages as AdminPackages,
+  Testimonials as AdminTestimonials,
+  Reels as AdminReels,
+  HomeCards as AdminHomeCards,
+} from '../pages/admin';
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +47,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'services', element: <Services /> },
-      { path: 'services/:serviceId', element: <ServiceDetail /> },
+      { path: 'services/:slug', element: <ServiceDetail /> },
       { path: 'portfolio', element: <Portfolio /> },
       { path: 'portfolio/:portfolioId', element: <PortfolioDetail /> },
       { path: 'about', element: <About /> },
@@ -46,10 +62,32 @@ export const router = createBrowserRouter([
       { path: 'partners', element: <Partners /> },
       { path: 'industries', element: <Industries /> },
       { path: 'industries/:slug', element: <Industry /> },
+      { path: 'tehran', element: <TehranAgency /> },
       { path: 'locations/:locationSlug', element: <Location /> },
       { path: 'start', element: <Start /> },
       { path: 'thank-you', element: <ThankYou /> },
       { path: '*', element: <NotFound /> },
+    ],
+  },
+  {
+    path: '/admin/login',
+    element: <AdminLogin />,
+  },
+  {
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [
+      { path: 'dashboard', element: <AdminDashboard /> },
+      { path: 'services', element: <AdminServices /> },
+      { path: 'portfolios', element: <AdminPortfolios /> },
+      { path: 'contacts', element: <AdminContacts /> },
+      { path: 'blog', element: <AdminBlog /> },
+      { path: 'clients', element: <AdminClients /> },
+      { path: 'industries', element: <AdminIndustries /> },
+      { path: 'packages', element: <AdminPackages /> },
+      { path: 'testimonials', element: <AdminTestimonials /> },
+      { path: 'reels', element: <AdminReels /> },
+      { path: 'home-cards', element: <AdminHomeCards /> },
     ],
   },
 ]);

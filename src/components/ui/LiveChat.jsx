@@ -74,7 +74,7 @@ const LiveChat = () => {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 left-6 z-50 w-[360px] max-w-[calc(100vw-48px)] rounded-2xl overflow-hidden bg-dark-900 border border-white/10 shadow-2xl"
+            className="fixed bottom-6 left-6 z-50 w-[320px] max-w-[calc(100vw-48px)] sm:w-[360px] sm:max-w-[calc(100vw-48px)] rounded-2xl overflow-hidden bg-dark-900 border border-white/10 shadow-2xl"
           >
             <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-4">
               <div className="flex items-center justify-between">

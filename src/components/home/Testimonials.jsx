@@ -1,17 +1,19 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination, EffectCards } from 'swiper/modules';
-import { testimonials } from '../../data/testimonials';
+import { Autoplay, Pagination } from 'swiper/modules';
 import { SectionTitle, ScrollReveal } from '../ui';
+import api from '../../services/api';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'swiper/css/effect-cards';
+import './Testimonials.css';
 
 const TestimonialCard = ({ testimonial }) => (
   <motion.div
-    whileHover={{ y: -5 }}
-    className="relative p-6 h-full rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 overflow-hidden group"
+    whileHover={{ y: -3 }}
+    className="relative p-6 h-[320px] rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 group flex flex-col"
+    style={{ transformOrigin: 'center bottom' }}
   >
     <div className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
       <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 blur-3xl" />
@@ -19,13 +21,13 @@ const TestimonialCard = ({ testimonial }) => (
 
     <motion.div
       initial={{ rotate: 0 }}
-      whileHover={{ rotate: 12, scale: 1.1 }}
+      whileHover={{ rotate: 12 }}
       transition={{ duration: 0.3 }}
     >
       <Quote className="w-10 h-10 text-primary-500/50 mb-4" />
     </motion.div>
     
-    <p className="text-dark-300 leading-relaxed mb-6 relative z-10">
+    <p className="text-dark-300 leading-relaxed mb-6 relative z-10 flex-grow">
       "{testimonial.text}"
     </p>
     
@@ -44,7 +46,7 @@ const TestimonialCard = ({ testimonial }) => (
     
     <div className="flex items-center gap-3 relative z-10">
       <motion.div 
-        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileHover={{ rotate: 5 }}
         className="w-12 h-12 rounded-full overflow-hidden shadow-lg shadow-primary-500/30"
       >
         <img 
@@ -65,8 +67,27 @@ const TestimonialCard = ({ testimonial }) => (
 );
 
 const Testimonials = () => {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await api.getTestimonials();
+        if (response.success && response.data) {
+          setTestimonials(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTestimonials();
+  }, []);
+
   return (
-    <section className="section-padding relative overflow-hidden bg-dark-900/50">
+    <section className="section-padding relative bg-dark-900/50 overflow-visible">
       <div className="absolute inset-0 pointer-events-none">
         <motion.div 
           className="absolute top-0 left-1/4 w-[700px] h-[700px] rounded-full"
@@ -97,26 +118,46 @@ const Testimonials = () => {
           />
         </ScrollReveal>
 
-        <ScrollReveal delay={0.2}>
-          <Swiper
-            modules={[Autoplay, Pagination]}
-            spaceBetween={24}
-            slidesPerView={1}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
-            pagination={{ clickable: true }}
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
-            className="pb-12"
-          >
-            {testimonials.map((testimonial) => (
-              <SwiperSlide key={testimonial.id}>
-                <TestimonialCard testimonial={testimonial} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </ScrollReveal>
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+          </div>
+        ) : testimonials.length > 0 ? (
+          <ScrollReveal delay={0.2}>
+            <div className="relative overflow-visible pt-12 pb-20">
+              <Swiper
+                modules={[Autoplay, Pagination]}
+                spaceBetween={24}
+                slidesPerView={1}
+                autoplay={{ 
+                  delay: 4000, 
+                  disableOnInteraction: false,
+                  pauseOnMouseEnter: true,
+                  stopOnLastSlide: false,
+                }}
+                pagination={{ 
+                  clickable: true,
+                }}
+                breakpoints={{
+                  640: { slidesPerView: 2 },
+                  1024: { slidesPerView: 3 },
+                }}
+                className="overflow-visible pb-20"
+                style={{ height: 'auto' }}
+              >
+                {testimonials.map((testimonial) => (
+                  <SwiperSlide key={testimonial.id} className="h-auto">
+                    <div className="h-full min-h-[320px] flex">
+                      <TestimonialCard testimonial={testimonial} />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          </ScrollReveal>
+        ) : (
+          <p className="text-center text-dark-400 py-12">نظری ثبت نشده است</p>
+        )}
       </div>
     </section>
   );

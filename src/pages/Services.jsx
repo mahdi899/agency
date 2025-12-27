@@ -1,10 +1,44 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import { services } from '../data/services';
+import { ArrowLeft, Video, Film, Camera, FileText, Share2, TrendingUp, Palette, Globe, Search } from 'lucide-react';
 import { SectionTitle, Card } from '../components/ui';
+import api from '../services/api';
+
+const iconMap = {
+  Video,
+  Film,
+  Camera,
+  FileText,
+  Share2,
+  TrendingUp,
+  Palette,
+  Globe,
+  Search,
+};
 
 const Services = () => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getServices();
+        if (response.success && response.data) {
+          setServices(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
   return (
     <div className="pt-24">
       <section className="section-padding relative overflow-hidden">
@@ -20,8 +54,13 @@ const Services = () => {
             description="همه چیز برای رشد و موفقیت کسب‌وکار شما در فضای دیجیتال"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {services.map((service, index) => (
               <motion.div
                 key={service.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -29,10 +68,12 @@ const Services = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Link to={`/services/${service.id}`}>
+                <Link to={`/services/${service.slug}`}>
                   <Card className="p-8 h-full group cursor-pointer">
                     <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                      <service.icon className="w-8 h-8 text-white" />
+                      {service.icon && iconMap[service.icon] && 
+                        React.createElement(iconMap[service.icon], { className: "w-8 h-8 text-white" })
+                      }
                     </div>
                     
                     <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
@@ -62,7 +103,8 @@ const Services = () => {
                 </Link>
               </motion.div>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </div>

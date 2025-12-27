@@ -1,4 +1,4 @@
-import { Hero, Services, Portfolio, Process, Testimonials, CTA, Clients, Features, Stats, Team, Results } from '../components/home';
+import { Hero, Services, Portfolio, Process, Testimonials, CTA, Clients, Features, Stats, Team, Results, WebProjects } from '../components/home';
 import { ReelsShowcase, Newsletter } from '../components/ui';
 
 const Home = () => {
@@ -10,6 +10,7 @@ const Home = () => {
       <Services />
       <ReelsShowcase />
       <Portfolio />
+      <WebProjects />
       <Results />
       <Features />
       <Team />

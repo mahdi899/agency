@@ -1,12 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Eye, TrendingUp, ArrowLeft, Play, ExternalLink } from 'lucide-react';
-import { portfolioItems, categories } from '../../data/portfolio';
+import { Eye, TrendingUp, ArrowLeft, Play, ExternalLink, Target, Coffee, Sparkles, ShoppingBag, Car, Shirt, Stethoscope, Dumbbell, GraduationCap } from 'lucide-react';
 import { SectionTitle, ScrollReveal } from '../ui';
+import VideoPlayer from '../ui/VideoPlayer';
+import api from '../../services/api';
+
+const categoryIcons = {
+  all: Target, cafe: Coffee, beauty: Sparkles, shop: ShoppingBag,
+  automotive: Car, fashion: Shirt, medical: Stethoscope, fitness: Dumbbell, education: GraduationCap
+};
+
+const defaultCategories = [
+  { id: 'all', title: 'همه' },
+  { id: 'cafe', title: 'کافه و رستوران' },
+  { id: 'beauty', title: 'زیبایی و لاغری' },
+  { id: 'shop', title: 'فروشگاهی' },
+  { id: 'automotive', title: 'خودرویی' },
+  { id: 'fashion', title: 'استایل و لباس' },
+];
 
 const PortfolioCard = ({ item, index }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const tags = Array.isArray(item.tags) ? item.tags : [];
+  
+  console.log('PortfolioCard item:', item); // Debug individual item
+  console.log('PortfolioCard title:', item.title); // Debug title specifically
 
   return (
     <motion.div
@@ -16,46 +35,60 @@ const PortfolioCard = ({ item, index }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link to={`/portfolio/${item.id}`}>
+      <Link to={`/portfolio/${item.slug || item.id}`}>
         <motion.div 
           whileHover={{ y: -8 }}
           className="relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10 group cursor-pointer"
         >
           <div className="relative aspect-[4/3] overflow-hidden">
-            <motion.img
-              src={item.thumbnail}
-              alt={item.title}
-              className="w-full h-full object-cover"
-              animate={{ scale: isHovered ? 1.1 : 1 }}
-              transition={{ duration: 0.5 }}
-            />
+            {item.type === 'video' && item.video_url ? (
+              <VideoPlayer
+                src={item.video_url}
+                poster={item.thumbnail || '/storage/portfolios/default-portfolio.jpg'}
+                autoPlay={false}
+                muted={true}
+                loop={true}
+                controls={false}
+                className="w-full h-full"
+              />
+            ) : (
+              <motion.img
+                src={item.thumbnail || '/storage/portfolios/default-portfolio.jpg'}
+                alt={item.title}
+                className="w-full h-full object-cover"
+                animate={{ scale: isHovered ? 1.1 : 1 }}
+                transition={{ duration: 0.5 }}
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
             
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-            >
+            {item.type === 'video' && (
               <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg shadow-primary-500/30"
+                className="absolute inset-0 flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isHovered ? 1 : 0 }}
               >
-                <Play className="w-6 h-6 text-white mr-[-2px]" fill="white" />
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg shadow-primary-500/30"
+                >
+                  <Play className="w-6 h-6 text-white mr-[-2px]" fill="white" />
+                </motion.div>
               </motion.div>
-            </motion.div>
+            )}
             
             <div className="absolute top-4 right-4 flex gap-2">
               <span className="px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-xl text-white text-xs flex items-center gap-1.5 font-medium">
                 <Eye className="w-3.5 h-3.5" />
-                {item.views}
+                {item.views || '0'}
               </span>
               <span className="px-3 py-1.5 rounded-full bg-green-500/20 backdrop-blur-xl text-green-400 text-xs flex items-center gap-1.5 font-medium">
                 <TrendingUp className="w-3.5 h-3.5" />
-                {item.growth}
+                {item.growth || '+0%'}
               </span>
             </div>
 
-            {item.featured && (
+            {item.is_featured && (
               <div className="absolute top-4 left-4">
                 <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-xs font-bold">
                   ویژه
@@ -67,7 +100,7 @@ const PortfolioCard = ({ item, index }) => {
           <div className="p-5">
             <div className="flex items-start justify-between mb-2">
               <h3 className="text-lg font-bold text-white group-hover:text-primary-400 transition-colors">
-                {item.title}
+                {item.title || 'NO TITLE'}
               </h3>
               <ExternalLink className="w-4 h-4 text-dark-500 group-hover:text-primary-400 transition-colors" />
             </div>
@@ -76,7 +109,7 @@ const PortfolioCard = ({ item, index }) => {
             </p>
             
             <div className="flex flex-wrap gap-2">
-              {item.tags?.slice(0, 3).map((tag, i) => (
+              {tags.slice(0, 3).map((tag, i) => (
                 <span
                   key={i}
                   className="px-2.5 py-1 rounded-lg bg-white/5 text-dark-300 text-xs border border-white/5"
@@ -94,10 +127,46 @@ const PortfolioCard = ({ item, index }) => {
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [portfolios, setPortfolios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [forceRender, setForceRender] = useState(0);
+  const [lastUpdate, setLastUpdate] = useState(null);
 
-  const filteredItems = activeCategory === 'all' 
-    ? portfolioItems.filter(item => item.featured).slice(0, 6)
-    : portfolioItems.filter(item => item.category === activeCategory).slice(0, 6);
+  useEffect(() => {
+    const fetchPortfolios = async () => {
+      try {
+        setLoading(true);
+        const params = activeCategory !== 'all' ? { category: activeCategory } : {};
+        const response = await api.getPortfolios({...params, _t: Date.now()});
+        console.log('Portfolio API response:', response); // Debug log
+        console.log('Portfolio titles:', response.data?.map(p => p.title)); // Debug titles
+        if (response.success && response.data) {
+          // Force update with new data
+          const newData = response.data.slice(0, 6);
+          console.log('Setting portfolios with:', newData);
+          console.log('First item title:', newData[0]?.title);
+          
+          // Completely reset state
+          setPortfolios([]);
+          setForceRender(prev => prev + 1);
+          
+          setTimeout(() => {
+            setPortfolios(newData);
+            setLastUpdate(Date.now());
+            setForceRender(prev => prev + 1);
+          }, 100);
+        } else {
+          console.log('No data in response');
+        }
+      } catch (error) {
+        console.error('Error fetching portfolios:', error);
+        // Don't set any fallback data
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPortfolios();
+  }, [activeCategory]);
 
   return (
     <section className="section-padding relative overflow-hidden bg-dark-900/50">
@@ -124,8 +193,8 @@ const Portfolio = () => {
 
         <ScrollReveal delay={0.1}>
           <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.slice(0, 6).map((category) => {
-              const IconComponent = category.icon;
+            {defaultCategories.map((category) => {
+              const IconComponent = categoryIcons[category.id] || Target;
               return (
                 <motion.button
                   key={category.id}
@@ -146,20 +215,26 @@ const Portfolio = () => {
           </div>
         </ScrollReveal>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {filteredItems.map((item, index) => (
-              <PortfolioCard key={item.id} item={item} index={index} />
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {portfolios.map((item, index) => (
+                <PortfolioCard key={`${item.id}-${forceRender}-${lastUpdate}`} item={item} index={index} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

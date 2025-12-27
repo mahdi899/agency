@@ -1,18 +1,22 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import { services } from '../../data/services';
+import { ArrowLeft, Video, Film, Sparkles, Camera, FileText, Lightbulb, Share2, TrendingUp, Megaphone, Palette, Globe, Search, Smartphone, Users } from 'lucide-react';
 import { SectionTitle, ScrollReveal } from '../ui';
+import api from '../../services/api';
 
-const featuredServices = services.slice(0, 6);
+const iconMap = {
+  Video, Film, Sparkles, Camera, FileText, Lightbulb, Share2, TrendingUp, Megaphone, Palette, Globe, Search, Smartphone, Users
+};
 
 const ServiceCard = ({ service, index }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const IconComponent = iconMap[service.icon] || Video;
+  const features = Array.isArray(service.features) ? service.features : [];
 
   return (
     <ScrollReveal delay={index * 0.1} variant="fadeUp">
-      <Link to={`/services/${service.id}`}>
+      <Link to={`/services/${service.slug || service.id}`}>
         <motion.div
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -22,7 +26,7 @@ const ServiceCard = ({ service, index }) => {
         >
           <div className="absolute inset-0">
             <img
-              src={service.image}
+              src={service.image || '/storage/services/default-service.jpg'}
               alt={service.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
@@ -31,10 +35,10 @@ const ServiceCard = ({ service, index }) => {
 
           <div className="absolute inset-0 p-6 flex flex-col justify-end">
             <motion.div 
-              className={`w-14 h-14 rounded-xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-4 shadow-lg`}
+              className={`w-14 h-14 rounded-xl bg-gradient-to-r ${service.color || 'from-primary-500 to-secondary-500'} flex items-center justify-center mb-4 shadow-lg`}
               animate={{ y: isHovered ? -5 : 0 }}
             >
-              <service.icon className="w-7 h-7 text-white" />
+              <IconComponent className="w-7 h-7 text-white" />
             </motion.div>
             
             <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
@@ -46,7 +50,7 @@ const ServiceCard = ({ service, index }) => {
             </p>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              {service.features.slice(0, 3).map((feature, i) => (
+              {features.slice(0, 3).map((feature, i) => (
                 <span key={i} className="px-2 py-1 rounded-md bg-white/10 text-white text-xs">
                   {feature}
                 </span>
@@ -68,6 +72,25 @@ const ServiceCard = ({ service, index }) => {
 };
 
 const Services = () => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await api.getServices();
+        if (response.success && response.data) {
+          setServices(response.data.slice(0, 6));
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
   return (
     <section className="section-padding relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -100,11 +123,17 @@ const Services = () => {
           />
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredServices.map((service, index) => (
-            <ServiceCard key={service.id} service={service} index={index} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service, index) => (
+              <ServiceCard key={service.id} service={service} index={index} />
+            ))}
+          </div>
+        )}
 
         <ScrollReveal delay={0.5}>
           <div className="text-center mt-12">

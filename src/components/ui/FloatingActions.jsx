@@ -44,14 +44,14 @@ const FloatingActions = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-24 right-6 z-40">
+    <div className="fixed bottom-6 left-6 z-40 lg:left-24">
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute bottom-16 right-0 flex flex-col gap-3 items-end"
+            className="absolute bottom-16 left-0 flex flex-col gap-3 items-start"
           >
             {actions.map((action, index) => {
               const IconComponent = action.icon;
@@ -61,12 +61,12 @@ const FloatingActions = () => {
                   href={action.href}
                   target={action.href.startsWith('http') ? '_blank' : undefined}
                   rel={action.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                  initial={{ opacity: 0, x: -20, scale: 0.8 }}
                   animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: 20, scale: 0.8 }}
+                  exit={{ opacity: 0, x: -20, scale: 0.8 }}
                   transition={{ delay: index * 0.05 }}
                   className="flex items-center gap-3 group"
-                  whileHover={{ x: -5 }}
+                  whileHover={{ x: 5 }}
                 >
                   <span className="px-3 py-1.5 rounded-lg bg-dark-800 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                     {action.label}
