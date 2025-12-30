@@ -27,8 +27,6 @@ const ServiceCard = ({ service, index }) => {
   const [isHovered, setIsHovered] = useState(false);
   const IconComponent = typeof service.icon === 'string' ? iconMap[service.icon] : service.icon || Video;
   const features = Array.isArray(service.features) ? service.features : [];
-  
-  console.log('Service:', service.title, 'Icon:', service.icon, 'IconComponent:', IconComponent);
 
   return (
     <ScrollReveal delay={index * 0.1} variant="fadeUp">
@@ -90,8 +88,6 @@ const ServiceCard = ({ service, index }) => {
 const Services = () => {
   const [services, setServices] = useState(defaultServices.slice(0, 6));
   const [loading, setLoading] = useState(true);
-  
-  console.log('Default services:', defaultServices);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -101,7 +97,6 @@ const Services = () => {
           setServices(response.data.slice(0, 6));
         }
       } catch (error) {
-        console.error('Error fetching services:', error);
         // Fallback to static data
         setServices(defaultServices.slice(0, 6));
       } finally {

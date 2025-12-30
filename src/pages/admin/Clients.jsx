@@ -18,7 +18,7 @@ const Clients = () => {
       const response = await api.getClients();
       setClients(response.data || []);
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ const Clients = () => {
       fetchData();
       closeModal();
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 
@@ -45,7 +45,7 @@ const Clients = () => {
       await api.deleteClient(id);
       setClients(clients.filter(c => c.id !== id));
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 

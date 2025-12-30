@@ -76,7 +76,7 @@ const WebProjects = () => {
         setProjects(response.data || []);
       }
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,6 @@ const WebProjects = () => {
       fetchProjects();
       closeModal();
     } catch (error) {
-      console.error('Error saving project:', error);
       alert('خطا در ذخیره پروژه');
     }
   };
@@ -104,7 +103,7 @@ const WebProjects = () => {
       await api.deleteWebProject(id);
       fetchProjects();
     } catch (error) {
-      console.error('Error deleting project:', error);
+      // Error handled silently
     }
   };
 
@@ -181,7 +180,6 @@ const WebProjects = () => {
       const response = await api.uploadFile(file, 'web-projects');
       setFormData({ ...formData, [field]: response.path });
     } catch (error) {
-      console.error('Error uploading image:', error);
       alert('خطا در آپلود تصویر');
     } finally {
       setUploading(false);

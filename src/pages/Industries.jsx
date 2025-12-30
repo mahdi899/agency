@@ -28,7 +28,7 @@ const Industries = () => {
           setIndustries(response.data);
         }
       } catch (error) {
-        console.error('Error fetching industries:', error);
+        // Error handled silently
       } finally {
         setLoading(false);
       }

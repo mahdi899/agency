@@ -101,7 +101,7 @@ const Clients = () => {
           setClients(response.data);
         }
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        // Fallback to default clients
       } finally {
         setLoading(false);
       }

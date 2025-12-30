@@ -48,7 +48,7 @@ const AdminLayout = () => {
       await api.logout();
       navigate('/admin/login');
     } catch (error) {
-      console.error('Logout error:', error);
+      // Error handled silently
     }
   };
 

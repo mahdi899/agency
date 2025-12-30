@@ -11,7 +11,6 @@ import 'swiper/css/pagination';
 import './Testimonials.css';
 
 const TestimonialCard = ({ testimonial }) => {
-  console.log('Testimonial data:', testimonial);
   return (
     <motion.div
       whileHover={{ y: -3 }}
@@ -89,7 +88,6 @@ const Testimonials = () => {
           setTestimonials(mappedTestimonials);
         }
       } catch (error) {
-        console.error('Error fetching testimonials:', error);
         // Fallback to static data
         setTestimonials(defaultTestimonials);
       } finally {

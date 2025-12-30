@@ -27,7 +27,7 @@ const PortfolioDetail = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching project:', error);
+        // Error handled silently
       } finally {
         setLoading(false);
       }

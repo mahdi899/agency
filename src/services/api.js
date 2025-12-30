@@ -1,9 +1,51 @@
 const API_BASE_URL = '/api/v1';
 
+// Custom Error Classes
+export class ApiError extends Error {
+  constructor(message, status, code, data = null) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
+    this.data = data;
+  }
+}
+
+export class NetworkError extends Error {
+  constructor(message = 'خطا در اتصال به سرور') {
+    super(message);
+    this.name = 'NetworkError';
+  }
+}
+
+export class AuthenticationError extends ApiError {
+  constructor(message = 'لطفاً وارد شوید') {
+    super(message, 401, 'UNAUTHENTICATED');
+    this.name = 'AuthenticationError';
+  }
+}
+
+export class ValidationError extends ApiError {
+  constructor(message, errors = {}) {
+    super(message, 422, 'VALIDATION_ERROR', errors);
+    this.name = 'ValidationError';
+    this.errors = errors;
+  }
+}
+
+export class NotFoundError extends ApiError {
+  constructor(message = 'موردی یافت نشد') {
+    super(message, 404, 'NOT_FOUND');
+    this.name = 'NotFoundError';
+  }
+}
+
 class ApiService {
   constructor() {
     this.baseUrl = API_BASE_URL;
     this.token = localStorage.getItem('auth_token');
+    this.maxRetries = 2;
+    this.retryDelay = 1000;
   }
 
   setToken(token) {
@@ -14,6 +56,55 @@ class ApiService {
   clearToken() {
     this.token = null;
     localStorage.removeItem('auth_token');
+  }
+
+  // Retry logic for failed requests
+  async withRetry(fn, retries = this.maxRetries) {
+    for (let i = 0; i <= retries; i++) {
+      try {
+        return await fn();
+      } catch (error) {
+        // Don't retry on auth, validation, or not found errors
+        if (error instanceof AuthenticationError || 
+            error instanceof ValidationError || 
+            error instanceof NotFoundError) {
+          throw error;
+        }
+        
+        // Last attempt, throw the error
+        if (i === retries) {
+          throw error;
+        }
+        
+        // Wait before retrying
+        await new Promise(resolve => setTimeout(resolve, this.retryDelay * (i + 1)));
+      }
+    }
+  }
+
+  // Parse error response and throw appropriate error
+  handleErrorResponse(response, data) {
+    const message = data?.message || 'خطایی رخ داده است';
+    
+    switch (response.status) {
+      case 401:
+        this.clearToken();
+        throw new AuthenticationError(message);
+      case 403:
+        throw new ApiError(message, 403, 'FORBIDDEN');
+      case 404:
+        throw new NotFoundError(message);
+      case 422:
+        throw new ValidationError(message, data?.errors || {});
+      case 429:
+        throw new ApiError('تعداد درخواست‌ها بیش از حد مجاز است', 429, 'RATE_LIMITED');
+      case 500:
+      case 502:
+      case 503:
+        throw new ApiError('خطای سرور - لطفاً بعداً تلاش کنید', response.status, 'SERVER_ERROR');
+      default:
+        throw new ApiError(message, response.status, 'UNKNOWN_ERROR', data);
+    }
   }
 
   async request(endpoint, options = {}) {
@@ -28,18 +119,40 @@ class ApiService {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    const makeRequest = async () => {
+      let response;
+      try {
+        response = await fetch(url, {
+          ...options,
+          headers,
+        });
+      } catch {
+        throw new NetworkError();
+      }
 
-    const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        if (!response.ok) {
+          throw new ApiError('پاسخ نامعتبر از سرور', response.status, 'INVALID_RESPONSE');
+        }
+        data = { success: true };
+      }
 
-    if (!response.ok) {
-      throw new Error(data.message || 'خطایی رخ داده است');
+      if (!response.ok) {
+        this.handleErrorResponse(response, data);
+      }
+
+      return data;
+    };
+
+    // Use retry for GET requests only
+    if (!options.method || options.method === 'GET') {
+      return this.withRetry(makeRequest);
     }
-
-    return data;
+    
+    return makeRequest();
   }
 
   // Auth

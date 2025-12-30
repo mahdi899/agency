@@ -177,7 +177,7 @@ const ReelsShowcase = () => {
           setReels(response.data);
         }
       } catch (error) {
-        console.error('Error fetching reels:', error);
+        // Fallback to default reels
       }
     };
     fetchReels();

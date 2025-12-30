@@ -1,99 +1,115 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import { Layout } from '../components/layout';
-import AdminLayout from '../components/admin/AdminLayout';
-import {
-  Home,
-  Services,
-  ServiceDetail,
-  Portfolio,
-  PortfolioDetail,
-  About,
-  Contact,
-  Pricing,
-  Blog,
-  BlogPost,
-  FAQ,
-  Location,
-  Start,
-  ThankYou,
-  NotFound,
-  Process,
-  CaseStudies,
-  Awards,
-  Partners,
-  Industries,
-  Industry,
-  TehranAgency,
-  WebProjectDetail,
-} from '../pages';
-import {
-  Login as AdminLogin,
-  Dashboard as AdminDashboard,
-  Services as AdminServices,
-  Portfolios as AdminPortfolios,
-  Contacts as AdminContacts,
-  Blog as AdminBlog,
-  Clients as AdminClients,
-  Industries as AdminIndustries,
-  Packages as AdminPackages,
-  Testimonials as AdminTestimonials,
-  Reels as AdminReels,
-  HomeCards as AdminHomeCards,
-  WebProjects as AdminWebProjects,
-  TeamMembers as AdminTeamMembers,
-} from '../pages/admin';
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-dark-950">
+    <div className="text-center">
+      <div className="w-12 h-12 border-3 border-primary-500/30 border-t-primary-500 rounded-full animate-spin mx-auto mb-4" />
+      <p className="text-dark-400">در حال بارگذاری...</p>
+    </div>
+  </div>
+);
+
+// Lazy loaded pages - Public
+const Home = lazy(() => import('../pages/Home'));
+const Services = lazy(() => import('../pages/Services'));
+const ServiceDetail = lazy(() => import('../pages/ServiceDetail'));
+const Portfolio = lazy(() => import('../pages/Portfolio'));
+const PortfolioDetail = lazy(() => import('../pages/PortfolioDetail'));
+const About = lazy(() => import('../pages/About'));
+const Contact = lazy(() => import('../pages/Contact'));
+const Pricing = lazy(() => import('../pages/Pricing'));
+const Blog = lazy(() => import('../pages/Blog'));
+const BlogPost = lazy(() => import('../pages/BlogPost'));
+const FAQ = lazy(() => import('../pages/FAQ'));
+const Location = lazy(() => import('../pages/Location'));
+const Start = lazy(() => import('../pages/Start'));
+const ThankYou = lazy(() => import('../pages/ThankYou'));
+const NotFound = lazy(() => import('../pages/NotFound'));
+const Process = lazy(() => import('../pages/Process'));
+const CaseStudies = lazy(() => import('../pages/CaseStudies'));
+const Partners = lazy(() => import('../pages/Partners'));
+const Industries = lazy(() => import('../pages/Industries'));
+const Industry = lazy(() => import('../pages/Industry'));
+const TehranAgency = lazy(() => import('../pages/TehranAgency'));
+const WebProjectDetail = lazy(() => import('../pages/WebProjectDetail'));
+
+// Lazy loaded pages - Admin
+const AdminLayout = lazy(() => import('../components/admin/AdminLayout'));
+const AdminLogin = lazy(() => import('../pages/admin/Login'));
+const AdminDashboard = lazy(() => import('../pages/admin/Dashboard'));
+const AdminServices = lazy(() => import('../pages/admin/Services'));
+const AdminPortfolios = lazy(() => import('../pages/admin/Portfolios'));
+const AdminContacts = lazy(() => import('../pages/admin/Contacts'));
+const AdminBlog = lazy(() => import('../pages/admin/Blog'));
+const AdminClients = lazy(() => import('../pages/admin/Clients'));
+const AdminIndustries = lazy(() => import('../pages/admin/Industries'));
+const AdminPackages = lazy(() => import('../pages/admin/Packages'));
+const AdminTestimonials = lazy(() => import('../pages/admin/Testimonials'));
+const AdminReels = lazy(() => import('../pages/admin/Reels'));
+const AdminHomeCards = lazy(() => import('../pages/admin/HomeCards'));
+const AdminWebProjects = lazy(() => import('../pages/admin/WebProjects'));
+const AdminTeamMembers = lazy(() => import('../pages/admin/TeamMembers'));
+
+// Suspense wrapper for lazy components
+const withSuspense = (Component) => (
+  <Suspense fallback={<PageLoader />}>
+    <Component />
+  </Suspense>
+);
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
-      { index: true, element: <Home /> },
-      { path: 'services', element: <Services /> },
-      { path: 'services/:slug', element: <ServiceDetail /> },
-      { path: 'portfolio', element: <Portfolio /> },
-      { path: 'portfolio/:portfolioId', element: <PortfolioDetail /> },
-      { path: 'about', element: <About /> },
-      { path: 'contact', element: <Contact /> },
-      { path: 'pricing', element: <Pricing /> },
-      { path: 'blog', element: <Blog /> },
-      { path: 'blog/:slug', element: <BlogPost /> },
-      { path: 'faq', element: <FAQ /> },
-      { path: 'process', element: <Process /> },
-      { path: 'case-studies', element: <CaseStudies /> },
-      // { path: 'awards', element: <Awards /> }, // Hidden temporarily - page exists but not accessible
-      { path: 'partners', element: <Partners /> },
-      { path: 'industries', element: <Industries /> },
-      { path: 'industries/:slug', element: <Industry /> },
-      { path: 'tehran', element: <TehranAgency /> },
-      { path: 'locations/:locationSlug', element: <Location /> },
-      { path: 'web-projects/:slug', element: <WebProjectDetail /> },
-      { path: 'start', element: <Start /> },
-      { path: 'thank-you', element: <ThankYou /> },
-      { path: '*', element: <NotFound /> },
+      { index: true, element: withSuspense(Home) },
+      { path: 'services', element: withSuspense(Services) },
+      { path: 'services/:slug', element: withSuspense(ServiceDetail) },
+      { path: 'portfolio', element: withSuspense(Portfolio) },
+      { path: 'portfolio/:portfolioId', element: withSuspense(PortfolioDetail) },
+      { path: 'about', element: withSuspense(About) },
+      { path: 'contact', element: withSuspense(Contact) },
+      { path: 'pricing', element: withSuspense(Pricing) },
+      { path: 'blog', element: withSuspense(Blog) },
+      { path: 'blog/:slug', element: withSuspense(BlogPost) },
+      { path: 'faq', element: withSuspense(FAQ) },
+      { path: 'process', element: withSuspense(Process) },
+      { path: 'case-studies', element: withSuspense(CaseStudies) },
+      { path: 'partners', element: withSuspense(Partners) },
+      { path: 'industries', element: withSuspense(Industries) },
+      { path: 'industries/:slug', element: withSuspense(Industry) },
+      { path: 'tehran', element: withSuspense(TehranAgency) },
+      { path: 'locations/:locationSlug', element: withSuspense(Location) },
+      { path: 'web-projects/:slug', element: withSuspense(WebProjectDetail) },
+      { path: 'start', element: withSuspense(Start) },
+      { path: 'thank-you', element: withSuspense(ThankYou) },
+      { path: '*', element: withSuspense(NotFound) },
     ],
   },
   {
     path: '/admin/login',
-    element: <AdminLogin />,
+    element: withSuspense(AdminLogin),
   },
   {
     path: '/admin',
-    element: <AdminLayout />,
+    element: withSuspense(AdminLayout),
     children: [
-      { path: 'dashboard', element: <AdminDashboard /> },
-      { path: 'services', element: <AdminServices /> },
-      { path: 'home-cards', element: <AdminHomeCards /> },
-      { path: 'web-projects', element: <AdminWebProjects /> },
-      { path: 'portfolios', element: <AdminPortfolios /> },
-      { path: 'contacts', element: <AdminContacts /> },
-      { path: 'blog', element: <AdminBlog /> },
-      { path: 'clients', element: <AdminClients /> },
-      { path: 'industries', element: <AdminIndustries /> },
-      { path: 'packages', element: <AdminPackages /> },
-      { path: 'testimonials', element: <AdminTestimonials /> },
-      { path: 'reels', element: <AdminReels /> },
-      { path: 'team', element: <AdminTeamMembers /> },
+      { path: 'dashboard', element: withSuspense(AdminDashboard) },
+      { path: 'services', element: withSuspense(AdminServices) },
+      { path: 'home-cards', element: withSuspense(AdminHomeCards) },
+      { path: 'web-projects', element: withSuspense(AdminWebProjects) },
+      { path: 'portfolios', element: withSuspense(AdminPortfolios) },
+      { path: 'contacts', element: withSuspense(AdminContacts) },
+      { path: 'blog', element: withSuspense(AdminBlog) },
+      { path: 'clients', element: withSuspense(AdminClients) },
+      { path: 'industries', element: withSuspense(AdminIndustries) },
+      { path: 'packages', element: withSuspense(AdminPackages) },
+      { path: 'testimonials', element: withSuspense(AdminTestimonials) },
+      { path: 'reels', element: withSuspense(AdminReels) },
+      { path: 'team', element: withSuspense(AdminTeamMembers) },
     ],
   },
 ]);

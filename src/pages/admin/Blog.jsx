@@ -53,7 +53,6 @@ const Blog = () => {
       // Check if user is authenticated
       const token = localStorage.getItem('auth_token');
       if (!token) {
-        console.log('No authentication token found');
         setPosts([]);
         setLoading(false);
         return;
@@ -62,7 +61,6 @@ const Blog = () => {
       const response = await api.getBlogPosts();
       setPosts(response.data || []);
     } catch (error) {
-      console.error('Error:', error);
       // If unauthorized, clear token and redirect to login
       if (error.message === 'Unauthenticated' || error.message.includes('401')) {
         localStorage.removeItem('auth_token');
@@ -82,7 +80,7 @@ const Blog = () => {
         setCategories(response.data || []);
       }
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      // Error handled silently
     }
   };
 
@@ -115,7 +113,6 @@ const Blog = () => {
       }
       closeModal();
     } catch (error) {
-      console.error('Error:', error);
       alert('خطا در ذخیره مقاله');
     }
   };
@@ -126,7 +123,7 @@ const Blog = () => {
       await api.deleteBlogPost(id);
       setPosts(posts.filter(p => p.id !== id));
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 

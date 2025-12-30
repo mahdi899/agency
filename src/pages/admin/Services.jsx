@@ -26,7 +26,7 @@ const Services = () => {
       const response = await api.getServices();
       setServices(response.data || []);
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -43,7 +43,7 @@ const Services = () => {
       fetchServices();
       closeModal();
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 
@@ -53,7 +53,7 @@ const Services = () => {
       await api.deleteService(id);
       setServices(services.filter(s => s.id !== id));
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 

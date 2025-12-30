@@ -1,17 +1,18 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { 
-  ArrowRight, Clock, User, Calendar, Share2, Eye, Heart, Tag, Copy, Check,
-  Bookmark, ChevronUp, Twitter, Linkedin, Send, MessageCircle
-} from 'lucide-react';
-import { Button, Card } from '../components/ui';
+import { ChevronUp } from 'lucide-react';
+import { Button } from '../components/ui';
 import api from '../services/api';
 import {
   Callout, BlockQuote, CallToAction, FeatureCard, PointList,
   FullWidthImage, ImageGallery, VideoEmbed, ReelsEmbed, CodeBlock,
   Divider, TableOfContents
 } from '../components/blog/BlogContentBlocks';
+import {
+  AuthorMeta, PostStats, AuthorBox, QuickStatsWidget, ShareWidget,
+  EngagementBar, RelatedPostsSection, TagsSection, FeaturedImage, Breadcrumb
+} from '../components/blog/BlogPostComponents';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -81,22 +82,22 @@ const BlogPost = () => {
         
         try {
           await api.incrementBlogViews(postData.id);
-        } catch (e) {}
+        } catch {}
         
         try {
           const relatedResponse = await api.getRelatedPosts(postData.id);
           if (relatedResponse.success) {
             setRelatedPosts(relatedResponse.data || []);
           }
-        } catch (e) {
+        } catch {
           const allPostsResponse = await api.getPublicBlogPosts();
           const related = allPostsResponse.data
             .filter(p => p.slug !== slug && p.category === postData.category)
             .slice(0, 3);
           setRelatedPosts(related);
         }
-      } catch (error) {
-        console.error('Error fetching blog post:', error);
+      } catch {
+        // Error handled silently
       } finally {
         setLoading(false);
       }
@@ -111,8 +112,8 @@ const BlogPost = () => {
       await api.toggleBlogLike(post.id);
       setPost(prev => ({ ...prev, likes: (prev.likes || 0) + 1 }));
       setLiked(true);
-    } catch (error) {
-      console.error('Error liking post:', error);
+    } catch {
+      // Error handled silently
     }
   };
 
@@ -135,7 +136,7 @@ const BlogPost = () => {
     } else if (navigator.share) {
       try {
         await navigator.share({ title: text, url });
-      } catch (e) {}
+      } catch {}
     }
   };
 
@@ -187,19 +188,7 @@ const BlogPost = () => {
 
           <div className="container-article mx-auto relative">
             {/* Breadcrumb */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              <nav className="flex items-center gap-2 text-sm text-dark-400">
-                <Link to="/" className="hover:text-white transition-colors">خانه</Link>
-                <span>/</span>
-                <Link to="/blog" className="hover:text-white transition-colors">بلاگ</Link>
-                <span>/</span>
-                <span className="text-primary-400">{post.categoryName}</span>
-              </nav>
-            </motion.div>
+            <Breadcrumb categoryName={post.categoryName} />
 
             {/* Article Header */}
             <div className="max-w-3xl lg:max-w-5xl mx-auto">
@@ -225,59 +214,17 @@ const BlogPost = () => {
 
                 {/* Meta Info */}
                 <div className="flex flex-wrap items-center justify-center gap-4 lg:gap-6 text-dark-400">
-                  <div className="flex items-center gap-3">
-                    {post.authorAvatar ? (
-                      <img src={post.authorAvatar} alt={post.author} className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover border-2 border-primary-500/30" />
-                    ) : (
-                      <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold">
-                        {post.author?.charAt(0)}
-                      </div>
-                    )}
-                    <div className="text-right">
-                      <span className="text-white font-medium block text-sm lg:text-base">{post.author}</span>
-                      <span className="text-xs lg:text-sm">{post.date}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs lg:text-sm">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 lg:w-4 lg:h-4" />
-                      {post.readTime} دقیقه
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-3 h-3 lg:w-4 lg:h-4" />
-                      {post.views.toLocaleString('fa-IR')} بازدید
-                    </span>
-                  </div>
+                  <AuthorMeta author={post.author} authorAvatar={post.authorAvatar} date={post.date} />
+                  <PostStats readTime={post.readTime} views={post.views} />
                 </div>
               </motion.div>
 
               {/* Featured Image */}
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="relative rounded-2xl lg:rounded-3xl overflow-hidden mb-8 lg:mb-12 shadow-2xl"
-              >
-                {post.thumbnail ? (
-                  <figure>
-                    <img 
-                      src={post.thumbnail} 
-                      alt={post.thumbnailAlt}
-                      className="w-full aspect-[16/9] lg:aspect-[21/9] object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-900/50 to-transparent" />
-                    {post.thumbnailCaption && (
-                      <figcaption className="absolute bottom-2 lg:bottom-4 left-4 right-4 text-center text-white/80 text-xs lg:text-sm">
-                        {post.thumbnailCaption}
-                      </figcaption>
-                    )}
-                  </figure>
-                ) : (
-                  <div className="aspect-[16/9] lg:aspect-[21/9] bg-gradient-to-br from-primary-500/30 to-secondary-500/30 flex items-center justify-center">
-                    <span className="text-6xl lg:text-9xl">📝</span>
-                  </div>
-                )}
-              </motion.div>
+              <FeaturedImage 
+                thumbnail={post.thumbnail} 
+                thumbnailAlt={post.thumbnailAlt} 
+                thumbnailCaption={post.thumbnailCaption} 
+              />
             </div>
           </div>
         </section>
@@ -497,233 +444,39 @@ const BlogPost = () => {
                 </div>
 
                 {/* Tags */}
-                <div className="mt-12 pt-8 border-t border-dark-700">
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag, i) => (
-                      <Link
-                        key={i}
-                        to={`/blog?tag=${tag}`}
-                        className="px-4 py-2 rounded-full bg-dark-800 text-dark-300 hover:bg-primary-500/20 hover:text-primary-400 transition-all text-sm"
-                      >
-                        #{tag}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                <TagsSection tags={post.tags} />
                 {/* Engagement Bar */}
-                <Card className="p-4 lg:p-6 mb-8 lg:mb-12">
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-4 lg:gap-6">
-                      <button 
-                        onClick={handleLike}
-                        className={`flex items-center gap-2 px-3 py-2 lg:px-4 py-2 rounded-xl transition-all ${
-                          liked 
-                            ? 'bg-red-500/20 text-red-400' 
-                            : 'bg-dark-700 text-dark-300 hover:bg-red-500/20 hover:text-red-400'
-                        }`}
-                      >
-                        <Heart className={`w-4 h-4 lg:w-5 lg:h-5 ${liked ? 'fill-red-400' : ''}`} />
-                        <span className="text-sm lg:text-base">{post.likes.toLocaleString('fa-IR')}</span>
-                      </button>
-                      <span className="flex items-center gap-2 text-dark-400 text-sm lg:text-base">
-                        <Eye className="w-4 h-4 lg:w-5 lg:h-5" />
-                        {post.views.toLocaleString('fa-IR')} بازدید
-                      </span>
-                    </div>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleShare('twitter')}
-                        className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#1DA1F2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Twitter className="w-3 h-3 lg:w-5 lg:h-5" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('linkedin')}
-                        className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0A66C2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Linkedin className="w-3 h-3 lg:w-5 lg:h-5" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('telegram')}
-                        className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0088cc] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Send className="w-3 h-3 lg:w-5 lg:h-5" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('copy')}
-                        className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-primary-500 hover:text-white transition-all flex items-center justify-center"
-                      >
-                        {copied ? <Check className="w-3 h-3 lg:w-5 lg:h-5" /> : <Copy className="w-3 h-3 lg:w-5 lg:h-5" />}
-                      </button>
-                    </div>
-                  </div>
-                </Card>
+                <EngagementBar 
+                  post={post} 
+                  liked={liked} 
+                  onLike={handleLike} 
+                  onShare={handleShare} 
+                  copied={copied} 
+                />
 
                 {/* Mobile Sidebar */}
                 <div className="lg:hidden mt-8 space-y-4">
-                  {/* Mobile Share Widget */}
-                  <Card className="p-4">
-                    <h4 className="text-sm font-bold text-white mb-3">اشتراک‌گذاری</h4>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleShare('twitter')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#1DA1F2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Twitter className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('linkedin')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0A66C2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('telegram')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0088cc] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Send className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </Card>
-
-                  {/* Mobile Quick Stats */}
-                  <Card className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">زمان مطالعه</span>
-                        <span className="text-white">{post.readTime} دقیقه</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">تعداد کلمات</span>
-                        <span className="text-white">{post.wordCount?.toLocaleString('fa-IR') || '0'}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">بازدید</span>
-                        <span className="text-white">{post.views.toLocaleString('fa-IR')}</span>
-                      </div>
-                    </div>
-                  </Card>
+                  <ShareWidget onShare={handleShare} copied={copied} />
+                  <QuickStatsWidget readTime={post.readTime} wordCount={post.wordCount} views={post.views} />
                 </div>
 
                 {/* Author Box */}
                 {post.author && (
-                  <Card className="p-6 mt-8">
-                    <div className="flex items-start gap-4">
-                      {post.authorAvatar ? (
-                        <img src={post.authorAvatar} alt={post.author} className="w-16 h-16 rounded-2xl object-cover" />
-                      ) : (
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-2xl font-bold">
-                          {post.author?.charAt(0)}
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <h4 className="text-lg font-bold text-white">{post.author}</h4>
-                        {post.authorBio && (
-                          <p className="text-dark-400 text-sm mt-1">{post.authorBio}</p>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
+                  <AuthorBox author={post.author} authorAvatar={post.authorAvatar} authorBio={post.authorBio} />
                 )}
               </motion.article>
 
               {/* Sidebar - Sticky */}
               <aside className="hidden lg:block">
                 <div className="sticky top-24 space-y-6">
-                  {/* Share Widget */}
-                  <Card className="p-4">
-                    <h4 className="text-sm font-bold text-white mb-3">اشتراک‌گذاری</h4>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleShare('twitter')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#1DA1F2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Twitter className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('linkedin')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0A66C2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('telegram')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0088cc] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Send className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </Card>
-
-                  {/* Quick Stats */}
-                  <Card className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">زمان مطالعه</span>
-                        <span className="text-white">{post.readTime} دقیقه</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">تعداد کلمات</span>
-                        <span className="text-white">{post.wordCount.toLocaleString('fa-IR')}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">بازدید</span>
-                        <span className="text-white">{post.views.toLocaleString('fa-IR')}</span>
-                      </div>
-                    </div>
-                  </Card>
+                  <ShareWidget onShare={handleShare} copied={copied} />
+                  <QuickStatsWidget readTime={post.readTime} wordCount={post.wordCount} views={post.views} />
                 </div>
               </aside>
             </div>
 
             {/* Related Posts */}
-            {relatedPosts.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="mt-16 pt-12 border-t border-dark-700"
-              >
-                <h2 className="text-2xl font-bold text-white mb-8">مقالات مرتبط</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {relatedPosts.map((p) => (
-                    <Link key={p.id} to={`/blog/${p.slug}`}>
-                      <Card className="p-0 overflow-hidden group h-full">
-                        <div className="aspect-video relative overflow-hidden">
-                          {p.thumbnail ? (
-                            <img 
-                              src={p.thumbnail} 
-                              alt={p.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-primary-500/30 to-secondary-500/30 flex items-center justify-center">
-                              <span className="text-4xl">📝</span>
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-dark-900 to-transparent" />
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-bold text-white group-hover:text-primary-400 transition-colors line-clamp-2">
-                            {p.title}
-                          </h3>
-                          <div className="flex items-center gap-3 mt-3 text-xs text-dark-400">
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              {p.read_time || 5} دقیقه
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Eye className="w-3 h-3" />
-                              {(p.views || 0).toLocaleString('fa-IR')}
-                            </span>
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+            <RelatedPostsSection posts={relatedPosts} />
           </div>
         </section>
       </div>

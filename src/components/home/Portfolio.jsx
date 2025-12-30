@@ -24,9 +24,6 @@ const PortfolioCard = ({ item, index }) => {
   const [isHovered, setIsHovered] = useState(false);
   const tags = Array.isArray(item.tags) ? item.tags : [];
   
-  console.log('PortfolioCard item:', item); // Debug individual item
-  console.log('PortfolioCard title:', item.title); // Debug title specifically
-
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -138,13 +135,9 @@ const Portfolio = () => {
         setLoading(true);
         const params = activeCategory !== 'all' ? { category: activeCategory } : {};
         const response = await api.getPortfolios({...params, _t: Date.now()});
-        console.log('Portfolio API response:', response); // Debug log
-        console.log('Portfolio titles:', response.data?.map(p => p.title)); // Debug titles
         if (response.success && response.data) {
           // Force update with new data
           const newData = response.data.slice(0, 6);
-          console.log('Setting portfolios with:', newData);
-          console.log('First item title:', newData[0]?.title);
           
           // Completely reset state
           setPortfolios([]);
@@ -155,12 +148,9 @@ const Portfolio = () => {
             setLastUpdate(Date.now());
             setForceRender(prev => prev + 1);
           }, 100);
-        } else {
-          console.log('No data in response');
         }
       } catch (error) {
-        console.error('Error fetching portfolios:', error);
-        // Don't set any fallback data
+        // Error handled silently
       } finally {
         setLoading(false);
       }

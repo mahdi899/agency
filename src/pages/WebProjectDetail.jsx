@@ -37,7 +37,6 @@ const WebProjectDetail = () => {
           setError('پروژه یافت نشد');
         }
       } catch (err) {
-        console.error('Error fetching project:', err);
         // Fallback to static data
         const staticProject = defaultWebProjects.find(p => p.id === slug || p.slug === slug);
         if (staticProject) {

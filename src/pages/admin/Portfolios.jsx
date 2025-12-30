@@ -25,7 +25,7 @@ const Portfolios = () => {
       const response = await api.getPortfolios();
       setPortfolios(response.data || []);
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,7 @@ const Portfolios = () => {
       fetchData();
       closeModal();
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 
@@ -52,7 +52,7 @@ const Portfolios = () => {
       await api.deletePortfolio(id);
       setPortfolios(portfolios.filter(p => p.id !== id));
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 

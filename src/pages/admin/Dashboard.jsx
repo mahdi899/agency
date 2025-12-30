@@ -66,7 +66,7 @@ const Dashboard = () => {
         const response = await api.getDashboard();
         setData(response.data);
       } catch (error) {
-        console.error('Error fetching dashboard:', error);
+        // Error handled silently
       } finally {
         setLoading(false);
       }

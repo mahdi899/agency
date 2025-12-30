@@ -41,7 +41,7 @@ const Services = () => {
           setServices(response.data);
         }
       } catch (error) {
-        console.error('Error fetching services:', error);
+        // Error handled silently
       } finally {
         setLoading(false);
       }

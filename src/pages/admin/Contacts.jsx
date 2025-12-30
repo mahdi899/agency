@@ -33,7 +33,7 @@ const Contacts = () => {
       const response = await api.getContacts(params);
       setContacts(response.data?.data || []);
     } catch (error) {
-      console.error('Error fetching contacts:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ const Contacts = () => {
       setContacts(contacts.filter(c => c.id !== id));
       if (selectedContact?.id === id) setSelectedContact(null);
     } catch (error) {
-      console.error('Error deleting contact:', error);
+      // Error handled silently
     }
   };
 

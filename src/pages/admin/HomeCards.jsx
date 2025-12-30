@@ -49,7 +49,7 @@ const HomeCards = () => {
         setCards(response.data || []);
       }
     } catch (error) {
-      console.error('Error fetching cards:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,6 @@ const HomeCards = () => {
       fetchCards();
       closeModal();
     } catch (error) {
-      console.error('Error saving card:', error);
       alert('خطا در ذخیره کارت');
     }
   };
@@ -77,7 +76,7 @@ const HomeCards = () => {
       await api.deleteHomeCard(id);
       fetchCards();
     } catch (error) {
-      console.error('Error deleting card:', error);
+      // Error handled silently
     }
   };
 
@@ -125,7 +124,6 @@ const HomeCards = () => {
       const response = await api.uploadFile(file, 'home-cards');
       setFormData({ ...formData, image: response.path });
     } catch (error) {
-      console.error('Error uploading image:', error);
       alert('خطا در آپلود تصویر');
     }
   };

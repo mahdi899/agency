@@ -104,7 +104,7 @@ const Team = () => {
           setTeamMembers(transformed);
         }
       } catch (error) {
-        console.error('Error fetching team:', error);
+        // Fallback to default team members
       }
     };
     fetchTeam();

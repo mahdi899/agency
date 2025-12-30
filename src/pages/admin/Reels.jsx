@@ -42,7 +42,7 @@ const Reels = () => {
         setReels(response.data || []);
       }
     } catch (error) {
-      console.error('Error fetching reels:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,6 @@ const Reels = () => {
       fetchReels();
       closeModal();
     } catch (error) {
-      console.error('Error saving reel:', error);
       alert('خطا در ذخیره ریلز');
     }
   };
@@ -70,7 +69,7 @@ const Reels = () => {
       await api.deleteReel(id);
       fetchReels();
     } catch (error) {
-      console.error('Error deleting reel:', error);
+      // Error handled silently
     }
   };
 
@@ -117,7 +116,6 @@ const Reels = () => {
       const response = await api.uploadVideo(file, formData.video_type, 'videos');
       setFormData({ ...formData, video_url: response.path });
     } catch (error) {
-      console.error('Error uploading video:', error);
       alert('خطا در آپلود ویدیو');
     } finally {
       setUploading(false);
@@ -133,7 +131,6 @@ const Reels = () => {
       const response = await api.uploadFile(file, 'reels/thumbnails');
       setFormData({ ...formData, thumbnail: response.path });
     } catch (error) {
-      console.error('Error uploading thumbnail:', error);
       alert('خطا در آپلود تصویر');
     } finally {
       setUploading(false);

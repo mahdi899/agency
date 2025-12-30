@@ -31,7 +31,7 @@ const TeamMembers = () => {
       const response = await api.request('/admin/team');
       setMembers(response.data || []);
     } catch (error) {
-      console.error('Error fetching team members:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -54,7 +54,7 @@ const TeamMembers = () => {
       fetchMembers();
       closeModal();
     } catch (error) {
-      console.error('Error saving team member:', error);
+      // Error handled silently
     }
   };
 
@@ -64,7 +64,7 @@ const TeamMembers = () => {
       await api.request(`/admin/team-members/${id}`, { method: 'DELETE' });
       fetchMembers();
     } catch (error) {
-      console.error('Error deleting team member:', error);
+      // Error handled silently
     }
   };
 

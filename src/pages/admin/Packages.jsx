@@ -21,7 +21,7 @@ const Packages = () => {
       const response = await api.getPackages();
       setPackages(response.data || []);
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -43,7 +43,7 @@ const Packages = () => {
       fetchData();
       closeModal();
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 
@@ -53,7 +53,7 @@ const Packages = () => {
       await api.deletePackage(id);
       setPackages(packages.filter(p => p.id !== id));
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 

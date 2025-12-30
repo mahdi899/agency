@@ -66,7 +66,6 @@ const ImageModal = ({ isOpen, onClose, onInsert, initialData = null }) => {
         setImageUrl(response.url);
       }
     } catch (error) {
-      console.error('Upload error:', error);
       alert('خطا در آپلود تصویر');
     } finally {
       setUploading(false);
@@ -333,7 +332,7 @@ const TipTapEditor = ({ value, onChange, label = 'محتوا', placeholder = 'م
         view.dispatch(transaction);
       }
     } catch (error) {
-      console.error('Drop upload error:', error);
+      // Error handled silently
     }
   };
 

@@ -88,7 +88,6 @@ const ServiceDetail = () => {
           setServices(servicesResponse.data);
         }
       } catch (error) {
-        console.error('Error fetching service data:', error);
         // Fallback to static data
         setService(defaultServices.find(s => s.id === slug || s.slug === slug));
       } finally {
@@ -354,9 +353,7 @@ const ServiceDetail = () => {
                 <Card className="p-6 mt-6">
                   <h4 className="font-bold text-white mb-4">خدمات مرتبط</h4>
                   <div className="space-y-3">
-                    {relatedServices?.map((s) => {
-                      console.log('Related service:', s.title, 'Icon:', s.icon, 'IconMap:', iconMap[s.icon]);
-                      return (
+                    {relatedServices?.map((s) => (
                       <Link
                         key={s.id}
                         to={`/services/${s.slug}`}
@@ -369,8 +366,7 @@ const ServiceDetail = () => {
                           {s.title}
                         </span>
                       </Link>
-                      );
-                    })}
+                    ))}
                   </div>
                 </Card>
               </motion.div>

@@ -22,7 +22,7 @@ const Industries = () => {
       const response = await api.getIndustries();
       setIndustries(response.data || []);
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ const Industries = () => {
       fetchData();
       closeModal();
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 
@@ -49,7 +49,7 @@ const Industries = () => {
       await api.deleteIndustry(id);
       setIndustries(industries.filter(i => i.id !== id));
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 

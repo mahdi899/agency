@@ -153,7 +153,7 @@ const Blog = () => {
         }));
         setBlogPosts(transformedPosts);
       } catch (error) {
-        console.error('Error fetching blog posts:', error);
+        // Error handled silently
       } finally {
         setLoading(false);
       }

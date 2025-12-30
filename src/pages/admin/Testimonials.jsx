@@ -26,7 +26,7 @@ const Testimonials = () => {
       const response = await api.getTestimonials();
       setTestimonials(response.data || []);
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -43,7 +43,7 @@ const Testimonials = () => {
       fetchData();
       closeModal();
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 
@@ -53,7 +53,7 @@ const Testimonials = () => {
       await api.deleteTestimonial(id);
       setTestimonials(testimonials.filter(t => t.id !== id));
     } catch (error) {
-      console.error('Error:', error);
+      // Error handled silently
     }
   };
 

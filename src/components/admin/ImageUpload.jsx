@@ -49,7 +49,6 @@ const ImageUpload = ({ value, onChange, folder = 'uploads', label = 'تصویر'
       }
     } catch (err) {
       setError('خطا در اتصال به سرور');
-      console.error('Upload error:', err);
     } finally {
       setUploading(false);
     }

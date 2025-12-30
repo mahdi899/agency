@@ -140,7 +140,7 @@ const WebProjects = () => {
           })));
         }
       } catch (error) {
-        console.error('Error fetching web projects:', error);
+        // Fallback to default projects
       } finally {
         setLoading(false);
       }
