@@ -36,8 +36,13 @@ Route::prefix('v1')->group(function () {
     Route::get('/industries/{industry:slug}', [IndustryController::class, 'show']);
 
     Route::get('/blog', [BlogController::class, 'index']);
-    Route::get('/blog/{slug}', [BlogController::class, 'show']);
     Route::get('/blog/categories', [BlogController::class, 'categories']);
+    Route::get('/blog/tags', [BlogController::class, 'tags']);
+    Route::get('/blog/{slug}', [BlogController::class, 'show']);
+    Route::get('/blog/{post}/related', [BlogController::class, 'relatedPosts']);
+    Route::get('/blog/{slug}/seo', [BlogController::class, 'seoData']);
+    Route::post('/blog/{post}/view', [BlogController::class, 'incrementViews']);
+    Route::post('/blog/{post}/like', [BlogController::class, 'toggleLike']);
 
     Route::get('/clients', [ClientController::class, 'index']);
 
@@ -91,6 +96,20 @@ Route::prefix('v1/admin')->middleware(['auth:sanctum'])->group(function () {
     Route::post('/blog', [BlogController::class, 'store']);
     Route::put('/blog/{blogPost}', [BlogController::class, 'update']);
     Route::delete('/blog/{blogPost}', [BlogController::class, 'destroy']);
+    
+    // Blog Categories
+    Route::post('/blog/categories', [BlogController::class, 'storeCategory']);
+    Route::put('/blog/categories/{category}', [BlogController::class, 'updateCategory']);
+    Route::delete('/blog/categories/{category}', [BlogController::class, 'destroyCategory']);
+    
+    // Blog Tags
+    Route::post('/blog/tags', [BlogController::class, 'storeTag']);
+    
+    // Blog Images
+    Route::post('/blog/images', [BlogController::class, 'uploadImage']);
+    Route::get('/blog/{post}/images', [BlogController::class, 'getPostImages']);
+    Route::put('/blog/images/{image}', [BlogController::class, 'updateImage']);
+    Route::delete('/blog/images/{image}', [BlogController::class, 'destroyImage']);
 
     // Clients CRUD
     Route::apiResource('clients', ClientController::class)->except(['index']);

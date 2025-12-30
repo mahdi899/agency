@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Coffee, Stethoscope, ShoppingBag, Car, Shirt, UtensilsCrossed, Lightbulb, Sparkles, Building2, Dumbbell, GraduationCap, Plane } from 'lucide-react';
 import api from '../../services/api';
@@ -6,6 +6,49 @@ import api from '../../services/api';
 const iconMap = {
   Coffee, Stethoscope, ShoppingBag, Car, Shirt, UtensilsCrossed, 
   Lightbulb, Sparkles, Building2, Dumbbell, GraduationCap, Plane
+};
+
+const InfiniteMarquee = ({ children, direction = 'left', speed = 30 }) => {
+  const marqueeRef = useRef(null);
+  const [contentWidth, setContentWidth] = useState(0);
+
+  useEffect(() => {
+    if (marqueeRef.current) {
+      const firstChild = marqueeRef.current.querySelector('.marquee-content');
+      if (firstChild) {
+        setContentWidth(firstChild.offsetWidth);
+      }
+    }
+  }, [children]);
+
+  const animationDuration = contentWidth / speed;
+
+  return (
+    <div className="overflow-hidden" ref={marqueeRef}>
+      <motion.div
+        className="flex gap-6"
+        animate={{
+          x: direction === 'left' ? [-contentWidth, 0] : [0, -contentWidth],
+        }}
+        transition={{
+          x: {
+            repeat: Infinity,
+            repeatType: 'loop',
+            duration: animationDuration || 30,
+            ease: 'linear',
+          },
+        }}
+        style={{ width: 'fit-content' }}
+      >
+        <div className="flex gap-6 marquee-content">
+          {children}
+        </div>
+        <div className="flex gap-6">
+          {children}
+        </div>
+      </motion.div>
+    </div>
+  );
 };
 
 const defaultClients = [
@@ -85,20 +128,26 @@ const Clients = () => {
         <div className="relative overflow-hidden">
           <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary-500/30 to-transparent -translate-y-1/2 z-10" />
           
-          <div className="flex gap-6 mb-6 animate-scroll-right">
-            {[...clients, ...clients, ...clients].map((client, index) => (
-              <div key={index} className="flex-shrink-0">
-                <ClientCard client={client} index={index} />
-              </div>
-            ))}
+          {/* First row - scrolling right */}
+          <div className="overflow-hidden mb-6">
+            <div className="flex gap-6 animate-marquee-left" style={{ width: 'max-content' }}>
+              {[...clients, ...clients].map((client, index) => (
+                <div key={`row1-${index}`} className="flex-shrink-0">
+                  <ClientCard client={client} index={index} />
+                </div>
+              ))}
+            </div>
           </div>
           
-          <div className="flex gap-6 animate-scroll-left">
-            {[...clients.slice().reverse(), ...clients.slice().reverse(), ...clients.slice().reverse()].map((client, index) => (
-              <div key={index} className="flex-shrink-0">
-                <ClientCard client={client} index={index} />
-              </div>
-            ))}
+          {/* Second row - scrolling left */}
+          <div className="overflow-hidden">
+            <div className="flex gap-6 animate-marquee-right" style={{ width: 'max-content' }}>
+              {[...clients.slice().reverse(), ...clients.slice().reverse()].map((client, index) => (
+                <div key={`row2-${index}`} className="flex-shrink-0">
+                  <ClientCard client={client} index={index} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

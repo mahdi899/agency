@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ContentSeeder::class,
             ReelsSeeder::class,
             WebProjectSeeder::class,
+            BlogSeeder::class,
         ]);
     }
 }

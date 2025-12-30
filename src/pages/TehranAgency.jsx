@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Clock, CheckCircle, ArrowLeft, Building2, Users, Award, Star } from 'lucide-react';
+import { MapPin, Phone, Clock, CheckCircle, ArrowLeft, Building2, Users, Award, Star, Video, Camera, Palette, TrendingUp } from 'lucide-react';
 import { SectionTitle, ScrollReveal } from '../components/ui';
 
 const districts = [
@@ -23,14 +23,10 @@ const districts = [
 ];
 
 const services = [
-  'تولید محتوای ویدیویی',
-  'فیلمبرداری حرفه‌ای',
-  'تدوین و موشن گرافیک',
-  'مدیریت شبکه‌های اجتماعی',
-  'دیجیتال مارکتینگ',
-  'طراحی سایت و اپلیکیشن',
-  'سئو و بهینه‌سازی',
-  'تبلیغات آنلاین',
+  { title: 'تولید محتوای ویدیویی', icon: Video, color: 'from-red-500 to-orange-500', image: 'https://images.unsplash.com/photo-1579632652768-6cb9dcf85912?w=400&h=300&fit=crop' },
+  { title: 'فیلمبرداری حرفه‌ای', icon: Camera, color: 'from-purple-500 to-pink-500', image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=300&fit=crop' },
+  { title: 'تدوین و موشن گرافیک', icon: Palette, color: 'from-cyan-500 to-blue-500', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=300&fit=crop' },
+  { title: 'دیجیتال مارکتینگ', icon: TrendingUp, color: 'from-green-500 to-emerald-500', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop' },
 ];
 
 const stats = [
@@ -38,6 +34,13 @@ const stats = [
   { value: '۲۰۰+', label: 'پروژه موفق', icon: Award },
   { value: '۵', label: 'سال تجربه', icon: Building2 },
   { value: '۴.۹', label: 'امتیاز مشتریان', icon: Star },
+];
+
+const galleryImages = [
+  'https://images.unsplash.com/photo-1573164713611-4e6db56b5bfc?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&h=400&fit=crop',
 ];
 
 const TehranAgency = () => {
@@ -123,17 +126,66 @@ const TehranAgency = () => {
             />
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {services.map((service, index) => (
-              <ScrollReveal key={index} delay={index * 0.05}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service, index) => {
+              const IconComponent = service.icon;
+              return (
+                <ScrollReveal key={index} delay={index * 0.1}>
+                  <motion.div
+                    whileHover={{ y: -8 }}
+                    className="relative rounded-2xl overflow-hidden group cursor-pointer h-full"
+                  >
+                    <div className="aspect-[4/3] relative">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-3`}>
+                        <IconComponent className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white group-hover:text-primary-400 transition-colors">
+                        {service.title}
+                      </h3>
+                    </div>
+                  </motion.div>
+                </ScrollReveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Visual Gallery Section */}
+      <section className="section-padding bg-dark-900/30">
+        <div className="container-custom mx-auto">
+          <ScrollReveal>
+            <div className="text-center mb-12">
+              <span className="inline-block px-4 py-2 mb-4 text-sm font-medium text-primary-400 bg-primary-500/10 rounded-full border border-primary-500/20">
+                نمونه کارهای ما
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-white">
+                پروژه‌های اجرا شده در تهران
+              </h2>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {galleryImages.map((image, index) => (
+              <ScrollReveal key={index} delay={index * 0.1}>
                 <motion.div
-                  whileHover={{ y: -3, scale: 1.02 }}
-                  className="p-4 rounded-xl bg-white/[0.03] border border-white/10 flex items-center gap-3 group"
+                  whileHover={{ scale: 1.05 }}
+                  className="relative rounded-xl overflow-hidden aspect-[4/3] group"
                 >
-                  <CheckCircle className="w-5 h-5 text-primary-400 flex-shrink-0" />
-                  <span className="text-white group-hover:text-primary-400 transition-colors">
-                    {service}
-                  </span>
+                  <img
+                    src={image}
+                    alt={`پروژه ${index + 1}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </motion.div>
               </ScrollReveal>
             ))}

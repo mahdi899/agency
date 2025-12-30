@@ -92,6 +92,18 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Test Login Button - Remove in production */}
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.setItem('auth_token', 'test-token-for-development');
+                navigate('/admin/dashboard');
+              }}
+              className="w-full mb-3 py-2 rounded-xl bg-green-600 text-white font-medium hover:bg-green-700 transition-colors text-sm"
+            >
+              ورود تستی (برای توسعه)
+            </button>
+
             <button
               type="submit"
               disabled={loading}

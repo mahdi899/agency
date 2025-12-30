@@ -112,11 +112,11 @@ const Industry = () => {
                   شروع همکاری
                 </Link>
                 <Link
-                  to="/portfolio"
+                  to={`/portfolio?industry=${slug}`}
                   className="px-8 py-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold hover:bg-white/20 transition-all flex items-center gap-2"
                 >
                   <Play className="w-5 h-5" />
-                  نمونه کارها
+                  مشاهده نمونه کار مرتبط
                 </Link>
               </div>
             </ScrollReveal>
@@ -155,21 +155,41 @@ const Industry = () => {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(industry.services || []).map((service, index) => (
-              <ScrollReveal key={index} delay={index * 0.1}>
-                <motion.div
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 group"
-                >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${industry.color} flex items-center justify-center mb-4`}>
-                    <CheckCircle className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-primary-400 transition-colors">
-                    {service}
-                  </h3>
-                </motion.div>
-              </ScrollReveal>
-            ))}
+            {(industry.services || []).map((service, index) => {
+              const serviceImages = [
+                'https://images.unsplash.com/photo-1579632652768-6cb9dcf85912?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop',
+              ];
+              return (
+                <ScrollReveal key={index} delay={index * 0.1}>
+                  <motion.div
+                    whileHover={{ y: -8 }}
+                    className="relative rounded-2xl overflow-hidden group cursor-pointer h-full"
+                  >
+                    <div className="aspect-[4/3] relative">
+                      <img
+                        src={serviceImages[index % serviceImages.length]}
+                        alt={service}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/60 to-transparent" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${industry.color} flex items-center justify-center mb-3`}>
+                        <CheckCircle className="w-5 h-5 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white group-hover:text-primary-400 transition-colors">
+                        {service}
+                      </h3>
+                    </div>
+                  </motion.div>
+                </ScrollReveal>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -187,6 +207,44 @@ const Industry = () => {
           <div className="max-w-3xl mx-auto">
             <ProjectTimeline />
           </div>
+        </div>
+      </section>
+
+      {/* Related Portfolio CTA */}
+      <section className="py-16">
+        <div className="container-custom mx-auto px-4">
+          <ScrollReveal>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="relative overflow-hidden rounded-3xl"
+            >
+              <div className="absolute inset-0">
+                <img
+                  src={industry.hero_image || industry.image?.startsWith('http') ? industry.image : `http://127.0.0.1:8000${industry.image}`}
+                  alt="نمونه کار"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-dark-950 via-dark-950/90 to-dark-950/70" />
+              </div>
+              <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    نمونه کارهای {industry.short_title || industry.title}
+                  </h3>
+                  <p className="text-dark-300">
+                    پروژه‌های موفق ما در این صنعت را مشاهده کنید
+                  </p>
+                </div>
+                <Link
+                  to={`/portfolio?industry=${slug}`}
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-bold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 transition-all flex items-center gap-2 whitespace-nowrap"
+                >
+                  <Play className="w-5 h-5" />
+                  مشاهده نمونه کار مرتبط
+                </Link>
+              </div>
+            </motion.div>
+          </ScrollReveal>
         </div>
       </section>
 

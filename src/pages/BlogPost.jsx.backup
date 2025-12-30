@@ -284,15 +284,14 @@ const BlogPost = () => {
 
         {/* Article Content */}
         <section className="container-article mx-auto">
-          <div className="max-w-3xl lg:max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 lg:gap-12">
-              {/* Main Content */}
-              <motion.article
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="min-w-0 lg:pr-8"
-              >
+          <div className="max-w-3xl lg:max-w-4xl mx-auto">
+            {/* Main Content */}
+            <motion.article
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="min-w-0"
+            >
                 {/* Table of Contents */}
                 {post.showToc && post.tableOfContents?.length > 0 && (
                   <TableOfContents items={post.tableOfContents} />
@@ -559,52 +558,6 @@ const BlogPost = () => {
                   </div>
                 </Card>
 
-                {/* Mobile Sidebar */}
-                <div className="lg:hidden mt-8 space-y-4">
-                  {/* Mobile Share Widget */}
-                  <Card className="p-4">
-                    <h4 className="text-sm font-bold text-white mb-3">اشتراک‌گذاری</h4>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleShare('twitter')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#1DA1F2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Twitter className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('linkedin')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0A66C2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('telegram')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0088cc] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Send className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </Card>
-
-                  {/* Mobile Quick Stats */}
-                  <Card className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">زمان مطالعه</span>
-                        <span className="text-white">{post.readTime} دقیقه</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">تعداد کلمات</span>
-                        <span className="text-white">{post.wordCount?.toLocaleString('fa-IR') || '0'}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">بازدید</span>
-                        <span className="text-white">{post.views.toLocaleString('fa-IR')}</span>
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-
                 {/* Author Box */}
                 {post.author && (
                   <Card className="p-6 mt-8">
@@ -627,54 +580,65 @@ const BlogPost = () => {
                 )}
               </motion.article>
 
-              {/* Sidebar - Sticky */}
-              <aside className="hidden lg:block">
-                <div className="sticky top-24 space-y-6">
-                  {/* Share Widget */}
-                  <Card className="p-4">
-                    <h4 className="text-sm font-bold text-white mb-3">اشتراک‌گذاری</h4>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleShare('twitter')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#1DA1F2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Twitter className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('linkedin')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0A66C2] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('telegram')}
-                        className="flex-1 h-10 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0088cc] hover:text-white transition-all flex items-center justify-center"
-                      >
-                        <Send className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </Card>
+              {/* Sidebar - Below Article */}
+            <div className="mt-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Share Widget */}
+                <Card className="p-6">
+                  <h4 className="text-sm font-bold text-white mb-4">اشتراک‌گذاری مقاله</h4>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => handleShare('twitter')}
+                      className="flex-1 h-12 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#1DA1F2] hover:text-white transition-all flex items-center justify-center"
+                    >
+                      <Twitter className="w-5 h-5" />
+                    </button>
+                    <button 
+                      onClick={() => handleShare('linkedin')}
+                      className="flex-1 h-12 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0A66C2] hover:text-white transition-all flex items-center justify-center"
+                    >
+                      <Linkedin className="w-5 h-5" />
+                    </button>
+                    <button 
+                      onClick={() => handleShare('telegram')}
+                      className="flex-1 h-12 rounded-xl bg-dark-700 text-dark-300 hover:bg-[#0088cc] hover:text-white transition-all flex items-center justify-center"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                    <button 
+                      onClick={() => handleShare('copy')}
+                      className="flex-1 h-12 rounded-xl bg-dark-700 text-dark-300 hover:bg-primary-500 hover:text-white transition-all flex items-center justify-center"
+                    >
+                      {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </Card>
 
-                  {/* Quick Stats */}
-                  <Card className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">زمان مطالعه</span>
-                        <span className="text-white">{post.readTime} دقیقه</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">تعداد کلمات</span>
-                        <span className="text-white">{post.wordCount.toLocaleString('fa-IR')}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-dark-400">بازدید</span>
-                        <span className="text-white">{post.views.toLocaleString('fa-IR')}</span>
-                      </div>
+                {/* Quick Stats */}
+                <Card className="p-6">
+                  <h4 className="text-sm font-bold text-white mb-4">آمار مقاله</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-dark-400">زمان مطالعه</span>
+                      <span className="text-white font-medium">{post.readTime} دقیقه</span>
                     </div>
-                  </Card>
-                </div>
-              </aside>
+                    <div className="flex items-center justify-between">
+                      <span className="text-dark-400">تعداد کلمات</span>
+                      <span className="text-white font-medium">{post.wordCount?.toLocaleString('fa-IR') || '0'}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-dark-400">بازدید</span>
+                      <span className="text-white font-medium">{post.views.toLocaleString('fa-IR')}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-dark-400">لایک‌ها</span>
+                      <span className="text-white font-medium">{post.likes.toLocaleString('fa-IR')}</span>
+                    </div>
+                  </div>
+                </Card>
+              </div>
             </div>
+          </div>
 
             {/* Related Posts */}
             {relatedPosts.length > 0 && (

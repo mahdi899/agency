@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { LiveChat, ScrollProgress, FloatingActions, SocialProofPopup, MouseFollower } from '../ui';
+import { LiveChat, ScrollProgress, SocialProofPopup, MouseFollower } from '../ui';
 
 const Layout = () => {
   const location = useLocation();
@@ -21,7 +21,6 @@ const Layout = () => {
       </main>
       <Footer />
       <LiveChat />
-      <FloatingActions />
       <SocialProofPopup />
     </div>
   );

@@ -149,12 +149,14 @@ class ApiService {
   }
 
   // Blog
-  async getBlogPosts() {
-    return this.request('/blog');
+  async getBlogPosts(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/admin/blog${query ? `?${query}` : ''}`);
   }
 
-  async getPublicBlogPosts() {
-    return this.request('/blog/public');
+  async getPublicBlogPosts(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return this.request(`/blog${query ? `?${query}` : ''}`);
   }
 
   async getBlogPost(slug) {
@@ -171,6 +173,89 @@ class ApiService {
 
   async deleteBlogPost(id) {
     return this.request(`/admin/blog/${id}`, { method: 'DELETE' });
+  }
+
+  // Blog Categories
+  async getBlogCategories() {
+    return this.request('/blog/categories');
+  }
+
+  async createBlogCategory(data) {
+    return this.request('/admin/blog/categories', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  async updateBlogCategory(id, data) {
+    return this.request(`/admin/blog/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  async deleteBlogCategory(id) {
+    return this.request(`/admin/blog/categories/${id}`, { method: 'DELETE' });
+  }
+
+  // Blog Tags
+  async getBlogTags() {
+    return this.request('/blog/tags');
+  }
+
+  async createBlogTag(data) {
+    return this.request('/admin/blog/tags', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  // Blog Images
+  async uploadBlogImage(file, postId = null, altText = '', title = '', caption = '') {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (postId) formData.append('blog_post_id', postId);
+    if (altText) formData.append('alt_text', altText);
+    if (title) formData.append('title', title);
+    if (caption) formData.append('caption', caption);
+
+    const url = `${this.baseUrl}/admin/blog/images`;
+    const headers = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'خطا در آپلود تصویر');
+    }
+    return data;
+  }
+
+  async getBlogPostImages(postId) {
+    return this.request(`/admin/blog/${postId}/images`);
+  }
+
+  async updateBlogImage(imageId, data) {
+    return this.request(`/admin/blog/images/${imageId}`, { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  async deleteBlogImage(imageId) {
+    return this.request(`/admin/blog/images/${imageId}`, { method: 'DELETE' });
+  }
+
+  // Blog Engagement
+  async incrementBlogViews(postId) {
+    return this.request(`/blog/${postId}/view`, { method: 'POST' });
+  }
+
+  async toggleBlogLike(postId) {
+    return this.request(`/blog/${postId}/like`, { method: 'POST' });
+  }
+
+  async getRelatedPosts(postId) {
+    return this.request(`/blog/${postId}/related`);
+  }
+
+  async getBlogSeoData(slug) {
+    return this.request(`/blog/${slug}/seo`);
   }
 
   // Clients

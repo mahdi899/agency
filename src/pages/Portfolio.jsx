@@ -160,6 +160,12 @@ const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [portfolioItems, setPortfolioItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const videoSectionRef = useRef(null);
+  const digitalSectionRef = useRef(null);
+
+  const scrollToSection = (ref) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   useEffect(() => {
     const fetchPortfolios = async () => {
@@ -211,6 +217,30 @@ const Portfolio = () => {
             />
           </ScrollReveal>
 
+          {/* Navigation Tabs for Video and Digital Sections */}
+          <ScrollReveal delay={0.05}>
+            <div className="flex justify-center gap-4 mb-12">
+              <motion.button
+                onClick={() => scrollToSection(videoSectionRef)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all flex items-center gap-2"
+              >
+                <Play className="w-5 h-5" />
+                نمونه کار ویدیویی
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection(digitalSectionRef)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all flex items-center gap-2"
+              >
+                <ExternalLink className="w-5 h-5" />
+                نمونه کار دیجیتال
+              </motion.button>
+            </div>
+          </ScrollReveal>
+
           {activeCategory === 'all' && featuredItem && (
             <ScrollReveal delay={0.1}>
               <FeaturedProject item={featuredItem} />
@@ -241,23 +271,38 @@ const Portfolio = () => {
             </div>
           </ScrollReveal>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeCategory}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {regularItems.map((item, index) => (
-                <PortfolioCard key={item.id} item={item} index={index} />
-              ))}
-            </motion.div>
-          </AnimatePresence>
+          {/* Video Portfolio Section */}
+          <div ref={videoSectionRef} className="scroll-mt-32 mb-20">
+            <ScrollReveal>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center">
+                  <Play className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-white">نمونه کار ویدیویی</h2>
+              </div>
+            </ScrollReveal>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCategory}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                {regularItems.map((item, index) => (
+                  <PortfolioCard key={item.id} item={item} index={index} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </section>
 
-      <WebProjects />
+      {/* Digital Portfolio Section */}
+      <div ref={digitalSectionRef} className="scroll-mt-32">
+        <WebProjects />
+      </div>
     </div>
   );
 };

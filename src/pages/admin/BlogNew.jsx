@@ -50,26 +50,10 @@ const Blog = () => {
 
   const fetchData = async () => {
     try {
-      // Check if user is authenticated
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        console.log('No authentication token found');
-        setPosts([]);
-        setLoading(false);
-        return;
-      }
-      
       const response = await api.getBlogPosts();
       setPosts(response.data || []);
     } catch (error) {
       console.error('Error:', error);
-      // If unauthorized, clear token and redirect to login
-      if (error.message === 'Unauthenticated' || error.message.includes('401')) {
-        localStorage.removeItem('auth_token');
-        window.location.href = '/admin/login';
-        return;
-      }
-      setPosts([]);
     } finally {
       setLoading(false);
     }
@@ -188,8 +172,6 @@ const Blog = () => {
     return <span className="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-xs">پیش‌نویس</span>;
   };
 
-  const token = localStorage.getItem('auth_token');
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -236,19 +218,6 @@ const Blog = () => {
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
-        </div>
-      ) : !token ? (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-white mb-4">احراز هویت لازم است</h1>
-            <p className="text-dark-400 mb-6">برای دسترسی به مدیریت بلاگ، باید وارد شوید.</p>
-            <a
-              href="/admin/login"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors"
-            >
-              ورود به پنل مدیریت
-            </a>
-          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

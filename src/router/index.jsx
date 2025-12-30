@@ -61,7 +61,7 @@ export const router = createBrowserRouter([
       { path: 'faq', element: <FAQ /> },
       { path: 'process', element: <Process /> },
       { path: 'case-studies', element: <CaseStudies /> },
-      { path: 'awards', element: <Awards /> },
+      // { path: 'awards', element: <Awards /> }, // Hidden temporarily - page exists but not accessible
       { path: 'partners', element: <Partners /> },
       { path: 'industries', element: <Industries /> },
       { path: 'industries/:slug', element: <Industry /> },

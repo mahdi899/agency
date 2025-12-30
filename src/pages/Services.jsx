@@ -16,6 +16,16 @@ const iconMap = {
   Palette,
   Globe,
   Search,
+  'video-production': Video,
+  'video-editing': Film,
+  'motion-graphics': Camera,
+  'content-creation': FileText,
+  'social-media': Share2,
+  'digital-marketing': TrendingUp,
+  'branding': Palette,
+  'graphic-design': Palette,
+  'web-design': Globe,
+  'seo': Search,
 };
 
 const Services = () => {
@@ -70,10 +80,11 @@ const Services = () => {
               >
                 <Link to={`/services/${service.slug}`}>
                   <Card className="p-8 h-full group cursor-pointer">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                      {service.icon && iconMap[service.icon] && 
-                        React.createElement(iconMap[service.icon], { className: "w-8 h-8 text-white" })
-                      }
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color || 'from-primary-500 to-secondary-500'} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                      {(() => {
+                        const IconComponent = iconMap[service.icon] || iconMap[service.id] || iconMap[service.slug] || Video;
+                        return <IconComponent className="w-8 h-8 text-white" />;
+                      })()}
                     </div>
                     
                     <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">

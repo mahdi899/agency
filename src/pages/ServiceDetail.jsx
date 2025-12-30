@@ -48,6 +48,15 @@ const iconMap = {
   'content-creation': FileText,
   'social-media': Share2,
   'digital-marketing': TrendingUp,
+  'Video': Video,
+  'Film': Film,
+  'Camera': Camera,
+  'FileText': FileText,
+  'Share2': Share2,
+  'TrendingUp': TrendingUp,
+  'Palette': Palette,
+  'Globe': Globe,
+  'Search': Search,
 };
 
 const defaultGallery = [
@@ -153,6 +162,7 @@ const ServiceDetail = () => {
             alt={service.title}
             className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-dark-950/80" />
           <div className="absolute inset-0 bg-gradient-to-l from-dark-950 via-dark-950/90 to-dark-950/70" />
         </div>
 
@@ -166,10 +176,11 @@ const ServiceDetail = () => {
               بازگشت به خدمات
             </Link>
 
-            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-6`}>
-              {service.icon && iconMap[service.icon] && 
-                React.createElement(iconMap[service.icon], { className: "w-8 h-8 text-white" })
-              }
+            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color || 'from-primary-500 to-secondary-500'} flex items-center justify-center mb-6`}>
+              {(() => {
+                const IconComponent = iconMap[service.icon] || iconMap[service.id] || Video;
+                return <IconComponent className="w-8 h-8 text-white" />;
+              })()}
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
@@ -203,6 +214,35 @@ const ServiceDetail = () => {
                 <p className="text-dark-300 mb-8 leading-relaxed text-lg">
                   {service.fullDescription}
                 </p>
+
+                {/* Persuasive Description Section - Ready for content */}
+                {service.persuasiveContent && (
+                  <div className="mb-12 p-8 rounded-2xl bg-gradient-to-br from-primary-500/10 to-secondary-500/10 border border-white/10">
+                    {service.persuasiveContent.headline && (
+                      <h3 className="text-2xl font-bold text-white mb-4">{service.persuasiveContent.headline}</h3>
+                    )}
+                    {service.persuasiveContent.subheadline && (
+                      <p className="text-lg text-dark-300 mb-6">{service.persuasiveContent.subheadline}</p>
+                    )}
+                    {service.persuasiveContent.benefits && (
+                      <ul className="space-y-3 mb-6">
+                        {service.persuasiveContent.benefits.map((benefit, idx) => (
+                          <li key={idx} className="flex items-start gap-3 text-dark-300">
+                            <Check className="w-5 h-5 text-primary-400 mt-0.5 flex-shrink-0" />
+                            <span>{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {service.persuasiveContent.cta && (
+                      <Link to="/start">
+                        <Button icon={<ArrowLeft className="w-4 h-4" />}>
+                          {service.persuasiveContent.cta}
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
                   {gallery.map((img, index) => (
