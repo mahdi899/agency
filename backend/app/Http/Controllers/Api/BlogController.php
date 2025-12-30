@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BlogPostResource;
+use App\Http\Resources\BlogPostCollection;
+use App\Http\Requests\BlogPostRequest;
+use App\Services\BlogService;
 use App\Models\BlogPost;
 use App\Models\BlogCategory;
 use App\Models\BlogTag;
@@ -12,154 +16,182 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class BlogController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    protected BlogService $blogService;
+
+    public function __construct(BlogService $blogService)
     {
-        $query = BlogPost::query()->where('is_published', true);
+        $this->blogService = $blogService;
+    }
+
+    public function index(Request $request): BlogPostCollection
+    {
+        $filters = $request->only(['category', 'tag', 'search', 'featured']);
+        $perPage = $request->get('per_page', 12);
         
-        // Filter by category
-        if ($request->category) {
-            $query->where('category', $request->category);
-        }
+        $posts = $this->blogService->getPublishedPosts($filters, $perPage);
         
-        // Search
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('excerpt', 'like', '%' . $request->search . '%')
-                  ->orWhere('content', 'like', '%' . $request->search . '%');
-            });
-        }
-        
-        $posts = $query->orderBy('is_featured', 'desc')
-                      ->orderBy('created_at', 'desc')
-                      ->paginate($request->per_page ?? 12);
-        
-        return response()->json([
-            'success' => true,
-            'data' => $posts->items(),
-            'meta' => [
-                'current_page' => $posts->currentPage(),
-                'last_page' => $posts->lastPage(),
-                'per_page' => $posts->perPage(),
-                'total' => $posts->total(),
-            ],
-        ]);
+        return new BlogPostCollection($posts);
     }
     
-    public function show(string $slug): JsonResponse
+    public function show(string $slug): BlogPostResource
     {
         $post = BlogPost::where('slug', $slug)
                        ->where('is_published', true)
-                       ->with(['categoryRelation', 'images', 'tagsRelation'])
-                       ->firstOrFail();
+                       ->with(['categoryRelation', 'tagsRelation'])
+                       ->first();
         
-        // Parse content_blocks if it's a string
-        $postData = $post->toArray();
-        if (isset($postData['content_blocks']) && is_string($postData['content_blocks'])) {
-            $postData['content_blocks'] = json_decode($postData['content_blocks'], true) ?? [];
+        if (!$post) {
+            return response()->json([
+                'success' => false,
+                'message' => 'مقاله یافت نشد'
+            ], 404);
         }
         
-        // Add category name
-        $postData['category_name'] = $post->categoryRelation?->name ?? $post->category;
+        // Increment views
+        $this->blogService->incrementViews($post);
         
-        // Add tags array
-        $postData['tags'] = $post->tagsRelation->pluck('name')->toArray();
-        
-        return response()->json([
-            'success' => true,
-            'data' => $postData,
-        ]);
+        return new BlogPostResource($post);
     }
     
-    public function store(Request $request): JsonResponse
+    public function store(BlogPostRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'required|string|max:500',
-            'content' => 'required|string',
-            'category' => 'required|string|max:100',
-            'author' => 'required|string|max:255',
-            'author_avatar' => 'nullable|string|max:255',
-            'thumbnail' => 'nullable|string|max:255',
-            'read_time' => 'nullable|integer|min:1',
-            'tags' => 'nullable|array',
-            'tags.*' => 'string|max:100',
-            'is_published' => 'boolean',
-            'is_featured' => 'boolean',
-        ]);
+        $validated = $request->validated();
         
-        $validated['slug'] = Str::slug($validated['title']);
-        $validated['read_time'] = $validated['read_time'] ?? ceil(str_word_count(strip_tags($validated['content'])) / 200);
+        // Generate unique slug using service
+        $validated['slug'] = $this->blogService->generateUniqueSlug($validated['title']);
         
-        // Ensure unique slug
-        $originalSlug = $validated['slug'];
-        $counter = 1;
-        while (BlogPost::where('slug', $validated['slug'])->exists()) {
-            $validated['slug'] = $originalSlug . '-' . $counter;
-            $counter++;
-        }
+        // Calculate word count and read time using service
+        $wordCount = $this->blogService->calculateWordCount($validated['content']);
+        $validated['word_count'] = $wordCount;
+        $validated['read_time'] = $validated['read_time'] ?? $this->blogService->calculateReadTime($wordCount);
         
         $post = BlogPost::create($validated);
         
+        // Handle tags if provided
+        if (!empty($validated['tags'])) {
+            $this->syncTags($post, $validated['tags']);
+        }
+        
+        // Clear cache
+        $this->blogService->clearCache();
+        
         return response()->json([
             'success' => true,
-            'data' => $post,
-            'message' => 'Blog post created successfully',
+            'data' => new BlogPostResource($post),
+            'message' => 'مقاله با موفقیت ایجاد شد',
         ], 201);
     }
     
-    public function update(Request $request, BlogPost $post): JsonResponse
+    public function update(BlogPostRequest $request, BlogPost $post): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'excerpt' => 'sometimes|required|string|max:500',
-            'content' => 'sometimes|required|string',
-            'category' => 'sometimes|required|string|max:100',
-            'author' => 'sometimes|required|string|max:255',
-            'author_avatar' => 'nullable|string|max:255',
-            'thumbnail' => 'nullable|string|max:255',
-            'read_time' => 'nullable|integer|min:1',
-            'tags' => 'nullable|array',
-            'tags.*' => 'string|max:100',
-            'is_published' => 'sometimes|boolean',
-            'is_featured' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
         
-        if (isset($validated['title'])) {
-            $validated['slug'] = Str::slug($validated['title']);
-            
-            // Ensure unique slug (excluding current post)
-            $originalSlug = $validated['slug'];
-            $counter = 1;
-            while (BlogPost::where('slug', $validated['slug'])->where('id', '!=', $post->id)->exists()) {
-                $validated['slug'] = $originalSlug . '-' . $counter;
-                $counter++;
-            }
-        }
+        // Slug is already provided from frontend, no need to regenerate
         
         if (isset($validated['content'])) {
-            $validated['read_time'] = ceil(str_word_count(strip_tags($validated['content'])) / 200);
+            $wordCount = $this->blogService->calculateWordCount($validated['content']);
+            $validated['word_count'] = $wordCount;
+            $validated['read_time'] = $this->blogService->calculateReadTime($wordCount);
         }
         
         $post->update($validated);
         
+        // Handle tags if provided
+        if (array_key_exists('tags', $validated)) {
+            $this->syncTags($post, $validated['tags'] ?? []);
+        }
+        
+        // Clear cache
+        $this->blogService->clearCache($post->slug);
+        
         return response()->json([
             'success' => true,
-            'data' => $post,
-            'message' => 'Blog post updated successfully',
+            'data' => new BlogPostResource($post),
+            'message' => 'مقاله با موفقیت ویرایش شد',
         ]);
+    }
+    
+    /**
+     * Sync tags with blog post
+     */
+    protected function syncTags(BlogPost $post, array $tags): void
+    {
+        $tagIds = [];
+        
+        foreach ($tags as $tagName) {
+            $tag = BlogTag::firstOrCreate([
+                'slug' => Str::slug($tagName)
+            ], [
+                'name' => $tagName,
+                'slug' => Str::slug($tagName),
+            ]);
+            
+            $tagIds[] = $tag->id;
+        }
+        
+        $post->tagsRelation()->sync($tagIds);
     }
     
     public function destroy(BlogPost $post): JsonResponse
     {
         $post->delete();
         
+        // Clear cache
+        $this->blogService->clearCache($post->slug);
+        
         return response()->json([
             'success' => true,
-            'message' => 'Blog post deleted successfully',
+            'message' => 'مقاله با موفقیت حذف شد',
+        ]);
+    }
+    
+    /**
+     * Increment post views
+     */
+    public function incrementViews(BlogPost $post): JsonResponse
+    {
+        $views = $this->blogService->incrementViews($post);
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'views' => $post->fresh()->views
+            ],
+            'message' => 'Views incremented successfully',
+        ]);
+    }
+    
+    /**
+     * Toggle like on post
+     */
+    public function toggleLike(BlogPost $post): JsonResponse
+    {
+        $likes = $this->blogService->toggleLike($post);
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'likes' => $likes,
+                'liked' => true
+            ],
+            'message' => 'Like toggled successfully',
+        ]);
+    }
+    
+    /**
+     * Get related posts
+     */
+    public function relatedPosts(BlogPost $post): JsonResponse
+    {
+        $relatedPosts = $this->blogService->getRelatedPosts($post);
+        
+        return response()->json([
+            'success' => true,
+            'data' => BlogPostResource::collection($relatedPosts),
         ]);
     }
     
@@ -369,43 +401,6 @@ class BlogController extends Controller
         return response()->json([
             'success' => true,
             'data' => $post->images,
-        ]);
-    }
-
-    public function incrementViews(BlogPost $post): JsonResponse
-    {
-        $post->increment('views');
-
-        return response()->json([
-            'success' => true,
-            'views' => $post->views,
-        ]);
-    }
-
-    public function toggleLike(BlogPost $post): JsonResponse
-    {
-        $post->increment('likes');
-
-        return response()->json([
-            'success' => true,
-            'likes' => $post->likes,
-        ]);
-    }
-
-    public function relatedPosts(BlogPost $post): JsonResponse
-    {
-        $related = BlogPost::published()
-            ->where('id', '!=', $post->id)
-            ->where(function ($query) use ($post) {
-                $query->where('category', $post->category)
-                      ->orWhere('category_id', $post->category_id);
-            })
-            ->limit(4)
-            ->get(['id', 'title', 'slug', 'thumbnail', 'excerpt', 'read_time', 'created_at']);
-
-        return response()->json([
-            'success' => true,
-            'data' => $related,
         ]);
     }
 

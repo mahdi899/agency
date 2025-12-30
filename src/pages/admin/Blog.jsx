@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit, Trash2, Calendar, Star, Clock, Eye, Search, Filter, ChevronDown, Settings, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, Star, Clock, Eye, Search, Filter, ChevronDown, Settings, Image as ImageIcon, User, Hash, Globe, BarChart, MessageSquare, Zap, FileText, Heart } from 'lucide-react';
 import api from '../../services/api';
 import ImageUpload from '../../components/admin/ImageUpload';
 import TipTapEditor from '../../components/admin/TipTapEditor';
+import CalloutBuilder from '../../components/admin/CalloutBuilder';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -20,27 +21,37 @@ const Blog = () => {
     slug: '',
     excerpt: '',
     content: '',
+    content_blocks: [],
     thumbnail: '',
     featured_image_alt: '',
     featured_image_caption: '',
     category: '',
     category_id: null,
-    tags: '',
+    tags: [],
     author: '',
     author_avatar: '',
+    author_bio: '',
     read_time: 5,
+    word_count: 0,
+    views: 0,
+    likes: 0,
     is_published: true,
     is_featured: false,
     allow_comments: true,
+    status: 'draft',
+    scheduled_at: '',
+    // SEO Fields
     meta_title: '',
     meta_description: '',
     meta_keywords: '',
     canonical_url: '',
+    // Open Graph
     og_title: '',
     og_description: '',
     og_image: '',
-    status: 'draft',
-    scheduled_at: '',
+    // Table of Contents
+    table_of_contents: [],
+    show_toc: true,
   });
 
   useEffect(() => { 
@@ -88,13 +99,27 @@ const Blog = () => {
     e.preventDefault();
     try {
       const data = { 
-        ...formData, 
-        tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
-        read_time: parseInt(formData.read_time) || 5
+        ...formData,
+        // Ensure tags is array
+        tags: Array.isArray(formData.tags) ? formData.tags : (formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(t => t) : []),
+        // Ensure content_blocks is included
+        content_blocks: formData.content_blocks || '',
+        read_time: parseInt(formData.read_time) || 5,
+        word_count: parseInt(formData.word_count) || 0,
+        // Convert boolean fields
+        is_published: Boolean(formData.is_published),
+        is_featured: Boolean(formData.is_featured),
+        allow_comments: Boolean(formData.allow_comments),
+        show_toc: Boolean(formData.show_toc),
       };
       
+      // Generate slug from title for both create and update
+      if (data.title) {
+        data.slug = data.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+      }
+      
       if (editingItem) {
-        delete data.slug;
+        // Remove fields that shouldn't be sent in update
         delete data.id;
         delete data.user_id;
         delete data.created_at;
@@ -104,12 +129,21 @@ const Blog = () => {
         delete data.likes;
         delete data.shares;
         
+        console.log('Final data to API:', data);
         await api.updateBlogPost(editingItem.id, data);
         await fetchData();
+        
+        // Trigger real-time update for frontend
+        localStorage.setItem('blog_updated', Date.now().toString());
+        localStorage.removeItem('blog_updated');
       } else {
         data.slug = formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
         const response = await api.createBlogPost(data);
         setPosts([response.data, ...posts]);
+        
+        // Trigger real-time update for frontend
+        localStorage.setItem('blog_updated', Date.now().toString());
+        localStorage.removeItem('blog_updated');
       }
       closeModal();
     } catch (error) {
@@ -122,6 +156,10 @@ const Blog = () => {
     try {
       await api.deleteBlogPost(id);
       setPosts(posts.filter(p => p.id !== id));
+      
+      // Trigger real-time update for frontend
+      localStorage.setItem('blog_updated', Date.now().toString());
+      localStorage.removeItem('blog_updated');
     } catch (error) {
       // Error handled silently
     }
@@ -132,30 +170,44 @@ const Blog = () => {
       setEditingItem(item);
       setFormData({ 
         ...item, 
-        tags: Array.isArray(item.tags) ? item.tags.join(', ') : '',
+        tags: Array.isArray(item.tags) ? item.tags : [],
+        content_blocks: item.content_blocks || '',
         read_time: item.read_time || 5,
+        word_count: item.word_count || 0,
+        views: item.views || 0,
+        likes: item.likes || 0,
+        author_bio: item.author_bio || '',
+        status: item.status || 'draft',
+        scheduled_at: item.scheduled_at || '',
+        // SEO fields
         meta_title: item.meta_title || '',
         meta_description: item.meta_description || '',
         meta_keywords: item.meta_keywords || '',
         canonical_url: item.canonical_url || '',
+        // Open Graph
         og_title: item.og_title || '',
         og_description: item.og_description || '',
         og_image: item.og_image || '',
         featured_image_alt: item.featured_image_alt || '',
         featured_image_caption: item.featured_image_caption || '',
-        status: item.status || 'draft',
-        scheduled_at: item.scheduled_at || '',
         allow_comments: item.allow_comments !== false,
+        show_toc: item.show_toc !== false,
       });
     } else {
       setEditingItem(null);
       setFormData({
-        title: '', slug: '', excerpt: '', content: '', thumbnail: '',
+        title: '', slug: '', excerpt: '', content: '', content_blocks: [], thumbnail: '',
         featured_image_alt: '', featured_image_caption: '',
-        category: '', category_id: null, tags: '', author: '', author_avatar: '',
-        read_time: 5, is_published: true, is_featured: false, allow_comments: true,
+        category: '', category_id: null, tags: [], author: '', author_avatar: '', author_bio: '',
+        read_time: 5, word_count: 0, views: 0, likes: 0,
+        is_published: true, is_featured: false, allow_comments: true,
+        status: 'draft', scheduled_at: '',
+        // SEO fields
         meta_title: '', meta_description: '', meta_keywords: '', canonical_url: '',
-        og_title: '', og_description: '', og_image: '', status: 'draft', scheduled_at: ''
+        // Open Graph
+        og_title: '', og_description: '', og_image: '',
+        // Table of Contents
+        table_of_contents: [], show_toc: true,
       });
     }
     setActiveTab('content');
@@ -330,12 +382,15 @@ const Blog = () => {
               </div>
               
               {/* Tabs */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {[
-                  { id: 'content', label: 'محتوا' },
-                  { id: 'media', label: 'رسانه' },
-                  { id: 'seo', label: 'سئو' },
-                  { id: 'settings', label: 'تنظیمات' },
+                  { id: 'content', label: 'محتوا', icon: <FileText className="w-4 h-4" /> },
+                  { id: 'blocks', label: 'بلاک‌ها', icon: <Zap className="w-4 h-4" /> },
+                  { id: 'media', label: 'رسانه', icon: <ImageIcon className="w-4 h-4" /> },
+                  { id: 'seo', label: 'سئو', icon: <Globe className="w-4 h-4" /> },
+                  { id: 'author', label: 'نویسنده', icon: <User className="w-4 h-4" /> },
+                  { id: 'advanced', label: 'پیشرفته', icon: <Settings className="w-4 h-4" /> },
+                  { id: 'analytics', label: 'آمار', icon: <BarChart className="w-4 h-4" /> },
                 ].map(tab => (
                   <button
                     key={tab.id}
@@ -346,7 +401,10 @@ const Blog = () => {
                         : 'bg-white/5 text-dark-400 hover:text-white'
                     }`}
                   >
-                    {tab.label}
+                    <span className="flex items-center gap-2">
+                      {tab.icon}
+                      {tab.label}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -384,6 +442,71 @@ const Blog = () => {
                     label="محتوای مقاله *"
                     placeholder="محتوای مقاله را اینجا بنویسید... می‌توانید تصاویر را با کشیدن و رها کردن اضافه کنید."
                   />
+                  
+                  <div>
+                    <label className="block text-dark-300 text-sm mb-2">
+                      تگ‌ها
+                      <span className="text-dark-500 mr-2">
+                        (با کاما یا Enter جدا کنید)
+                      </span>
+                    </label>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Hash className="w-4 h-4 text-dark-400" />
+                      <input 
+                        type="text" 
+                        value={formData.tags.join(', ')} 
+                        onChange={(e) => setFormData({...formData, tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)})} 
+                        placeholder="سئو, بازاریابی, محتوا"
+                        className="flex-1 bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                      />
+                    </div>
+                    {formData.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {formData.tags.map((tag, index) => (
+                          <span 
+                            key={index} 
+                            className="px-3 py-1 bg-primary-500/20 text-primary-400 rounded-full text-sm flex items-center gap-1"
+                          >
+                            #{tag}
+                            <button 
+                              type="button"
+                              onClick={() => setFormData({...formData, tags: formData.tags.filter((_, i) => i !== index)})}
+                              className="text-primary-400 hover:text-primary-300"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Content Blocks Tab */}
+              {activeTab === 'blocks' && (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
+                    <h4 className="text-yellow-400 font-medium mb-2">بلاک‌های محتوایی</h4>
+                    <p className="text-dark-400 text-sm">
+                      با استفاده از بلاک‌های آماده، محتوای جذاب‌تری ایجاد کنید. این بلاک‌ها به صورت خودکار به محتوای اصلی اضافه می‌شوند.
+                    </p>
+                  </div>
+                  
+                  <CalloutBuilder 
+                    value={formData.content_blocks || ''}
+                    onChange={(html) => {
+                      // Add to content or update content_blocks
+                      setFormData({...formData, content_blocks: html});
+                    }}
+                  />
+                  
+                  <div className="bg-dark-800/50 border border-white/10 rounded-xl p-4">
+                    <h4 className="text-white font-medium mb-3">پیش‌نمایش HTML</h4>
+                    <pre className="bg-dark-900 rounded-lg p-3 text-xs text-green-400 overflow-auto max-h-40">
+                      {formData.content_blocks || '<!-- بلاک‌ها در اینجا نمایش داده می‌شوند -->'}
+                    </pre>
+                  </div>
                 </div>
               )}
 
@@ -523,6 +646,184 @@ const Blog = () => {
                         folder="blog/og"
                         label="تصویر OG (1200x630 پیکسل)"
                       />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Author Tab */}
+              {activeTab === 'author' && (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                    <h4 className="text-purple-400 font-medium mb-2">اطلاعات نویسنده</h4>
+                    <p className="text-dark-400 text-sm">
+                      اطلاعات نویسنده برای نمایش در مقاله و بهبود اعتبار محتوا
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-dark-300 text-sm mb-2">نام نویسنده *</label>
+                      <input 
+                        type="text" 
+                        value={formData.author || ''} 
+                        onChange={(e) => setFormData({...formData, author: e.target.value})} 
+                        placeholder="نام کامل نویسنده" 
+                        className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500" 
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-dark-300 text-sm mb-2">آواتار نویسنده</label>
+                      <ImageUpload
+                        value={formData.author_avatar || ''}
+                        onChange={(url) => setFormData({...formData, author_avatar: url})}
+                        folder="authors"
+                        label="آواتار نویسنده"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-dark-300 text-sm mb-2">بیوگرافی نویسنده</label>
+                    <textarea 
+                      value={formData.author_bio || ''} 
+                      onChange={(e) => setFormData({...formData, author_bio: e.target.value})} 
+                      rows={4}
+                      className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                      placeholder="معرفی کوتاه از نویسنده و تخصص او..."
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Advanced Tab */}
+              {activeTab === 'advanced' && (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                    <h4 className="text-orange-400 font-medium mb-2">تنظیمات پیشرفته</h4>
+                    <p className="text-dark-400 text-sm">
+                      تنظیمات پیشرفته برای کنترل دقیق‌تر مقاله
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-dark-300 text-sm mb-2">وضعیت مقاله</label>
+                      <select 
+                        value={formData.status} 
+                        onChange={(e) => setFormData({...formData, status: e.target.value})} 
+                        className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                      >
+                        <option value="draft">پیش‌نویس</option>
+                        <option value="pending">در انتظار بررسی</option>
+                        <option value="published">منتشر شده</option>
+                        <option value="archived">بایگانی شده</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-dark-300 text-sm mb-2">زمان انتشار برنامه‌ریزی شده</label>
+                      <input 
+                        type="datetime-local" 
+                        value={formData.scheduled_at || ''} 
+                        onChange={(e) => setFormData({...formData, scheduled_at: e.target.value})} 
+                        className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-dark-300 text-sm mb-2">تعداد کلمات</label>
+                      <input 
+                        type="number" 
+                        value={formData.word_count || 0} 
+                        readOnly
+                        className="w-full bg-dark-800/50 border border-white/10 rounded-xl py-3 px-4 text-white/50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-dark-300 text-sm mb-2">تعداد بازدیدها</label>
+                      <input 
+                        type="number" 
+                        value={formData.views || 0} 
+                        readOnly
+                        className="w-full bg-dark-800/50 border border-white/10 rounded-xl py-3 px-4 text-white/50"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={formData.allow_comments} 
+                        onChange={(e) => setFormData({...formData, allow_comments: e.target.checked})} 
+                        className="w-4 h-4 text-primary-500 rounded focus:ring-primary-500"
+                      />
+                      <span className="text-dark-300 text-sm">اجازه کامنت</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={formData.show_toc} 
+                        onChange={(e) => setFormData({...formData, show_toc: e.target.checked})} 
+                        className="w-4 h-4 text-primary-500 rounded focus:ring-primary-500"
+                      />
+                      <span className="text-dark-300 text-sm">نمایش فهرست مطالب</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Analytics Tab */}
+              {activeTab === 'analytics' && (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                    <h4 className="text-green-400 font-medium mb-2">آمار و تحلیل</h4>
+                    <p className="text-dark-400 text-sm">
+                      آمار بازدید و تعامل با مقاله
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-dark-800/50 border border-white/10 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Eye className="w-5 h-5 text-blue-400" />
+                        <span className="text-dark-300 text-sm">بازدیدها</span>
+                      </div>
+                      <div className="text-2xl font-bold text-white">{formData.views || 0}</div>
+                    </div>
+                    <div className="bg-dark-800/50 border border-white/10 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Heart className="w-5 h-5 text-red-400" />
+                        <span className="text-dark-300 text-sm">لایک‌ها</span>
+                      </div>
+                      <div className="text-2xl font-bold text-white">{formData.likes || 0}</div>
+                    </div>
+                    <div className="bg-dark-800/50 border border-white/10 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="w-5 h-5 text-green-400" />
+                        <span className="text-dark-300 text-sm">زمان مطالعه</span>
+                      </div>
+                      <div className="text-2xl font-bold text-white">{formData.read_time || 5} دقیقه</div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-dark-800/50 border border-white/10 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="w-5 h-5 text-purple-400" />
+                        <span className="text-dark-300 text-sm">تعداد کلمات</span>
+                      </div>
+                      <div className="text-2xl font-bold text-white">{formData.word_count || 0}</div>
+                    </div>
+                    <div className="bg-dark-800/50 border border-white/10 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <MessageSquare className="w-5 h-5 text-orange-400" />
+                        <span className="text-dark-300 text-sm">کامنت‌ها</span>
+                      </div>
+                      <div className="text-2xl font-bold text-white">-</div>
                     </div>
                   </div>
                 </div>

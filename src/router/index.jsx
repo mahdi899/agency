@@ -1,27 +1,18 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { Layout } from '../components/layout';
+import { PageLoader } from '../components/ui/LazyLoader';
 
-// Loading fallback component
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-dark-950">
-    <div className="text-center">
-      <div className="w-12 h-12 border-3 border-primary-500/30 border-t-primary-500 rounded-full animate-spin mx-auto mb-4" />
-      <p className="text-dark-400">در حال بارگذاری...</p>
-    </div>
-  </div>
-);
-
-// Lazy loaded pages - Public
-const Home = lazy(() => import('../pages/Home'));
-const Services = lazy(() => import('../pages/Services'));
+// Lazy loaded pages - Public (with prefetch for important pages)
+const Home = lazy(() => import(/* webpackPrefetch: true */ '../pages/Home'));
+const Services = lazy(() => import(/* webpackPrefetch: true */ '../pages/Services'));
 const ServiceDetail = lazy(() => import('../pages/ServiceDetail'));
-const Portfolio = lazy(() => import('../pages/Portfolio'));
+const Portfolio = lazy(() => import(/* webpackPrefetch: true */ '../pages/Portfolio'));
 const PortfolioDetail = lazy(() => import('../pages/PortfolioDetail'));
 const About = lazy(() => import('../pages/About'));
-const Contact = lazy(() => import('../pages/Contact'));
+const Contact = lazy(() => import(/* webpackPrefetch: true */ '../pages/Contact'));
 const Pricing = lazy(() => import('../pages/Pricing'));
-const Blog = lazy(() => import('../pages/Blog'));
+const Blog = lazy(() => import(/* webpackPrefetch: true */ '../pages/Blog'));
 const BlogPost = lazy(() => import('../pages/BlogPost'));
 const FAQ = lazy(() => import('../pages/FAQ'));
 const Location = lazy(() => import('../pages/Location'));

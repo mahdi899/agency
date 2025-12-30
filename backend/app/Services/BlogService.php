@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\BlogPost;
+use App\Models\BlogCategory;
+use App\Models\BlogTag;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 
@@ -17,14 +19,25 @@ class BlogService
         
         return Cache::remember($cacheKey, 300, function () use ($filters, $perPage) {
             $query = BlogPost::where('is_published', true)
+                ->with(['categoryRelation', 'tagsRelation'])
+                ->orderBy('is_featured', 'desc')
                 ->orderBy('created_at', 'desc');
 
             if (!empty($filters['category'])) {
-                $query->where('category', $filters['category']);
+                $category = $filters['category'];
+                $query->where(function ($q) use ($category) {
+                    $q->where('category', $category)
+                      ->orWhereHas('categoryRelation', function ($subQuery) use ($category) {
+                          $subQuery->where('slug', $category);
+                      });
+                });
             }
 
             if (!empty($filters['tag'])) {
-                $query->whereJsonContains('tags', $filters['tag']);
+                $tag = $filters['tag'];
+                $query->whereHas('tagsRelation', function ($subQuery) use ($tag) {
+                    $subQuery->where('slug', $tag);
+                });
             }
 
             if (!empty($filters['search'])) {
@@ -52,6 +65,7 @@ class BlogService
         return Cache::remember("blog_post_{$slug}", 300, function () use ($slug) {
             return BlogPost::where('slug', $slug)
                 ->where('is_published', true)
+                ->with(['categoryRelation', 'tagsRelation'])
                 ->first();
         });
     }

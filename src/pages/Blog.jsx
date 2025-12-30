@@ -5,6 +5,7 @@ import { Clock, User, ArrowLeft, TrendingUp, Sparkles } from 'lucide-react';
 import { blogCategories } from '../data/blog';
 import { SectionTitle, ScrollReveal } from '../components/ui';
 import api from '../services/api';
+import { useRealtimeBlog } from '../hooks/useRealtimeBlog';
 
 const FeaturedPost = ({ post }) => (
   <Link to={`/blog/${post.slug}`}>
@@ -130,6 +131,7 @@ const Blog = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { lastUpdate } = useRealtimeBlog();
 
   useEffect(() => {
     const fetchBlogPosts = async () => {
@@ -142,14 +144,24 @@ const Blog = () => {
           slug: post.slug,
           excerpt: post.excerpt,
           content: post.content,
+          content_blocks: post.content_blocks || [],
           thumbnail: post.thumbnail,
           category: post.category,
           tags: post.tags || [],
           author: post.author,
-          authorAvatar: post.author_avatar,
+          author_avatar: post.author_avatar,
+          author_bio: post.author_bio,
           readTime: post.read_time || 5,
+          word_count: post.word_count || 0,
+          views: post.views || 0,
+          likes: post.likes || 0,
           date: new Date(post.created_at).toLocaleDateString('fa-IR'),
-          featured: post.is_featured || false
+          featured: post.is_featured || false,
+          status: post.status || 'published',
+          meta_title: post.meta_title,
+          meta_description: post.meta_description,
+          featured_image_alt: post.featured_image_alt,
+          featured_image_caption: post.featured_image_caption,
         }));
         setBlogPosts(transformedPosts);
       } catch (error) {
@@ -160,7 +172,12 @@ const Blog = () => {
     };
 
     fetchBlogPosts();
-  }, []);
+    
+    // Set up polling for real-time updates
+    const interval = setInterval(fetchBlogPosts, 30000); // Refresh every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [lastUpdate]); // Re-fetch when lastUpdate changes
 
   const filteredPosts = activeCategory === 'all'
     ? blogPosts

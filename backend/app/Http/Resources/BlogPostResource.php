@@ -20,13 +20,15 @@ class BlogPostResource extends JsonResource
             'slug' => $this->slug,
             'excerpt' => $this->excerpt,
             'content' => $this->content,
-            'content_blocks' => $this->content_blocks,
+            'content_blocks' => $this->content_blocks ? (is_string($this->content_blocks) ? json_decode($this->content_blocks, true) : $this->content_blocks) : [],
             'thumbnail' => $this->thumbnail ? url($this->thumbnail) : null,
             'featured_image_alt' => $this->featured_image_alt,
             'featured_image_caption' => $this->featured_image_caption,
             'category' => $this->category,
             'category_name' => $this->getCategoryName(),
-            'tags' => $this->tags ?? [],
+            'tags' => $this->whenLoaded('tagsRelation', function () {
+                return $this->tagsRelation->pluck('name')->toArray();
+            }, $this->tags ?? []),
             'author' => $this->author,
             'author_avatar' => $this->author_avatar ? url($this->author_avatar) : null,
             'author_bio' => $this->author_bio,
