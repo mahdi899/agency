@@ -195,17 +195,114 @@ class ApiService {
   }
 
   async createService(data) {
-    return this.request('/admin/services', {
-      method: 'POST',
-      body: JSON.stringify(data),
+    // Handle file uploads with FormData
+    const formData = new FormData();
+    
+    // Append all text fields
+    Object.keys(data).forEach(key => {
+      if (key !== 'image' && key !== 'gallery') {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
     });
+    
+    // Handle single image file
+    if (data.image instanceof File) {
+      formData.append('image', data.image);
+    } else if (data.image && typeof data.image === 'string') {
+      formData.append('image', data.image);
+    }
+    
+    // Handle gallery files array
+    if (Array.isArray(data.gallery)) {
+      data.gallery.forEach((file, index) => {
+        if (file instanceof File) {
+          formData.append(`gallery[${index}]`, file);
+        } else if (typeof file === 'string') {
+          formData.append(`gallery[${index}]`, file);
+        }
+      });
+    }
+
+    const url = `${this.baseUrl}/admin/services`;
+    const headers = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+    if (!response.ok) {
+      this.handleErrorResponse(response, responseData);
+      throw new ApiError('خطا در ایجاد سرویس', response.status);
+    }
+    
+    return responseData;
   }
 
   async updateService(id, data) {
-    return this.request(`/admin/services/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
+    // Handle file uploads with FormData
+    const formData = new FormData();
+    
+    // Append all text fields
+    Object.keys(data).forEach(key => {
+      if (key !== 'image' && key !== 'gallery') {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
     });
+    
+    // Handle single image file
+    if (data.image instanceof File) {
+      formData.append('image', data.image);
+    } else if (data.image && typeof data.image === 'string') {
+      formData.append('image', data.image);
+    }
+    
+    // Handle gallery files array
+    if (Array.isArray(data.gallery)) {
+      data.gallery.forEach((file, index) => {
+        if (file instanceof File) {
+          formData.append(`gallery[${index}]`, file);
+        } else if (typeof file === 'string') {
+          formData.append(`gallery[${index}]`, file);
+        }
+      });
+    }
+
+    // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
+    formData.append('_method', 'PUT');
+
+    const url = `${this.baseUrl}/admin/services/${id}`;
+    const headers = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST', // Use POST with _method: PUT for FormData
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+    if (!response.ok) {
+      this.handleErrorResponse(response, responseData);
+      throw new ApiError('خطا در بروزرسانی سرویس', response.status);
+    }
+    
+    return responseData;
   }
 
   async deleteService(id) {
@@ -223,17 +320,112 @@ class ApiService {
   }
 
   async createPortfolio(data) {
-    return this.request('/admin/portfolios', {
-      method: 'POST',
-      body: JSON.stringify(data),
+    // Handle file uploads with FormData
+    const formData = new FormData();
+    
+    Object.keys(data).forEach(key => {
+      if (key !== 'image' && key !== 'gallery') {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
     });
+    
+    // Handle single image file
+    if (data.image instanceof File) {
+      formData.append('image', data.image);
+    } else if (data.image && typeof data.image === 'string') {
+      formData.append('image', data.image);
+    }
+    
+    // Handle gallery files array
+    if (Array.isArray(data.gallery)) {
+      data.gallery.forEach((file, index) => {
+        if (file instanceof File) {
+          formData.append(`gallery[${index}]`, file);
+        } else if (typeof file === 'string') {
+          formData.append(`gallery[${index}]`, file);
+        }
+      });
+    }
+
+    const url = `${this.baseUrl}/admin/portfolios`;
+    const headers = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+    if (!response.ok) {
+      this.handleErrorResponse(response, responseData);
+      throw new ApiError('خطا در ایجاد نمونه کار', response.status);
+    }
+    
+    return responseData;
   }
 
   async updatePortfolio(id, data) {
-    return this.request(`/admin/portfolios/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
+    // Handle file uploads with FormData
+    const formData = new FormData();
+    
+    Object.keys(data).forEach(key => {
+      if (key !== 'image' && key !== 'gallery') {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
     });
+    
+    // Handle single image file
+    if (data.image instanceof File) {
+      formData.append('image', data.image);
+    } else if (data.image && typeof data.image === 'string') {
+      formData.append('image', data.image);
+    }
+    
+    // Handle gallery files array
+    if (Array.isArray(data.gallery)) {
+      data.gallery.forEach((file, index) => {
+        if (file instanceof File) {
+          formData.append(`gallery[${index}]`, file);
+        } else if (typeof file === 'string') {
+          formData.append(`gallery[${index}]`, file);
+        }
+      });
+    }
+
+    // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
+    formData.append('_method', 'PUT');
+
+    const url = `${this.baseUrl}/admin/portfolios/${id}`;
+    const headers = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST', // Use POST with _method: PUT for FormData
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+    if (!response.ok) {
+      this.handleErrorResponse(response, responseData);
+      throw new ApiError('خطا در بروزرسانی نمونه کار', response.status);
+    }
+    
+    return responseData;
   }
 
   async deletePortfolio(id) {
@@ -277,11 +469,62 @@ class ApiService {
   }
 
   async createBlogPost(data) {
-    return this.request('/admin/blog', { method: 'POST', body: JSON.stringify(data) });
+    // Check if data contains files (FormData)
+    if (data instanceof FormData) {
+      const url = `${this.baseUrl}/admin/blog`;
+      const headers = {};
+      if (this.token) {
+        headers['Authorization'] = `Bearer ${this.token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: data,
+      });
+
+      const responseData = await response.json();
+      if (!response.ok) {
+        this.handleErrorResponse(response, responseData);
+        throw new ApiError('خطا در ایجاد مقاله', response.status);
+      }
+      
+      return responseData;
+    } else {
+      // Regular JSON request
+      return this.request('/admin/blog', { method: 'POST', body: JSON.stringify(data) });
+    }
   }
 
   async updateBlogPost(id, data) {
-    return this.request(`/admin/blog/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    // Check if data contains files (FormData)
+    if (data instanceof FormData) {
+      // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
+      data.append('_method', 'PUT');
+
+      const url = `${this.baseUrl}/admin/blog/${id}`;
+      const headers = {};
+      if (this.token) {
+        headers['Authorization'] = `Bearer ${this.token}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'POST', // Use POST with _method: PUT for FormData
+        headers,
+        body: data,
+      });
+
+      const responseData = await response.json();
+      if (!response.ok) {
+        this.handleErrorResponse(response, responseData);
+        throw new ApiError('خطا در بروزرسانی مقاله', response.status);
+      }
+      
+      return responseData;
+    } else {
+      // Regular JSON request
+      return this.request(`/admin/blog/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    }
   }
 
   async deleteBlogPost(id) {
@@ -509,11 +752,109 @@ class ApiService {
   }
 
   async createWebProject(data) {
-    return this.request('/admin/web-projects', { method: 'POST', body: JSON.stringify(data) });
+    // Handle file uploads with FormData
+    const formData = new FormData();
+    
+    Object.keys(data).forEach(key => {
+      if (key !== 'image' && key !== 'gallery') {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
+    });
+    
+    // Handle single image file
+    if (data.image instanceof File) {
+      formData.append('image', data.image);
+    } else if (data.image && typeof data.image === 'string') {
+      formData.append('image', data.image);
+    }
+    
+    // Handle gallery files array
+    if (Array.isArray(data.gallery)) {
+      data.gallery.forEach((file, index) => {
+        if (file instanceof File) {
+          formData.append(`gallery[${index}]`, file);
+        } else if (typeof file === 'string') {
+          formData.append(`gallery[${index}]`, file);
+        }
+      });
+    }
+
+    const url = `${this.baseUrl}/admin/web-projects`;
+    const headers = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+    if (!response.ok) {
+      this.handleErrorResponse(response, responseData);
+      throw new ApiError('خطا در ایجاد پروژه وب', response.status);
+    }
+    
+    return responseData;
   }
 
   async updateWebProject(id, data) {
-    return this.request(`/admin/web-projects/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    // Handle file uploads with FormData
+    const formData = new FormData();
+    
+    Object.keys(data).forEach(key => {
+      if (key !== 'image' && key !== 'gallery') {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
+    });
+    
+    // Handle single image file
+    if (data.image instanceof File) {
+      formData.append('image', data.image);
+    } else if (data.image && typeof data.image === 'string') {
+      formData.append('image', data.image);
+    }
+    
+    // Handle gallery files array
+    if (Array.isArray(data.gallery)) {
+      data.gallery.forEach((file, index) => {
+        if (file instanceof File) {
+          formData.append(`gallery[${index}]`, file);
+        } else if (typeof file === 'string') {
+          formData.append(`gallery[${index}]`, file);
+        }
+      });
+    }
+
+    const url = `${this.baseUrl}/admin/web-projects/${id}`;
+    const headers = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+    if (!response.ok) {
+      this.handleErrorResponse(response, responseData);
+      throw new ApiError('خطا در بروزرسانی پروژه وب', response.status);
+    }
+    
+    return responseData;
   }
 
   async deleteWebProject(id) {

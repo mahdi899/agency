@@ -76,9 +76,17 @@ const ImageUpload = ({ value, onChange, folder = 'uploads', label = 'تصویر'
       {value ? (
         <div className="relative group">
           <img
-            src={value}
+            src={value.startsWith('http') ? value.replace('http://localhost:8000', '') : value}
             alt="Preview"
             className="w-full h-48 object-cover rounded-xl border border-white/10"
+            onError={(e) => {
+              e.target.onerror = null;
+              console.log('Image load error:', value);
+              e.target.src = `${API_URL}/placeholder.svg`;
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', value);
+            }}
           />
           <button
             type="button"

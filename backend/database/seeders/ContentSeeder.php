@@ -15,6 +15,9 @@ class ContentSeeder extends Seeder
 {
     public function run(): void
     {
+        // Disable foreign key checks
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        
         // Services - Complete data from frontend
         Service::truncate();
         $services = [
@@ -130,5 +133,8 @@ class ContentSeeder extends Seeder
         foreach ($clients as $client) {
             Client::create($client);
         }
+        
+        // Re-enable foreign key checks
+        \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

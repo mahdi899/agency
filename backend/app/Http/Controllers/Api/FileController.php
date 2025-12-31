@@ -31,17 +31,17 @@ class FileController extends Controller
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                         . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs("public/{$folder}", $filename, 'public');
+            $path = $file->storeAs($folder, $filename, 'public');
             
             // Log success
             \Log::info('File uploaded successfully', [
                 'path' => $path,
-                'url' => Storage::disk('public')->url(str_replace('public/', '', $path))
+                'url' => Storage::disk('public')->url($path)
             ]);
             
             return response()->json([
                 'success' => true,
-                'path' => Storage::disk('public')->url(str_replace('public/', '', $path)),
+                'path' => 'storage/' . $path,
                 'filename' => $filename,
             ]);
         } catch (\Exception $e) {
@@ -109,11 +109,11 @@ class FileController extends Controller
         $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                     . '.' . $file->getClientOriginalExtension();
         
-        $path = $file->storeAs("public/{$folder}/{$subfolder}", $filename, 'public');
+        $path = $file->storeAs("{$folder}/{$subfolder}", $filename, 'public');
         
         return response()->json([
             'success' => true,
-            'path' => Storage::disk('public')->url(str_replace('public/', '', $path)),
+            'path' => 'storage/' . $path,
             'filename' => $filename,
             'type' => $type,
         ]);

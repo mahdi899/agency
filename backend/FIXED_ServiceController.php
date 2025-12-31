@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Service;
-use App\Http\Resources\ServiceResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +26,7 @@ class ServiceController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => ServiceResource::collection($services),
+            'data' => $services,
         ]);
     }
 
@@ -35,7 +34,7 @@ class ServiceController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => new ServiceResource($service),
+            'data' => $service,
         ]);
     }
 
@@ -63,8 +62,8 @@ class ServiceController extends Controller
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                         . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs("services", $filename, 'public');
-            $validated['image'] = 'services/' . $filename;
+            $path = $file->storeAs("public/services", $filename, 'public');
+            $validated['image'] = Storage::disk('public')->url(str_replace('public/', '', $path));
         }
 
         // ✅ FIXED: Handle gallery uploads
@@ -74,8 +73,8 @@ class ServiceController extends Controller
                 $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                             . '.' . $file->getClientOriginalExtension();
                 
-                $path = $file->storeAs("services", $filename, 'public');
-                $gallery[] = 'services/' . $filename;
+                $path = $file->storeAs("public/services", $filename, 'public');
+                $gallery[] = Storage::disk('public')->url(str_replace('public/', '', $path));
             }
             $validated['gallery'] = json_encode($gallery);
         }
@@ -89,7 +88,7 @@ class ServiceController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'سرویس با موفقیت ایجاد شد.',
-            'data' => new ServiceResource($service),
+            'data' => $service,
         ], 201);
     }
 
@@ -117,8 +116,8 @@ class ServiceController extends Controller
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                         . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs("services", $filename, 'public');
-            $validated['image'] = 'services/' . $filename;
+            $path = $file->storeAs("public/services", $filename, 'public');
+            $validated['image'] = Storage::disk('public')->url(str_replace('public/', '', $path));
         }
 
         // ✅ FIXED: Handle gallery uploads
@@ -128,8 +127,8 @@ class ServiceController extends Controller
                 $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                             . '.' . $file->getClientOriginalExtension();
                 
-                $path = $file->storeAs("services", $filename, 'public');
-                $gallery[] = 'services/' . $filename;
+                $path = $file->storeAs("public/services", $filename, 'public');
+                $gallery[] = Storage::disk('public')->url(str_replace('public/', '', $path));
             }
             $validated['gallery'] = json_encode($gallery);
         }
@@ -143,7 +142,7 @@ class ServiceController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'سرویس با موفقیت بروزرسانی شد.',
-            'data' => new ServiceResource($service),
+            'data' => $service,
         ]);
     }
 

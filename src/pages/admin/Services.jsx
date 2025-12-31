@@ -4,12 +4,16 @@ import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import api from '../../services/api';
 import ImageUpload from '../../components/admin/ImageUpload';
 import IconPicker from '../../components/admin/IconPicker';
+import Toast from '../../components/admin/Toast';
 
 const Services = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingService, setEditingService] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState(null);
   const [formData, setFormData] = useState({
     title: '', description: '', short_title: '', full_description: '',
     icon: '', color: 'from-primary-500 to-secondary-500', image: '',
@@ -34,16 +38,31 @@ const Services = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
+    
     try {
       if (editingService) {
         await api.updateService(editingService.id, formData);
+        setToast({ message: 'سرویس با موفقیت بروزرسانی شد', type: 'success' });
       } else {
         await api.createService(formData);
+        setToast({ message: 'سرویس با موفقیت ایجاد شد', type: 'success' });
       }
       fetchServices();
       closeModal();
     } catch (error) {
-      // Error handled silently
+      if (error.status === 422 && error.errors) {
+        setErrors(error.errors);
+        setToast({ message: 'لطفاً خطاهای را برطرف کنید', type: 'error' });
+      } else {
+        setToast({ 
+          message: error.message || 'خطایی در عملیات رخ داد', 
+          type: 'error' 
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -70,6 +89,7 @@ const Services = () => {
       });
       setFeaturesInput('');
     }
+    setErrors({});
     setShowModal(true);
   };
 
@@ -109,7 +129,15 @@ const Services = () => {
               className="bg-dark-900/50 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden"
             >
               {service.image && (
-                <img src={service.image} alt={service.title} className="w-full h-40 object-cover" />
+                <img 
+                  src={service.image} 
+                  alt={service.title} 
+                  className="w-full h-40 object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'http://127.0.0.1:8000/storage/placeholder.jpg';
+                  }}
+                />
               )}
               <div className="p-5">
                 <div className="flex items-start justify-between mb-3">
@@ -162,9 +190,14 @@ const Services = () => {
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                    className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                      errors.title ? 'border-red-500' : 'border-white/10'
+                    }`}
                     required
                   />
+                  {errors.title && (
+                    <p className="mt-1 text-sm text-red-400">{errors.title[0]}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-dark-300 text-sm mb-2">عنوان کوتاه</label>
@@ -182,9 +215,14 @@ const Services = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   rows={3}
-                  className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                  className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                    errors.description ? 'border-red-500' : 'border-white/10'
+                  }`}
                   required
                 />
+                {errors.description && (
+                  <p className="mt-1 text-sm text-red-400">{errors.description[0]}</p>
+                )}
               </div>
               <div>
                 <label className="block text-dark-300 text-sm mb-2">توضیحات کامل</label>
@@ -270,9 +308,10 @@ const Services = () => {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="flex-1 py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex-1 py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {editingService ? 'بروزرسانی' : 'ایجاد'}
+                  {isSubmitting ? 'در حال پردازش...' : (editingService ? 'بروزرسانی' : 'ایجاد')}
                 </button>
                 <button
                   type="button"
@@ -285,6 +324,13 @@ const Services = () => {
             </form>
           </motion.div>
         </div>
+      )}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

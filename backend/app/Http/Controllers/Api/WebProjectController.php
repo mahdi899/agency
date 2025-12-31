@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\WebProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class WebProjectController extends Controller
 {
@@ -46,8 +47,8 @@ class WebProjectController extends Controller
             'category' => 'required|string|max:255',
             'icon' => 'nullable|string',
             'color' => 'nullable|string',
-            'image' => 'nullable|string',
-            'mockup_image' => 'nullable|string',
+            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'mockup_image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'description' => 'nullable|string',
             'client' => 'nullable|string|max:255',
             'industry' => 'nullable|string|max:255',
@@ -64,6 +65,38 @@ class WebProjectController extends Controller
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ]);
+
+        // Handle file uploads
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                        . '.' . $file->getClientOriginalExtension();
+            
+            $path = $file->storeAs("public/web-projects", $filename, 'public');
+            $validated['image'] = Storage::disk('public')->url(str_replace('public/', '', $path));
+        }
+
+        if ($request->hasFile('mockup_image')) {
+            $file = $request->file('mockup_image');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                        . '.' . $file->getClientOriginalExtension();
+            
+            $path = $file->storeAs("public/web-projects", $filename, 'public');
+            $validated['mockup_image'] = Storage::disk('public')->url(str_replace('public/', '', $path));
+        }
+
+        // Handle gallery uploads
+        if ($request->hasFile('gallery')) {
+            $gallery = [];
+            foreach ($request->file('gallery') as $index => $file) {
+                $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                            . '.' . $file->getClientOriginalExtension();
+                
+                $path = $file->storeAs("public/web-projects", $filename, 'public');
+                $gallery[] = Storage::disk('public')->url(str_replace('public/', '', $path));
+            }
+            $validated['gallery'] = json_encode($gallery);
+        }
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
@@ -87,24 +120,56 @@ class WebProjectController extends Controller
             'category' => 'sometimes|string|max:255',
             'icon' => 'nullable|string',
             'color' => 'nullable|string',
-            'image' => 'nullable|string',
-            'mockup_image' => 'nullable|string',
-            'description' => 'nullable|string',
-            'client' => 'nullable|string|max:255',
-            'industry' => 'nullable|string|max:255',
-            'year' => 'nullable|string|max:10',
-            'technologies' => 'nullable|array',
-            'features' => 'nullable|array',
-            'results' => 'nullable|array',
-            'link' => 'nullable|string',
-            'testimonial' => 'nullable|string',
-            'challenge' => 'nullable|string',
-            'solution' => 'nullable|string',
-            'gallery' => 'nullable|array',
-            'order' => 'nullable|integer',
+            'image' => 'sometimes|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'mockup_image' => 'sometimes|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'description' => 'sometimes|string',
+            'client' => 'sometimes|string|max:255',
+            'industry' => 'sometimes|string|max:255',
+            'year' => 'sometimes|string|max:10',
+            'technologies' => 'sometimes|array',
+            'features' => 'sometimes|array',
+            'results' => 'sometimes|array',
+            'link' => 'sometimes|string|url',
+            'testimonial' => 'sometimes|string',
+            'challenge' => 'sometimes|string',
+            'solution' => 'sometimes|string',
+            'gallery' => 'sometimes|array',
+            'order' => 'sometimes|integer',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ]);
+
+        // Handle file uploads
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                        . '.' . $file->getClientOriginalExtension();
+            
+            $path = $file->storeAs("public/web-projects", $filename, 'public');
+            $validated['image'] = Storage::disk('public')->url(str_replace('public/', '', $path));
+        }
+
+        if ($request->hasFile('mockup_image')) {
+            $file = $request->file('mockup_image');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                        . '.' . $file->getClientOriginalExtension();
+            
+            $path = $file->storeAs("public/web-projects", $filename, 'public');
+            $validated['mockup_image'] = Storage::disk('public')->url(str_replace('public/', '', $path));
+        }
+
+        // Handle gallery uploads
+        if ($request->hasFile('gallery')) {
+            $gallery = [];
+            foreach ($request->file('gallery') as $index => $file) {
+                $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                            . '.' . $file->getClientOriginalExtension();
+                
+                $path = $file->storeAs("public/web-projects", $filename, 'public');
+                $gallery[] = Storage::disk('public')->url(str_replace('public/', '', $path));
+            }
+            $validated['gallery'] = json_encode($gallery);
+        }
 
         $webProject->update($validated);
 
