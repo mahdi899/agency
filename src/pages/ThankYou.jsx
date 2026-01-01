@@ -81,9 +81,9 @@ const ThankYou = () => {
             </div>
 
             <div className="flex items-center justify-center gap-6 text-dark-400">
-              <a href="tel:+982112345678" className="flex items-center gap-2 hover:text-primary-400 transition-colors">
+              <a href="tel:+989052010799" className="flex items-center gap-2 hover:text-primary-400 transition-colors">
                 <Phone className="w-5 h-5" />
-                <span>۰۲۱-۱۲۳۴۵۶۷۸</span>
+                <span>09052010799</span>
               </a>
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-primary-400 transition-colors">
                 <Instagram className="w-5 h-5" />

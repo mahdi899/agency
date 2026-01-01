@@ -10,3 +10,4 @@ export { default as Stats } from './Stats';
 export { default as Team } from './Team';
 export { default as Results } from './Results';
 export { default as WebProjects } from './WebProjects';
+export { default as WhyChooseUs } from './WhyChooseUs';

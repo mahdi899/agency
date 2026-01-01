@@ -63,8 +63,22 @@ class ServiceController extends Controller
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                         . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs("services", $filename, 'public');
-            $validated['image'] = 'services/' . $filename;
+            $path = $file->storeAs("public/services", $filename, 'public');
+            $validated['image'] = '/storage/services/' . $filename;
+            
+            // Ensure public storage directory exists
+            $publicDir = public_path('storage/services');
+            if (!is_dir($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            // Copy file to public storage for web access
+            $sourcePath = storage_path('app/public/services/' . $filename);
+            $publicPath = public_path('storage/services/' . $filename);
+            
+            if (file_exists($sourcePath)) {
+                copy($sourcePath, $publicPath);
+            }
         }
 
         // ✅ FIXED: Handle gallery uploads
@@ -74,8 +88,22 @@ class ServiceController extends Controller
                 $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                             . '.' . $file->getClientOriginalExtension();
                 
-                $path = $file->storeAs("services", $filename, 'public');
-                $gallery[] = 'services/' . $filename;
+                $path = $file->storeAs("public/services", $filename, 'public');
+                $gallery[] = '/storage/services/' . $filename;
+                
+                // Ensure public storage directory exists
+                $publicDir = public_path('storage/services');
+                if (!is_dir($publicDir)) {
+                    mkdir($publicDir, 0755, true);
+                }
+                
+                // Copy file to public storage for web access
+                $sourcePath = storage_path('app/public/services/' . $filename);
+                $publicPath = public_path('storage/services/' . $filename);
+                
+                if (file_exists($sourcePath)) {
+                    copy($sourcePath, $publicPath);
+                }
             }
             $validated['gallery'] = json_encode($gallery);
         }
@@ -117,8 +145,22 @@ class ServiceController extends Controller
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                         . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs("services", $filename, 'public');
-            $validated['image'] = 'services/' . $filename;
+            $path = $file->storeAs("public/services", $filename, 'public');
+            $validated['image'] = '/storage/services/' . $filename;
+            
+            // Ensure public storage directory exists
+            $publicDir = public_path('storage/services');
+            if (!is_dir($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            // Copy file to public storage for web access
+            $sourcePath = storage_path('app/public/services/' . $filename);
+            $publicPath = public_path('storage/services/' . $filename);
+            
+            if (file_exists($sourcePath)) {
+                copy($sourcePath, $publicPath);
+            }
         }
 
         // ✅ FIXED: Handle gallery uploads
@@ -128,8 +170,22 @@ class ServiceController extends Controller
                 $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                             . '.' . $file->getClientOriginalExtension();
                 
-                $path = $file->storeAs("services", $filename, 'public');
-                $gallery[] = 'services/' . $filename;
+                $path = $file->storeAs("public/services", $filename, 'public');
+                $gallery[] = '/storage/services/' . $filename;
+                
+                // Ensure public storage directory exists
+                $publicDir = public_path('storage/services');
+                if (!is_dir($publicDir)) {
+                    mkdir($publicDir, 0755, true);
+                }
+                
+                // Copy file to public storage for web access
+                $sourcePath = storage_path('app/public/services/' . $filename);
+                $publicPath = public_path('storage/services/' . $filename);
+                
+                if (file_exists($sourcePath)) {
+                    copy($sourcePath, $publicPath);
+                }
             }
             $validated['gallery'] = json_encode($gallery);
         }

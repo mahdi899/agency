@@ -64,9 +64,9 @@ const CTA = () => {
                   شروع پروژه
                 </Button>
               </Link>
-              <a href="tel:+982112345678">
+              <a href="tel:+989052010799">
                 <Button variant="secondary" size="lg" icon={<Phone className="w-5 h-5" />} iconPosition="left">
-                  ۰۲۱-۱۲۳۴۵۶۷۸
+                  09052010799
                 </Button>
               </a>
             </div>

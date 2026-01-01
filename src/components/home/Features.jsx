@@ -86,7 +86,7 @@ const Features = () => {
         <ScrollReveal>
           <SectionTitle
             subtitle="چرا ما؟"
-            title="مزایای همکاری با آژانس خلاق"
+            title="مزایای همکاری با amonix"
             description="دلایلی که ما را از رقبا متمایز می‌کند"
           />
         </ScrollReveal>

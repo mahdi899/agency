@@ -122,29 +122,60 @@ class ApiService {
     const makeRequest = async () => {
       let response;
       try {
+        // 1. Auto-configure headers
+        const headers = {
+          'Accept': 'application/json',
+          ...options.headers, // Preserve any custom headers passed
+        };
+
+        // Add Authorization token if available
+        if (this.token) {
+          headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        // 2. Smart Body Handling
+        // If it's FormData (file upload), DO NOT set Content-Type (browser does it with boundary)
+        // If it's JSON/Object, set Content-Type to application/json and stringify
+        if (options.body && !(options.body instanceof FormData)) {
+          headers['Content-Type'] = 'application/json';
+          
+          if (typeof options.body === 'object') {
+            options.body = JSON.stringify(options.body);
+          }
+        }
+
+        // 3. Execute Fetch
         response = await fetch(url, {
           ...options,
           headers,
         });
-      } catch {
-        throw new NetworkError();
-      }
 
-      let data;
-      try {
-        data = await response.json();
-      } catch {
-        if (!response.ok) {
-          throw new ApiError('پاسخ نامعتبر از سرور', response.status, 'INVALID_RESPONSE');
+        // 4. Parse Response (check Content-Type header)
+        let data;
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            console.error("Server returned HTML instead of JSON:", text.substring(0, 500)); // Log first 500 chars
+            throw new Error("Server Error: Received HTML response. Check console for details.");
         }
-        data = { success: true };
-      }
 
-      if (!response.ok) {
-        this.handleErrorResponse(response, data);
-      }
+        // 5. Handle Errors (Standardize Laravel 422/500 errors)
+        if (!response.ok) {
+          const error = new Error(data?.message || `HTTP Error: ${response.status}`);
+          error.status = response.status;
+          // Capture Laravel validation errors (key-value pairs)
+          error.errors = data?.errors || {}; 
+          throw error;
+        }
 
-      return data;
+        return data;
+
+      } catch (error) {
+        console.error('API Request Failed:', error);
+        throw error;
+      }
     };
 
     // Use retry for GET requests only

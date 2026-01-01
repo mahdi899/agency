@@ -8,7 +8,7 @@ class Portfolio extends Model
 {
     protected $fillable = [
         'title', 'slug', 'description', 'full_description', 'category', 'type',
-        'thumbnail', 'cover_image', 'video_url', 'gallery', 'client', 'industry',
+        'thumbnail', 'cover_image', 'video_url', 'gallery', 'client_name', 'industry',
         'views', 'growth', 'services', 'tags', 'duration', 'year', 'results',
         'testimonial', 'is_featured', 'is_active', 'order'
     ];

@@ -1,10 +1,19 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
-  <text x="16" y="22" font-family="Arial" font-size="16" font-weight="bold" fill="white" text-anchor="middle">آ</text>
+<svg width="32" height="32" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black background -->
+  <rect width="32" height="32" fill="#000000"/>
+  
+  <!-- Metallic gradient -->
   <defs>
-    <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#f97316"/>
-      <stop offset="1" stop-color="#d946ef"/>
+    <linearGradient id="metallic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#c0c0c0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
     </linearGradient>
   </defs>
+  
+  <!-- A letter -->
+  <text x="8" y="24" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="url(#metallic)">A</text>
+  
+  <!-- Small starburst -->
+  <path d="M14 8 L16 6 L15 10 Z" fill="url(#metallic)" opacity="0.8"/>
 </svg>

@@ -14,7 +14,7 @@ const districts = [
   { name: 'تجریش', description: 'خدمات دیجیتال مارکتینگ تجریش' },
   { name: 'نیاوران', description: 'تولید محتوای ویدیویی نیاوران' },
   { name: 'زعفرانیه', description: 'فیلمبرداری حرفه‌ای زعفرانیه' },
-  { name: 'فرمانیه', description: 'آژانس خلاق فرمانیه' },
+  { name: 'فرمانیه', description: 'آژانس amonix فرمانیه' },
   { name: 'قیطریه', description: 'خدمات تولید محتوا قیطریه' },
   { name: 'پاسداران', description: 'دیجیتال مارکتینگ پاسداران' },
   { name: 'میرداماد', description: 'تولید ویدیو میرداماد' },
@@ -271,7 +271,7 @@ const TehranAgency = () => {
               <div className="relative">
                 <img
                   src="/storage/hero/agency-team.jpg"
-                  alt="تیم آژانس خلاق"
+                  alt="تیم amonix"
                   className="rounded-2xl shadow-2xl"
                 />
                 <div className="absolute -bottom-6 -right-6 p-6 rounded-2xl bg-gradient-to-r from-primary-500 to-secondary-500 shadow-xl">

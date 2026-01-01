@@ -31,17 +31,30 @@ class FileController extends Controller
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                         . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs($folder, $filename, 'public');
+            $path = $file->storeAs("public/{$folder}", $filename, 'public');
+            
+            // Copy to public/storage for Windows compatibility
+            $publicPath = public_path('storage/' . $folder . '/' . $filename);
+            $sourcePath = storage_path('app/' . $path);
+            
+            // Ensure directory exists
+            $publicDir = dirname($publicPath);
+            if (!is_dir($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            // Copy file
+            copy($sourcePath, $publicPath);
             
             // Log success
             \Log::info('File uploaded successfully', [
                 'path' => $path,
-                'url' => Storage::disk('public')->url($path)
+                'url' => Storage::disk('public')->url(str_replace('public/', '', $path))
             ]);
             
             return response()->json([
                 'success' => true,
-                'path' => 'storage/' . $path,
+                'path' => '/storage/' . str_replace('public/', '', $path),
                 'filename' => $filename,
             ]);
         } catch (\Exception $e) {
@@ -109,11 +122,24 @@ class FileController extends Controller
         $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                     . '.' . $file->getClientOriginalExtension();
         
-        $path = $file->storeAs("{$folder}/{$subfolder}", $filename, 'public');
+        $path = $file->storeAs("public/{$folder}/{$subfolder}", $filename, 'public');
+        
+        // Copy to public/storage for Windows compatibility
+        $publicPath = public_path('storage/' . $folder . '/' . $subfolder . '/' . $filename);
+        $sourcePath = storage_path('app/' . $path);
+        
+        // Ensure directory exists
+        $publicDir = dirname($publicPath);
+        if (!is_dir($publicDir)) {
+            mkdir($publicDir, 0755, true);
+        }
+        
+        // Copy file
+        copy($sourcePath, $publicPath);
         
         return response()->json([
             'success' => true,
-            'path' => 'storage/' . $path,
+            'path' => '/storage/' . str_replace('public/', '', $path),
             'filename' => $filename,
             'type' => $type,
         ]);

@@ -21,7 +21,7 @@ class PortfolioResource extends JsonResource
             'description' => $this->description,
             'category' => $this->category,
             'type' => $this->type,
-            'thumbnail' => $this->thumbnail ? asset('storage/' . $this->thumbnail) : null,
+            'thumbnail' => $this->thumbnail ? url($this->thumbnail) : null,
             'video_url' => $this->video_url,
             'gallery' => $this->gallery ? (is_string($this->gallery) ? json_decode($this->gallery, true) : $this->gallery) : [],
             'client_name' => $this->client_name,

@@ -59,7 +59,21 @@ class PortfolioController extends Controller
                         . '.' . $file->getClientOriginalExtension();
             
             $path = $file->storeAs("public/portfolios", $filename, 'public');
-            $validated['thumbnail'] = Storage::disk('public')->url(str_replace('public/', '', $path));
+            $validated['thumbnail'] = '/storage/portfolios/' . $filename;
+            
+            // Ensure public storage directory exists
+            $publicDir = public_path('storage/portfolios');
+            if (!is_dir($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            // Copy file to public storage for web access
+            $sourcePath = storage_path('app/public/portfolios/' . $filename);
+            $publicPath = public_path('storage/portfolios/' . $filename);
+            
+            if (file_exists($sourcePath)) {
+                copy($sourcePath, $publicPath);
+            }
         }
         
         // Handle gallery uploads
@@ -70,7 +84,21 @@ class PortfolioController extends Controller
                             . '.' . $file->getClientOriginalExtension();
                 
                 $path = $file->storeAs("public/portfolios", $filename, 'public');
-                $gallery[] = Storage::disk('public')->url(str_replace('public/', '', $path));
+                $gallery[] = '/storage/portfolios/' . $filename;
+                
+                // Ensure public storage directory exists
+                $publicDir = public_path('storage/portfolios');
+                if (!is_dir($publicDir)) {
+                    mkdir($publicDir, 0755, true);
+                }
+                
+                // Copy file to public storage for web access
+                $sourcePath = storage_path('app/public/portfolios/' . $filename);
+                $publicPath = public_path('storage/portfolios/' . $filename);
+                
+                if (file_exists($sourcePath)) {
+                    copy($sourcePath, $publicPath);
+                }
             }
             $validated['gallery'] = json_encode($gallery);
         }
@@ -116,7 +144,21 @@ class PortfolioController extends Controller
                         . '.' . $file->getClientOriginalExtension();
             
             $path = $file->storeAs("public/portfolios", $filename, 'public');
-            $validated['thumbnail'] = Storage::disk('public')->url(str_replace('public/', '', $path));
+            $validated['thumbnail'] = '/storage/portfolios/' . $filename;
+            
+            // Ensure public storage directory exists
+            $publicDir = public_path('storage/portfolios');
+            if (!is_dir($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            // Copy file to public storage for web access
+            $sourcePath = storage_path('app/public/portfolios/' . $filename);
+            $publicPath = public_path('storage/portfolios/' . $filename);
+            
+            if (file_exists($sourcePath)) {
+                copy($sourcePath, $publicPath);
+            }
         }
         
         // Handle gallery uploads
@@ -127,7 +169,21 @@ class PortfolioController extends Controller
                             . '.' . $file->getClientOriginalExtension();
                 
                 $path = $file->storeAs("public/portfolios", $filename, 'public');
-                $gallery[] = Storage::disk('public')->url(str_replace('public/', '', $path));
+                $gallery[] = '/storage/portfolios/' . $filename;
+                
+                // Ensure public storage directory exists
+                $publicDir = public_path('storage/portfolios');
+                if (!is_dir($publicDir)) {
+                    mkdir($publicDir, 0755, true);
+                }
+                
+                // Copy file to public storage for web access
+                $sourcePath = storage_path('app/public/portfolios/' . $filename);
+                $publicPath = public_path('storage/portfolios/' . $filename);
+                
+                if (file_exists($sourcePath)) {
+                    copy($sourcePath, $publicPath);
+                }
             }
             $validated['gallery'] = json_encode($gallery);
         }

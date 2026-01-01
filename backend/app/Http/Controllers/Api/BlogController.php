@@ -59,50 +59,132 @@ class BlogController extends Controller
     
     public function store(BlogPostRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-        
-        // Generate unique slug using service
-        $validated['slug'] = $this->blogService->generateUniqueSlug($validated['title']);
-        
-        // Calculate word count and read time using service
-        $wordCount = $this->blogService->calculateWordCount($validated['content']);
-        $validated['word_count'] = $wordCount;
-        $validated['read_time'] = $validated['read_time'] ?? $this->blogService->calculateReadTime($wordCount);
-        
-        $post = BlogPost::create($validated);
-        
-        // Handle tags if provided
-        if (!empty($validated['tags'])) {
-            $this->syncTags($post, $validated['tags']);
+        DB::beginTransaction();
+        try {
+            \Log::info('=== Starting blog post creation ===');
+            \Log::info('Request data: ' . json_encode($request->all()));
+            
+            // 1. Create and Save post FIRST
+            $post = BlogPost::create([
+                'title' => $request->title,
+                'slug' => $request->slug ?? Str::slug($request->title),
+                'excerpt' => $request->excerpt,
+                'content' => $request->content,
+                'category' => $request->category,
+                'author' => $request->author,
+                'author_avatar' => $request->author_avatar,
+                'thumbnail' => $request->thumbnail, // Will be updated if file uploaded
+                'read_time' => $request->read_time,
+                'is_featured' => $request->is_featured ?? false,
+                'is_published' => $request->is_published ?? false,
+                'published_at' => $request->published_at,
+                'user_id' => auth()->id(),
+                'meta_title' => $request->meta_title,
+                'meta_description' => $request->meta_description,
+                'meta_keywords' => $request->meta_keywords,
+                'canonical_url' => $request->canonical_url,
+                'category_id' => $request->category_id,
+                'featured_image_alt' => $request->featured_image_alt,
+                'featured_image_caption' => $request->featured_image_caption,
+                'status' => $request->status ?? 'draft',
+                'scheduled_at' => $request->scheduled_at,
+                'og_image' => $request->og_image,
+                'og_title' => $request->og_title,
+                'og_description' => $request->og_description,
+                'allow_comments' => $request->allow_comments ?? true,
+            ]);
+
+            // Refresh برای اطمینان از وجود ID
+            $post->refresh();
+            \Log::info('Post created with ID: ' . $post->id);
+            \Log::info('Post exists: ' . ($post->exists ? 'true' : 'false'));
+
+            // Calculate word count and read time
+            $wordCount = $this->blogService->calculateWordCount($post->content);
+            $post->update([
+                'word_count' => $wordCount,
+                'read_time' => $post->read_time ?? $this->blogService->calculateReadTime($wordCount),
+            ]);
+
+            // 2. Upload Image (if exists) and update post
+            if ($request->hasFile('thumbnail')) {
+                $path = $request->file('thumbnail')->store('blog', 'public');
+                $post->update(['thumbnail' => $path]);
+                \Log::info('Thumbnail uploaded: ' . $path);
+            }
+
+            // 3. Sync Tags (NOW the post has an ID, so this will work)
+            if ($request->has('tags') && !empty($request->tags)) {
+                // Handle both comma-separated string or array
+                $tags = is_string($request->tags) 
+                    ? array_filter(explode(',', $request->tags))
+                    : array_filter($request->tags);
+                
+                \Log::info('Tags to sync: ' . json_encode($tags));
+                \Log::info('Post ID before sync: ' . $post->id);
+                \Log::info('Post exists before sync: ' . ($post->exists ? 'true' : 'false'));
+                
+                // Ensure we have a fresh post object from database
+                $freshPost = BlogPost::find($post->id);
+                if (!$freshPost || !$freshPost->id) {
+                    throw new \Exception('Post not found in database after creation');
+                }
+                
+                $this->syncTags($freshPost, $tags);
+            }
+            
+            DB::commit();
+            
+            // Clear cache
+            $this->blogService->clearCache();
+            
+            return response()->json([
+                'success' => true,
+                'data' => new BlogPostResource($post->load(['categoryRelation', 'tagsRelation'])),
+                'message' => 'مقاله با موفقیت ایجاد شد',
+            ], 201);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error creating blog post: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در ایجاد مقاله',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-        
-        // Clear cache
-        $this->blogService->clearCache();
-        
-        return response()->json([
-            'success' => true,
-            'data' => new BlogPostResource($post),
-            'message' => 'مقاله با موفقیت ایجاد شد',
-        ], 201);
     }
     
     public function update(BlogPostRequest $request, BlogPost $post): JsonResponse
     {
-        $validated = $request->validated();
+        // 1. Find the post (already done via route model binding)
+        // $post = BlogPost::findOrFail($id);
+
+        // 2. Update basic fields
+        $updateData = $request->except(['tags', 'thumbnail']);
         
-        // Slug is already provided from frontend, no need to regenerate
-        
-        if (isset($validated['content'])) {
-            $wordCount = $this->blogService->calculateWordCount($validated['content']);
-            $validated['word_count'] = $wordCount;
-            $validated['read_time'] = $this->blogService->calculateReadTime($wordCount);
+        // Handle content-related fields
+        if (isset($updateData['content'])) {
+            $wordCount = $this->blogService->calculateWordCount($updateData['content']);
+            $updateData['word_count'] = $wordCount;
+            $updateData['read_time'] = $this->blogService->calculateReadTime($wordCount);
         }
         
-        $post->update($validated);
-        
-        // Handle tags if provided
-        if (array_key_exists('tags', $validated)) {
-            $this->syncTags($post, $validated['tags'] ?? []);
+        $post->update($updateData);
+
+        // 3. Handle Image
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('blog', 'public');
+            $post->update(['thumbnail' => $path]);
+        }
+
+        // 4. Sync Tags
+        if ($request->has('tags')) {
+            // Handle both comma-separated string or array
+            $tags = is_string($request->tags) ? explode(',', $request->tags) : $request->tags;
+            $this->syncTags($post, $tags);
         }
         
         // Clear cache
@@ -120,20 +202,45 @@ class BlogController extends Controller
      */
     protected function syncTags(BlogPost $post, array $tags): void
     {
+        \Log::info("Syncing tags for post ID: {$post->id}");
+        \Log::info('Tags array: ' . json_encode($tags));
+        
         $tagIds = [];
         
         foreach ($tags as $tagName) {
-            $tag = BlogTag::firstOrCreate([
-                'slug' => Str::slug($tagName)
-            ], [
-                'name' => $tagName,
-                'slug' => Str::slug($tagName),
-            ]);
+            $tagName = trim($tagName);
             
+            if (empty($tagName)) {
+                \Log::warning('Empty tag name skipped');
+                continue;
+            }
+            
+            $slug = Str::slug($tagName);
+            
+            $tag = BlogTag::firstOrCreate(
+                ['slug' => $slug],
+                ['name' => $tagName]
+            );
+            
+            \Log::info("Tag processed: ID={$tag->id}, Name={$tag->name}, Slug={$slug}");
             $tagIds[] = $tag->id;
         }
         
-        $post->tagsRelation()->sync($tagIds);
+        if (empty($tagIds)) {
+            \Log::warning('No valid tags to sync');
+            return;
+        }
+        
+        \Log::info('Tag IDs to sync: ' . json_encode($tagIds));
+        
+        try {
+            $post->tagsRelation()->sync($tagIds);
+            \Log::info('Tags synced successfully for post ' . $post->id);
+        } catch (\Exception $e) {
+            \Log::error('Failed to sync tags: ' . $e->getMessage());
+            \Log::error('SQL: ' . $e->getSql() ?? 'N/A');
+            throw $e;
+        }
     }
     
     public function destroy(BlogPost $post): JsonResponse
