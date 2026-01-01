@@ -107,7 +107,7 @@ const Hero = () => {
             className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl"
           >
             <Sparkles className="w-4 h-4 text-primary-400" />
-            <span className="text-sm text-dark-300">آژانس خلاق دیجیتال در تهران</span>
+            <span className="text-sm text-dark-300">مارکتینگ با هوش مصنوعی در تهران</span>
           </motion.div>
 
           <motion.h1
@@ -116,12 +116,12 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight"
           >
-            <span className="text-white">خلاقیت را با </span>
+            <span className="text-white">رشد واقعی با </span>
             <span className="bg-gradient-to-r from-primary-400 via-secondary-400 to-accent-400 bg-clip-text text-transparent">
-              نتیجه
+              هوش مصنوعی
             </span>
             <br />
-            <span className="text-white">ترکیب می‌کنیم</span>
+            <span className="text-white">و استراتژی دقیق</span>
           </motion.h1>
 
           <motion.p
@@ -130,8 +130,8 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-dark-400 mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            تولید محتوای ویدیویی با ویوهای میلیونی، رشد ارگانیک پیج و 
-            استراتژی‌های دیجیتال مارکتینگ که نتیجه می‌دهند.
+            Amonix با ترکیب استراتژی، خلاقیت، تکنولوژی و داده، 
+            مسیر رشد دیجیتال شما را دقیق و نتیجه‌محور طراحی می‌کند.
           </motion.p>
 
           <motion.div
@@ -194,7 +194,7 @@ const Hero = () => {
             />
             <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex items-center justify-between pointer-events-none">
               <div>
-                <p className="text-white font-bold text-sm md:text-base lg:text-lg">شوریل آژانس خلاق</p>
+                <p className="text-white font-bold text-sm md:text-base lg:text-lg">شوریل Amonix</p>
                 <p className="text-dark-400 text-xs md:text-sm hidden sm:block">مشاهده نمونه کارها و پروژه‌های ما</p>
               </div>
               <div className="flex items-center gap-2 text-dark-400 text-sm">

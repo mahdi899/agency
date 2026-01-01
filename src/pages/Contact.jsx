@@ -6,20 +6,20 @@ import { SectionTitle, Card, Button, Input, Textarea } from '../components/ui';
 const contactInfo = [
   {
     icon: Phone,
-    title: 'تلفن',
-    value: '۰۲۱-۱۲۳۴۵۶۷۸',
-    link: 'tel:+982112345678',
+    title: 'شماره تماس',
+    value: '09052010799',
+    link: 'tel:+989052010799',
   },
   {
     icon: Mail,
     title: 'ایمیل',
-    value: 'info@agency.ir',
-    link: 'mailto:info@agency.ir',
+    value: 'amonixagency@gmail.com',
+    link: 'mailto:amonixagency@gmail.com',
   },
   {
     icon: MapPin,
     title: 'آدرس',
-    value: 'تهران، پاسداران، خیابان گلستان',
+    value: 'تهران، دیباجی جنوبی، خیابان تسلیمی، خیابان بختیاری، پلاک ۴',
     link: '#',
   },
   {
@@ -66,8 +66,8 @@ const Contact = () => {
         <div className="container-custom mx-auto relative">
           <SectionTitle
             subtitle="تماس با ما"
-            title="بیایید با هم صحبت کنیم"
-            description="سوالی دارید؟ می‌خواهید پروژه‌ای شروع کنید؟ ما آماده شنیدن هستیم."
+            title="برای شروع همکاری، مشاوره یا ثبت پروژه، با ما در ارتباط باشید"
+            description="پاسخ‌گویی سریع، مستقیم و حرفه‌ای."
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">

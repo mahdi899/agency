@@ -12,42 +12,36 @@ const stats = [
   { value: 5, suffix: '+', label: 'سال تجربه', icon: Heart, color: 'from-purple-500 to-pink-500' },
 ];
 
-const values = [
+const services = [
   {
-    icon: Target,
-    title: 'نتیجه‌محور',
-    description: 'تمرکز ما روی نتایج قابل اندازه‌گیری است. هر کمپین با KPIهای مشخص شروع می‌شود و با گزارش دقیق پایان می‌یابد.',
-    color: 'from-red-500 to-orange-500',
-  },
-  {
-    icon: Zap,
-    title: 'خلاقیت بی‌حد',
-    description: 'ایده‌های نو و خلاقانه که شما را از رقبا متمایز می‌کند. ما محدودیتی برای خلاقیت قائل نیستیم.',
-    color: 'from-yellow-500 to-amber-500',
-  },
-  {
-    icon: Users,
-    title: 'همکاری استراتژیک',
-    description: 'ما شریک رشد شما هستیم، نه فقط یک پیمانکار. موفقیت شما، موفقیت ماست.',
-    color: 'from-green-500 to-emerald-500',
-  },
-  {
-    icon: Award,
-    title: 'کیفیت تضمینی',
-    description: 'استانداردهای بالا در هر پروژه، بدون استثنا. رضایت ۱۰۰٪ یا بازگشت هزینه.',
+    title: 'استراتژی دیجیتال',
+    description: 'طراحی سایت، فروشگاه آنلاین، سئو و رنکینگ در گوگل، طراحی اپلیکیشن و اجرای کامل مسیر رشد دیجیتال',
     color: 'from-blue-500 to-cyan-500',
   },
   {
-    icon: Heart,
-    title: 'تعهد کامل',
-    description: 'به موفقیت شما متعهدیم و تا رسیدن به نتیجه همراهتان هستیم. پشتیبانی ۲۴/۷.',
-    color: 'from-pink-500 to-rose-500',
+    title: 'برندینگ و طراحی',
+    description: 'طراحی ساختار برند، طراحی لوگو، انتخاب پالت رنگی، طراحی گرافیک، موشن گرافیک و تولید محتوای بصری',
+    color: 'from-purple-500 to-violet-500',
   },
   {
-    icon: Rocket,
-    title: 'نوآوری مداوم',
-    description: 'همیشه یک قدم جلوتر از ترندها. از جدیدترین تکنولوژی‌ها و روش‌ها استفاده می‌کنیم.',
-    color: 'from-purple-500 to-violet-500',
+    title: 'تولید محتوا',
+    description: 'فیلمبرداری، تصویربرداری، عکاسی حرفه‌ای و تدوین مخصوص اینستاگرام، ریلز و کمپین‌های دیجیتال',
+    color: 'from-green-500 to-emerald-500',
+  },
+  {
+    title: 'AI مارکتینگ',
+    description: 'تحلیل دیتا و رفتار کاربران، بهینه‌سازی محتوا، افزایش نرخ تعامل و بهبود نرخ تبدیل با هوش مصنوعی',
+    color: 'from-red-500 to-orange-500',
+  },
+  {
+    title: 'تبلیغات پولی',
+    description: 'گوگل ادز، تبلیغات یکتانت، کمپین‌های هدفمند در تبلیغات فیسبوک و پلتفرم‌های دیجیتال',
+    color: 'from-yellow-500 to-amber-500',
+  },
+  {
+    title: 'شریک رشد برند',
+    description: 'ترکیب دیجیتال مارکتینگ، سئو، طراحی، تولید محتوا و هوش مصنوعی برای رشد دقیق و نتیجه‌محور',
+    color: 'from-indigo-500 to-blue-500',
   },
 ];
 
@@ -76,18 +70,17 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
             >
               <span className="inline-block px-4 py-2 mb-6 text-sm font-medium text-primary-400 bg-primary-500/10 rounded-full border border-primary-500/20">
-                درباره ما
+                داستان برند Amonix
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
-                ما یک آژانس{' '}
+                مارکتینگ با{' '}
                 <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
-                  خلاق
-                </span>{' '}
-                هستیم
+                  هوش مصنوعی
+                </span>
               </h1>
               <p className="text-xl text-dark-400 leading-relaxed">
-                در قلب تهران، تیمی از متخصصین خلاق گرد هم آمده‌اند تا با ترکیب 
-                خلاقیت، دیتا و اجرای حرفه‌ای، به کسب‌وکارها کمک کنند در فضای دیجیتال بدرخشند.
+                Amonix با تمرکز بر مارکتینگ با هوش مصنوعی متولد شد؛
+                برای کسب‌وکارهایی که به رشد واقعی، فروش پایدار و دیده شدن هدفمند فکر می‌کنند.
               </p>
             </motion.div>
           </div>
@@ -110,11 +103,11 @@ const About = () => {
 
           <div className="mb-20">
             <SectionTitle
-              subtitle="ارزش‌های ما"
-              title="چرا ما متفاوتیم؟"
+              subtitle="خدمات ما"
+              title="مارکتینگ هوشمند برای رشد پایدار"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {values.map((value, index) => (
+              {services.map((service, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
@@ -123,11 +116,11 @@ const About = () => {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="p-6 h-full">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${value.color} flex items-center justify-center mb-4`}>
-                      <value.icon className="w-7 h-7 text-white" />
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-4`}>
+                      <div className="w-7 h-7 bg-white rounded-full" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
-                    <p className="text-dark-400">{value.description}</p>
+                    <h3 className="text-xl font-bold text-white mb-2">{service.title}</h3>
+                    <p className="text-dark-400">{service.description}</p>
                   </Card>
                 </motion.div>
               ))}
@@ -211,7 +204,7 @@ const About = () => {
               <div className="relative rounded-2xl overflow-hidden">
                 <img 
                   src="/storage/hero/agency-team.jpg"
-                  alt="تیم آژانس خلاق"
+                  alt="تیم آژانس Amonix"
                   className="w-full h-full object-cover rounded-2xl"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 to-transparent" />
@@ -224,12 +217,10 @@ const About = () => {
                   داستان ما
                 </h2>
                 <p className="text-dark-300 leading-relaxed mb-6">
-                  آژانس خلاق در سال ۱۳۹۸ با هدف پر کردن شکاف بین خلاقیت و نتیجه در صنعت دیجیتال مارکتینگ 
-                  ایران تأسیس شد. ما معتقدیم که محتوای خوب باید هم زیبا باشد و هم نتیجه بدهد.
+                  ما در Amonix باور داریم دیجیتال مارکتینگ موفق، نتیجه‌ی کنار هم قرار گرفتن استراتژی، خلاقیت، تکنولوژی و داده است. به همین دلیل خدمات ما از طراحی سایت و طراحی فروشگاه آنلاین شروع می‌شود و تا سئو و رنکینگ در گوگل، طراحی اپلیکیشن و اجرای کامل مسیر رشد دیجیتال ادامه دارد.
                 </p>
                 <p className="text-dark-300 leading-relaxed mb-8">
-                  با تیمی از متخصصین باتجربه در حوزه‌های فیلمبرداری، تدوین، موشن گرافیک، سوشال مدیا و 
-                  دیجیتال مارکتینگ، توانسته‌ایم برای بیش از ۵۰ برند معتبر نتایج چشمگیری رقم بزنیم.
+                  Amonix به برندها کمک می‌کند هویت منسجم و حرفه‌ای بسازند؛ از برندینگ، طراحی ساختار برند، طراحی لوگو و انتخاب پالت رنگی مناسب گرفته تا طراحی گرافیک، موشن گرافیک و تولید محتوای بصری که با استراتژی مارکتینگ هم‌راستا باشد.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -258,15 +249,14 @@ const About = () => {
               />
               <div className="relative z-10">
                 <h2 className="text-3xl font-bold text-white mb-4">
-                  آماده همکاری هستید؟
+                  Amonix یک آژانس معمولی نیست
                 </h2>
                 <p className="text-dark-300 max-w-2xl mx-auto mb-8">
-                  بیایید با هم صحبت کنیم و ببینیم چطور می‌توانیم به رشد کسب‌وکار شما کمک کنیم.
-                  مشاوره اولیه رایگان است.
+                  ما شریک رشد برندها هستیم و با ترکیب دیجیتال مارکتینگ، سئو، طراحی، تولید محتوا و هوش مصنوعی مسیر رشد را دقیق، قابل اندازه‌گیری و نتیجه‌محور طراحی می‌کنیم.
                 </p>
                 <Link to="/start">
                   <Button size="lg" icon={<ArrowLeft className="w-5 h-5" />}>
-                    شروع پروژه
+                    شروع همکاری
                   </Button>
                 </Link>
               </div>

@@ -16,7 +16,7 @@ const LiveChat = () => {
     {
       id: 1,
       type: 'bot',
-      text: 'سلام! 👋 به آژانس خلاق خوش آمدید. چطور می‌تونم کمکتون کنم؟',
+      text: 'سلام! 👋 به Amonix خوش آمدید. چطور می‌تونم کمکتون کنم؟',
       time: 'الان',
     },
   ]);
@@ -43,7 +43,7 @@ const LiveChat = () => {
         {
           id: prev.length + 1,
           type: 'bot',
-          text: 'ممنون از پیامتون! همکاران ما به زودی پاسخ می‌دن. برای پاسخ سریع‌تر می‌تونید با شماره ۰۲۱-۱۲۳۴۵۶۷۸ تماس بگیرید.',
+          text: 'ممنون از پیامتون! همکاران ما به زودی پاسخ می‌دن. برای پاسخ سریع‌تر می‌تونید با شماره 09052010799 تماس بگیرید.',
           time: 'الان',
         },
       ]);
@@ -175,9 +175,9 @@ const LiveChat = () => {
             </div>
 
             <div className="p-3 bg-white/5 border-t border-white/10 flex items-center justify-center gap-4">
-              <a href="tel:+982112345678" className="flex items-center gap-2 text-dark-400 text-xs hover:text-primary-400 transition-colors">
+              <a href="tel:+989052010799" className="flex items-center gap-2 text-dark-400 text-xs hover:text-primary-400 transition-colors">
                 <Phone className="w-4 h-4" />
-                ۰۲۱-۱۲۳۴۵۶۷۸
+                09052010799
               </a>
               <span className="text-dark-600">|</span>
               <div className="flex items-center gap-2 text-dark-400 text-xs">

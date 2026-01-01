@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Portfolio;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PortfolioResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class PortfolioController extends Controller
 {
@@ -25,7 +27,7 @@ class PortfolioController extends Controller
 
         $portfolios = $query->active()->orderBy('order')->get();
 
-        return response()->json(['success' => true, 'data' => $portfolios]);
+        return response()->json(['success' => true, 'data' => PortfolioResource::collection($portfolios)]);
     }
 
     public function store(Request $request)
@@ -35,7 +37,7 @@ class PortfolioController extends Controller
             'description' => 'required|string',
             'category' => 'required|string',
             'type' => 'nullable|string',
-            'thumbnail' => 'required|string',
+            'thumbnail' => 'required|file|mimes:jpg,jpeg,png,webp|max:2048',
             'video_url' => 'nullable|string',
             'gallery' => 'nullable|array',
             'client_name' => 'nullable|string',
@@ -49,14 +51,66 @@ class PortfolioController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
+        
+        // Handle thumbnail upload
+        if ($request->hasFile('thumbnail')) {
+            $file = $request->file('thumbnail');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                        . '.' . $file->getClientOriginalExtension();
+            
+            $path = $file->storeAs("public/portfolios", $filename, 'public');
+            $validated['thumbnail'] = '/storage/portfolios/' . $filename;
+            
+            // Ensure public storage directory exists
+            $publicDir = public_path('storage/portfolios');
+            if (!is_dir($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            // Copy file to public storage for web access
+            $sourcePath = storage_path('app/public/portfolios/' . $filename);
+            $publicPath = public_path('storage/portfolios/' . $filename);
+            
+            if (file_exists($sourcePath)) {
+                copy($sourcePath, $publicPath);
+            }
+        }
+        
+        // Handle gallery uploads
+        if ($request->hasFile('gallery')) {
+            $gallery = [];
+            foreach ($request->file('gallery') as $index => $file) {
+                $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                            . '.' . $file->getClientOriginalExtension();
+                
+                $path = $file->storeAs("public/portfolios", $filename, 'public');
+                $gallery[] = '/storage/portfolios/' . $filename;
+                
+                // Ensure public storage directory exists
+                $publicDir = public_path('storage/portfolios');
+                if (!is_dir($publicDir)) {
+                    mkdir($publicDir, 0755, true);
+                }
+                
+                // Copy file to public storage for web access
+                $sourcePath = storage_path('app/public/portfolios/' . $filename);
+                $publicPath = public_path('storage/portfolios/' . $filename);
+                
+                if (file_exists($sourcePath)) {
+                    copy($sourcePath, $publicPath);
+                }
+            }
+            $validated['gallery'] = json_encode($gallery);
+        }
+        
         $portfolio = Portfolio::create($validated);
 
-        return response()->json(['success' => true, 'message' => 'نمونه کار ایجاد شد.', 'data' => $portfolio], 201);
+        return response()->json(['success' => true, 'message' => 'نمونه کار ایجاد شد.', 'data' => new PortfolioResource($portfolio)], 201);
     }
 
     public function show(Portfolio $portfolio)
     {
-        return response()->json(['success' => true, 'data' => $portfolio]);
+        return response()->json(['success' => true, 'data' => new PortfolioResource($portfolio)]);
     }
 
     public function update(Request $request, Portfolio $portfolio)
@@ -66,7 +120,7 @@ class PortfolioController extends Controller
             'description' => 'sometimes|string',
             'category' => 'sometimes|string',
             'type' => 'nullable|string',
-            'thumbnail' => 'sometimes|string',
+            'thumbnail' => 'sometimes|file|mimes:jpg,jpeg,png,webp|max:2048',
             'video_url' => 'nullable|string',
             'gallery' => 'nullable|array',
             'client_name' => 'nullable|string',
@@ -82,9 +136,60 @@ class PortfolioController extends Controller
         if (isset($validated['title'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
+        
+        // Handle thumbnail upload
+        if ($request->hasFile('thumbnail')) {
+            $file = $request->file('thumbnail');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                        . '.' . $file->getClientOriginalExtension();
+            
+            $path = $file->storeAs("public/portfolios", $filename, 'public');
+            $validated['thumbnail'] = '/storage/portfolios/' . $filename;
+            
+            // Ensure public storage directory exists
+            $publicDir = public_path('storage/portfolios');
+            if (!is_dir($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            // Copy file to public storage for web access
+            $sourcePath = storage_path('app/public/portfolios/' . $filename);
+            $publicPath = public_path('storage/portfolios/' . $filename);
+            
+            if (file_exists($sourcePath)) {
+                copy($sourcePath, $publicPath);
+            }
+        }
+        
+        // Handle gallery uploads
+        if ($request->hasFile('gallery')) {
+            $gallery = [];
+            foreach ($request->file('gallery') as $index => $file) {
+                $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                            . '.' . $file->getClientOriginalExtension();
+                
+                $path = $file->storeAs("public/portfolios", $filename, 'public');
+                $gallery[] = '/storage/portfolios/' . $filename;
+                
+                // Ensure public storage directory exists
+                $publicDir = public_path('storage/portfolios');
+                if (!is_dir($publicDir)) {
+                    mkdir($publicDir, 0755, true);
+                }
+                
+                // Copy file to public storage for web access
+                $sourcePath = storage_path('app/public/portfolios/' . $filename);
+                $publicPath = public_path('storage/portfolios/' . $filename);
+                
+                if (file_exists($sourcePath)) {
+                    copy($sourcePath, $publicPath);
+                }
+            }
+            $validated['gallery'] = json_encode($gallery);
+        }
 
         $portfolio->update($validated);
-        return response()->json(['success' => true, 'message' => 'نمونه کار بروزرسانی شد.', 'data' => $portfolio]);
+        return response()->json(['success' => true, 'message' => 'نمونه کار بروزرسانی شد.', 'data' => new PortfolioResource($portfolio)]);
     }
 
     public function destroy(Portfolio $portfolio)

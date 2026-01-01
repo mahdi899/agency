@@ -96,7 +96,7 @@ const Dashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">داشبورد</h1>
-          <p className="text-dark-400">خوش آمدید به پنل مدیریت آژانس خلاق</p>
+          <p className="text-dark-400">خوش آمدید به پنل مدیریت amonix</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="relative p-3 rounded-xl bg-white/5 text-dark-400 hover:text-white hover:bg-white/10 transition-colors">

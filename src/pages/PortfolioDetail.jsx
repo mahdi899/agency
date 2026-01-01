@@ -143,7 +143,7 @@ const PortfolioDetail = () => {
               <div className="mt-8">
                 <h3 className="text-xl font-bold text-white mb-4">خدمات ارائه شده</h3>
                 <div className="flex flex-wrap gap-3">
-                  {(project.services || []).map((service, index) => (
+                  {(Array.isArray(project.services) ? project.services : JSON.parse(project.services || '[]')).map((service, index) => (
                     <span
                       key={index}
                       className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border border-primary-500/20 text-primary-400"
@@ -160,14 +160,16 @@ const PortfolioDetail = () => {
                 <Card className="p-8">
                   <Quote className="w-10 h-10 text-primary-500/30 mb-4" />
                   <p className="text-dark-300 leading-relaxed mb-6">
-                    "{project.testimonial.text}"
+                    "{typeof project.testimonial === 'string' ? JSON.parse(project.testimonial).content : project.testimonial.content}"
                   </p>
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold">
-                      {project.testimonial.author.charAt(0)}
+                      {(typeof project.testimonial === 'string' ? JSON.parse(project.testimonial).client_name : project.testimonial.client_name)?.charAt(0) || 'C'}
                     </div>
                     <div>
-                      <div className="font-bold text-white">{project.testimonial.author}</div>
+                      <div className="font-bold text-white">
+                        {typeof project.testimonial === 'string' ? JSON.parse(project.testimonial).client_name : project.testimonial.client_name}
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -194,6 +196,11 @@ const PortfolioDetail = () => {
                   <Link key={p.id} to={`/portfolio/${p.id}`}>
                     <Card className="overflow-hidden group">
                       <div className="relative aspect-video bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
+                        <img
+                          src={p.thumbnail}
+                          alt={p.title}
+                          className="w-full h-full object-cover"
+                        />
                         <div className="absolute top-4 right-4">
                           <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-xl text-white text-xs">
                             {p.views}

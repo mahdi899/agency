@@ -3,12 +3,16 @@ import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Star } from 'lucide-react';
 import api from '../../services/api';
 import ImageUpload from '../../components/admin/ImageUpload';
+import Toast from '../../components/admin/Toast';
 
 const Portfolios = () => {
   const [portfolios, setPortfolios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState(null);
   const [formData, setFormData] = useState({
     title: '', description: '', full_description: '', category: '', type: 'video',
     thumbnail: '', cover_image: '', video_url: '', client: '', industry: '',
@@ -33,16 +37,31 @@ const Portfolios = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
+    
     try {
       if (editingItem) {
         await api.updatePortfolio(editingItem.id, formData);
+        setToast({ message: 'نمونه کار با موفقیت بروزرسانی شد', type: 'success' });
       } else {
         await api.createPortfolio(formData);
+        setToast({ message: 'نمونه کار با موفقیت ایجاد شد', type: 'success' });
       }
       fetchData();
       closeModal();
     } catch (error) {
-      // Error handled silently
+      if (error.status === 422 && error.errors) {
+        setErrors(error.errors);
+        setToast({ message: 'لطفاً خطاهای را برطرف کنید', type: 'error' });
+      } else {
+        setToast({ 
+          message: error.message || 'خطایی در عملیات رخ داد', 
+          type: 'error' 
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -69,6 +88,7 @@ const Portfolios = () => {
         is_active: true, is_featured: false, order: 0
       });
     }
+    setErrors({});
     setShowModal(true);
   };
 
@@ -108,7 +128,15 @@ const Portfolios = () => {
               className="bg-dark-900/50 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden group"
             >
               <div className="relative">
-                <img src={item.thumbnail} alt={item.title} className="w-full h-48 object-cover" />
+                <img 
+                  src={item.thumbnail} 
+                  alt={item.title} 
+                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'http://127.0.0.1:8000/storage/placeholder.jpg';
+                  }}
+                />
                 <div className="absolute top-3 right-3 flex gap-2">
                   {item.is_featured && (
                     <span className="px-2 py-1 rounded-lg bg-yellow-500/20 text-yellow-400 text-xs flex items-center gap-1">
@@ -165,9 +193,14 @@ const Portfolios = () => {
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                    className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                      errors.title ? 'border-red-500' : 'border-white/10'
+                    }`}
                     required
                   />
+                  {errors.title && (
+                    <p className="mt-1 text-sm text-red-400">{errors.title[0]}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-dark-300 text-sm mb-2">دسته‌بندی *</label>
@@ -175,9 +208,14 @@ const Portfolios = () => {
                     type="text"
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                    className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                      errors.category ? 'border-red-500' : 'border-white/10'
+                    }`}
                     required
                   />
+                  {errors.category && (
+                    <p className="mt-1 text-sm text-red-400">{errors.category[0]}</p>
+                  )}
                 </div>
               </div>
               <div>
@@ -186,9 +224,14 @@ const Portfolios = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   rows={2}
-                  className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                  className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                    errors.description ? 'border-red-500' : 'border-white/10'
+                  }`}
                   required
                 />
+                {errors.description && (
+                  <p className="mt-1 text-sm text-red-400">{errors.description[0]}</p>
+                )}
               </div>
               <div>
                 <label className="block text-dark-300 text-sm mb-2">توضیحات کامل</label>
@@ -344,8 +387,12 @@ const Portfolios = () => {
                 </label>
               </div>
               <div className="flex gap-3 pt-4">
-                <button type="submit" className="flex-1 py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors">
-                  {editingItem ? 'بروزرسانی' : 'ایجاد'}
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="flex-1 py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'در حال پردازش...' : (editingItem ? 'بروزرسانی' : 'ایجاد')}
                 </button>
                 <button type="button" onClick={closeModal} className="px-6 py-3 rounded-xl bg-white/5 text-white hover:bg-white/10 transition-colors">
                   انصراف
@@ -354,6 +401,13 @@ const Portfolios = () => {
             </form>
           </motion.div>
         </div>
+      )}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

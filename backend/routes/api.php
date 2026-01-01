@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ServiceController;
@@ -18,9 +19,66 @@ use App\Http\Controllers\Api\ReelController;
 use App\Http\Controllers\Api\HomeCardController;
 use App\Http\Controllers\Api\WebProjectController;
 use App\Http\Controllers\Api\TeamMemberController;
+use App\Models\BlogPost;
+use App\Models\BlogTag;
 
 // Public Routes
 Route::prefix('v1')->group(function () {
+    // Test route for debugging
+    Route::get('/test-blog', function() {
+        try {
+            // Simple test without any complex logic
+            $post = BlogPost::create([
+                'title' => 'Simple Test',
+                'slug' => 'simple-test-' . time(),
+                'content' => 'Simple content',
+                'user_id' => 1,
+            ]);
+            
+            if (!$post->id) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Post ID is null after creation'
+                ], 500);
+            }
+            
+            $tag = BlogTag::firstOrCreate([
+                'slug' => 'simple-tag',
+                'name' => 'Simple Tag'
+            ]);
+            
+            if (!$tag->id) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Tag ID is null after creation'
+                ], 500);
+            }
+            
+            // Direct attach without any helper methods
+            DB::table('blog_post_tag')->insert([
+                'blog_post_id' => $post->id,
+                'blog_tag_id' => $tag->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'post_id' => $post->id,
+                'tag_id' => $tag->id,
+                'message' => 'Direct insert completed'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    });
+    
     // Auth
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');

@@ -106,24 +106,24 @@ const Footer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
           <div className="lg:col-span-2 text-center lg:text-right">
             <Link to="/" className="inline-flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-                <span className="text-white font-black text-2xl">آ</span>
-              </div>
-              <span className="text-2xl font-black text-white">آژانس خلاق</span>
+              <img 
+                src="/images/logo-transparent.svg" 
+                alt="AMONIX" 
+                className="h-12 w-auto"
+              />
             </Link>
             <p className="text-dark-400 mb-6 leading-relaxed max-w-md mx-auto lg:mx-0">
-              ما یک آژانس خلاق در تهران هستیم که با ترکیب خلاقیت، دیتا و اجرای حرفه‌ای، 
-              به کسب‌وکارها کمک می‌کنیم تا در فضای دیجیتال بدرخشند.
+              مارکتینگ با هوش مصنوعی برای کسب‌وکارهایی که به رشد واقعی، فروش پایدار و دیده شدن هدفمند فکر می‌کنند.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
-              <a href="tel:+982112345678" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-dark-300 hover:text-primary-400 transition-colors">
+              <a href="tel:+989052010799" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-dark-300 hover:text-primary-400 transition-colors">
                 <Phone className="w-4 h-4" />
-                <span className="text-sm">۰۲۱-۱۲۳۴۵۶۷۸</span>
+                <span className="text-sm">09052010799</span>
               </a>
-              <a href="mailto:info@agency.ir" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-dark-300 hover:text-primary-400 transition-colors">
+              <a href="mailto:amonixagency@gmail.com" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-dark-300 hover:text-primary-400 transition-colors">
                 <Mail className="w-4 h-4" />
-                <span className="text-sm">info@agency.ir</span>
+                <span className="text-sm">amonixagency@gmail.com</span>
               </a>
             </div>
 
@@ -209,7 +209,7 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-dark-500 text-sm">
-            © ۱۴۰۳ آژانس خلاق. تمامی حقوق محفوظ است.
+            © ۱۴۰۳ Amonix. تمامی حقوق محفوظ است.
           </p>
           <div className="flex items-center gap-6">
             <Link to="/privacy" className="text-dark-500 hover:text-dark-300 text-sm transition-colors">

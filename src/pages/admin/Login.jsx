@@ -41,11 +41,13 @@ const Login = () => {
       >
         <div className="bg-dark-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center mb-4">
-              <span className="text-white font-black text-3xl">آ</span>
-            </div>
+            <img 
+              src="/images/logo-transparent.svg" 
+              alt="AMONIX" 
+              className="h-16 w-auto mx-auto mb-4"
+            />
             <h1 className="text-2xl font-bold text-white">ورود به داشبورد</h1>
-            <p className="text-dark-400 mt-2">پنل مدیریت آژانس خلاق</p>
+            <p className="text-dark-400 mt-2">پنل مدیریت amonix</p>
           </div>
 
           {error && (

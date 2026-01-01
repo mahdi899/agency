@@ -5,6 +5,7 @@ import api from '../../services/api';
 import ImageUpload from '../../components/admin/ImageUpload';
 import TipTapEditor from '../../components/admin/TipTapEditor';
 import CalloutBuilder from '../../components/admin/CalloutBuilder';
+import Toast from '../../components/admin/Toast';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -15,6 +16,9 @@ const Blog = () => {
   const [activeTab, setActiveTab] = useState('content');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState(null);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -97,6 +101,9 @@ const Blog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
+    
     try {
       const data = { 
         ...formData,
@@ -131,6 +138,7 @@ const Blog = () => {
         
         console.log('Final data to API:', data);
         await api.updateBlogPost(editingItem.id, data);
+        setToast({ message: 'مقاله با موفقیت بروزرسانی شد', type: 'success' });
         await fetchData();
         
         // Trigger real-time update for frontend
@@ -140,6 +148,7 @@ const Blog = () => {
         data.slug = formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
         const response = await api.createBlogPost(data);
         setPosts([response.data, ...posts]);
+        setToast({ message: 'مقاله با موفقیت ایجاد شد', type: 'success' });
         
         // Trigger real-time update for frontend
         localStorage.setItem('blog_updated', Date.now().toString());
@@ -147,7 +156,17 @@ const Blog = () => {
       }
       closeModal();
     } catch (error) {
-      alert('خطا در ذخیره مقاله');
+      if (error.status === 422 && error.errors) {
+        setErrors(error.errors);
+        setToast({ message: 'لطفاً خطاهای را برطرف کنید', type: 'error' });
+      } else {
+        setToast({ 
+          message: error.message || 'خطایی در عملیات رخ داد', 
+          type: 'error' 
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -210,6 +229,7 @@ const Blog = () => {
         table_of_contents: [], show_toc: true,
       });
     }
+    setErrors({});
     setActiveTab('content');
     setShowModal(true);
   };
@@ -420,9 +440,14 @@ const Blog = () => {
                       type="text" 
                       value={formData.title} 
                       onChange={(e) => setFormData({...formData, title: e.target.value})} 
-                      className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500" 
+                      className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                        errors.title ? 'border-red-500' : 'border-white/10'
+                      }`}
                       required 
                     />
+                    {errors.title && (
+                      <p className="mt-1 text-sm text-red-400">{errors.title[0]}</p>
+                    )}
                   </div>
                   
                   <div>
@@ -431,9 +456,14 @@ const Blog = () => {
                       value={formData.excerpt} 
                       onChange={(e) => setFormData({...formData, excerpt: e.target.value})} 
                       rows={3} 
-                      className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500"
+                      className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                        errors.excerpt ? 'border-red-500' : 'border-white/10'
+                      }`}
                       placeholder="خلاصه‌ای کوتاه از مقاله که در لیست مقالات نمایش داده می‌شود..."
                     />
+                    {errors.excerpt && (
+                      <p className="mt-1 text-sm text-red-400">{errors.excerpt[0]}</p>
+                    )}
                   </div>
                   
                   <TipTapEditor
@@ -669,9 +699,14 @@ const Blog = () => {
                         value={formData.author || ''} 
                         onChange={(e) => setFormData({...formData, author: e.target.value})} 
                         placeholder="نام کامل نویسنده" 
-                        className="w-full bg-dark-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500" 
+                        className={`w-full bg-dark-800 border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary-500 ${
+                          errors.author ? 'border-red-500' : 'border-white/10'
+                        }`}
                         required
                       />
+                      {errors.author && (
+                        <p className="mt-1 text-sm text-red-400">{errors.author[0]}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-dark-300 text-sm mb-2">آواتار نویسنده</label>
@@ -928,9 +963,10 @@ const Blog = () => {
               <div className="flex gap-3 pt-4 border-t border-white/10">
                 <button 
                   type="submit" 
-                  className="flex-1 py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex-1 py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {editingItem ? 'بروزرسانی مقاله' : 'انتشار مقاله'}
+                  {isSubmitting ? 'در حال پردازش...' : (editingItem ? 'بروزرسانی مقاله' : 'انتشار مقاله')}
                 </button>
                 <button 
                   type="button" 
@@ -943,6 +979,13 @@ const Blog = () => {
             </form>
           </motion.div>
         </div>
+      )}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );
