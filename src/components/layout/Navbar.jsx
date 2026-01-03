@@ -46,13 +46,10 @@ const Navbar = () => {
     { 
       name: 'صنایع', 
       path: '/industries',
-      submenu: [
-        ...industries.map(i => ({
-          name: i.title || i.short_title,
-          path: `/industries/${i.slug}`
-        })),
-        { name: 'همه صنایع', path: '/industries' }
-      ]
+      submenu: industries.map(i => ({
+        name: i.title || i.short_title,
+        path: `/industries/${i.slug}`
+      }))
     },
     { name: 'درباره ما', path: '/about' },
     { name: 'بلاگ', path: '/blog' },
