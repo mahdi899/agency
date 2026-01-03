@@ -119,17 +119,7 @@ const Services = () => {
                       {service.description}
                     </p>
 
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {service.features?.ui_suggestion?.slice(0, 3).map((feature, i) => (
-                        <span
-                          key={i}
-                          className="px-2 sm:px-3 py-1 rounded-full bg-white/5 text-dark-400 text-xs"
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-
+                    
                     <div className="flex items-center gap-2 text-primary-400 font-medium text-sm sm:text-base">
                       {service.title === 'تدوین ویدیو' ? (
                         <Link to="/portfolios?category=filming" className="flex items-center gap-2 hover:text-white transition-colors">

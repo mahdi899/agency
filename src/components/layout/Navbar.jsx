@@ -37,7 +37,7 @@ const Navbar = () => {
     { 
       name: 'خدمات', 
       path: '/services',
-      submenu: services.slice(0, 6).map(s => ({
+      submenu: services.map(s => ({
         name: s.title || s.short_title,
         path: `/services/${s.slug}`
       }))

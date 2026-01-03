@@ -67,14 +67,7 @@ const ServiceCard = ({ service, index }) => {
               {service.description}
             </p>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              {features.slice(0, 3).map((feature, i) => (
-                <span key={i} className="px-1.5 sm:px-2 py-1 rounded-md bg-white/10 text-white text-xs">
-                  {feature}
-                </span>
-              ))}
-            </div>
-            
+                        
             <motion.div 
               className="flex items-center gap-2 text-primary-400 font-medium"
               animate={{ x: isHovered ? -5 : 0 }}

@@ -181,7 +181,7 @@ const Portfolio = () => {
         <ScrollReveal>
           <SectionTitle
             subtitle="نمونه کارها"
-            title="پروژه‌های موفق با ویوهای میلیونی"
+            title="• پروژه‌های موفق Amonix که میلیون‌ها نفر را درگیر کردند"
             description="نتایج واقعی که برای مشتریان‌مان رقم زده‌ایم"
           />
         </ScrollReveal>
