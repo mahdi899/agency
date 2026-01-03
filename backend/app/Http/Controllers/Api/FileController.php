@@ -31,30 +31,18 @@ class FileController extends Controller
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
                         . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs("public/{$folder}", $filename, 'public');
-            
-            // Copy to public/storage for Windows compatibility
-            $publicPath = public_path('storage/' . $folder . '/' . $filename);
-            $sourcePath = storage_path('app/' . $path);
-            
-            // Ensure directory exists
-            $publicDir = dirname($publicPath);
-            if (!is_dir($publicDir)) {
-                mkdir($publicDir, 0755, true);
-            }
-            
-            // Copy file
-            copy($sourcePath, $publicPath);
+            // ✅ FIXED: Use Storage facade to handle directory creation automatically
+            $path = $file->storeAs($folder, $filename, 'public');
             
             // Log success
             \Log::info('File uploaded successfully', [
                 'path' => $path,
-                'url' => Storage::disk('public')->url(str_replace('public/', '', $path))
+                'url' => Storage::disk('public')->url($path)
             ]);
             
             return response()->json([
                 'success' => true,
-                'path' => '/storage/' . str_replace('public/', '', $path),
+                'path' => '/storage/' . $path,
                 'filename' => $filename,
             ]);
         } catch (\Exception $e) {
@@ -108,40 +96,42 @@ class FileController extends Controller
     public function uploadVideo(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:mp4,mov,avi,wmv,webm|max:102400', // 100MB max
+            'file' => 'required|file|mimes:mp4,mov,avi,wmv,webm|max:102100', // 100MB max
             'folder' => 'nullable|string',
             'type' => 'nullable|string|in:vertical,horizontal',
         ]);
 
-        $file = $request->file('file');
-        $folder = $request->input('folder', 'videos');
-        $type = $request->input('type', 'vertical');
-        
-        $subfolder = $type === 'vertical' ? 'reels' : 'horizontal';
-        
-        $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
-                    . '.' . $file->getClientOriginalExtension();
-        
-        $path = $file->storeAs("public/{$folder}/{$subfolder}", $filename, 'public');
-        
-        // Copy to public/storage for Windows compatibility
-        $publicPath = public_path('storage/' . $folder . '/' . $subfolder . '/' . $filename);
-        $sourcePath = storage_path('app/' . $path);
-        
-        // Ensure directory exists
-        $publicDir = dirname($publicPath);
-        if (!is_dir($publicDir)) {
-            mkdir($publicDir, 0755, true);
+        try {
+            $file = $request->file('file');
+            $folder = $request->input('folder', 'videos');
+            $type = $request->input('type', 'vertical');
+            
+            $subfolder = $type === 'vertical' ? 'reels' : 'horizontal';
+            $fullFolder = $folder . '/' . $subfolder;
+            
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) 
+                        . '.' . $file->getClientOriginalExtension();
+            
+            // ✅ FIXED: Use Storage facade to handle directory creation automatically
+            $path = $file->storeAs($fullFolder, $filename, 'public');
+            
+            return response()->json([
+                'success' => true,
+                'path' => '/storage/' . $path,
+                'filename' => $filename,
+                'type' => $type,
+            ]);
+        } catch (\Exception $e) {
+            // Log error
+            \Log::error('Video upload failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در آپلود ویدیو: ' . $e->getMessage()
+            ], 500);
         }
-        
-        // Copy file
-        copy($sourcePath, $publicPath);
-        
-        return response()->json([
-            'success' => true,
-            'path' => '/storage/' . str_replace('public/', '', $path),
-            'filename' => $filename,
-            'type' => $type,
-        ]);
     }
 }

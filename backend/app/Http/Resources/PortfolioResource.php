@@ -21,9 +21,9 @@ class PortfolioResource extends JsonResource
             'description' => $this->description,
             'category' => $this->category,
             'type' => $this->type,
-            'thumbnail' => $this->thumbnail ? url($this->thumbnail) : null,
+            'thumbnail' => $this->thumbnail ? asset($this->thumbnail) : null,
             'video_url' => $this->video_url,
-            'gallery' => $this->gallery ? (is_string($this->gallery) ? json_decode($this->gallery, true) : $this->gallery) : [],
+            'gallery' => $this->gallery ? $this->processGalleryUrls($this->gallery) : [],
             'client_name' => $this->client_name,
             'industry' => $this->industry,
             'views' => $this->views,
@@ -35,5 +35,21 @@ class PortfolioResource extends JsonResource
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];
+    }
+
+    /**
+     * Process gallery URLs to ensure absolute paths
+     */
+    protected function processGalleryUrls($gallery): array
+    {
+        $galleryArray = is_string($gallery) ? json_decode($gallery, true) : $gallery;
+        
+        if (!is_array($galleryArray)) {
+            return [];
+        }
+        
+        return array_map(function ($image) {
+            return $image ? asset($image) : null;
+        }, $galleryArray);
     }
 }

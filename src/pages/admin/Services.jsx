@@ -42,13 +42,48 @@ const Services = () => {
     setErrors({});
     
     try {
+      // ✅ FIXED: Create proper FormData for PHP/Laravel
+      const submissionData = new FormData();
+      
+      // Append text fields
+      submissionData.append('title', formData.title);
+      submissionData.append('description', formData.description);
+      submissionData.append('short_title', formData.short_title || '');
+      submissionData.append('full_description', formData.full_description || '');
+      submissionData.append('icon', formData.icon || '');
+      submissionData.append('color', formData.color || 'from-primary-500 to-secondary-500');
+      submissionData.append('order', formData.order || 0);
+      
+      // ✅ FIXED: Convert booleans to strings for FormData
+      submissionData.append('is_active', formData.is_active ? '1' : '0');
+      submissionData.append('is_featured', formData.is_featured ? '1' : '0');
+      
+      // ✅ FIXED: Handle arrays properly for PHP
+      if (Array.isArray(formData.features)) {
+        formData.features.forEach((feature, index) => {
+          if (feature && feature.trim()) {
+            submissionData.append(`features[${index}]`, feature.trim());
+          }
+        });
+      }
+      
+      // ✅ FIXED: Handle image file only if it's a File object
+      if (formData.image instanceof File) {
+        submissionData.append('image', formData.image);
+      } else if (formData.image && typeof formData.image === 'string') {
+        submissionData.append('image', formData.image);
+      }
+      
       if (editingService) {
-        await api.updateService(editingService.id, formData);
+        // Add method spoofing for PUT
+        submissionData.append('_method', 'PUT');
+        await api.updateService(editingService.id, submissionData);
         setToast({ message: 'سرویس با موفقیت بروزرسانی شد', type: 'success' });
       } else {
-        await api.createService(formData);
+        await api.createService(submissionData);
         setToast({ message: 'سرویس با موفقیت ایجاد شد', type: 'success' });
       }
+      
       fetchServices();
       closeModal();
     } catch (error) {

@@ -228,36 +228,43 @@ class ApiService {
   }
 
   async createService(data) {
-    // Handle file uploads with FormData
-    const formData = new FormData();
+    // ✅ FIXED: Accept FormData directly or create it
+    let formData;
     
-    // Append all text fields
-    Object.keys(data).forEach(key => {
-      if (key !== 'image' && key !== 'gallery') {
-        if (typeof data[key] === 'object' && data[key] !== null) {
-          formData.append(key, JSON.stringify(data[key]));
-        } else {
-          formData.append(key, data[key]);
-        }
-      }
-    });
-    
-    // Handle single image file
-    if (data.image instanceof File) {
-      formData.append('image', data.image);
-    } else if (data.image && typeof data.image === 'string') {
-      formData.append('image', data.image);
-    }
-    
-    // Handle gallery files array
-    if (Array.isArray(data.gallery)) {
-      data.gallery.forEach((file, index) => {
-        if (file instanceof File) {
-          formData.append(`gallery[${index}]`, file);
-        } else if (typeof file === 'string') {
-          formData.append(`gallery[${index}]`, file);
+    if (data instanceof FormData) {
+      formData = data;
+    } else {
+      // Legacy support for object data
+      formData = new FormData();
+      
+      // Append all text fields
+      Object.keys(data).forEach(key => {
+        if (key !== 'image' && key !== 'gallery') {
+          if (typeof data[key] === 'object' && data[key] !== null) {
+            formData.append(key, JSON.stringify(data[key]));
+          } else {
+            formData.append(key, data[key]);
+          }
         }
       });
+      
+      // Handle single image file
+      if (data.image instanceof File) {
+        formData.append('image', data.image);
+      } else if (data.image && typeof data.image === 'string') {
+        formData.append('image', data.image);
+      }
+      
+      // Handle gallery files array
+      if (Array.isArray(data.gallery)) {
+        data.gallery.forEach((file, index) => {
+          if (file instanceof File) {
+            formData.append(`gallery[${index}]`, file);
+          } else if (typeof file === 'string') {
+            formData.append(`gallery[${index}]`, file);
+          }
+        });
+      }
     }
 
     const url = `${this.baseUrl}/admin/services`;
@@ -282,40 +289,49 @@ class ApiService {
   }
 
   async updateService(id, data) {
-    // Handle file uploads with FormData
-    const formData = new FormData();
+    // ✅ FIXED: Accept FormData directly or create it
+    let formData;
     
-    // Append all text fields
-    Object.keys(data).forEach(key => {
-      if (key !== 'image' && key !== 'gallery') {
-        if (typeof data[key] === 'object' && data[key] !== null) {
-          formData.append(key, JSON.stringify(data[key]));
-        } else {
-          formData.append(key, data[key]);
-        }
-      }
-    });
-    
-    // Handle single image file
-    if (data.image instanceof File) {
-      formData.append('image', data.image);
-    } else if (data.image && typeof data.image === 'string') {
-      formData.append('image', data.image);
-    }
-    
-    // Handle gallery files array
-    if (Array.isArray(data.gallery)) {
-      data.gallery.forEach((file, index) => {
-        if (file instanceof File) {
-          formData.append(`gallery[${index}]`, file);
-        } else if (typeof file === 'string') {
-          formData.append(`gallery[${index}]`, file);
+    if (data instanceof FormData) {
+      formData = data;
+      // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
+      formData.append('_method', 'PUT');
+    } else {
+      // Legacy support for object data
+      formData = new FormData();
+      
+      // Append all text fields
+      Object.keys(data).forEach(key => {
+        if (key !== 'image' && key !== 'gallery') {
+          if (typeof data[key] === 'object' && data[key] !== null) {
+            formData.append(key, JSON.stringify(data[key]));
+          } else {
+            formData.append(key, data[key]);
+          }
         }
       });
+      
+      // Handle single image file
+      if (data.image instanceof File) {
+        formData.append('image', data.image);
+      } else if (data.image && typeof data.image === 'string') {
+        formData.append('image', data.image);
+      }
+      
+      // Handle gallery files array
+      if (Array.isArray(data.gallery)) {
+        data.gallery.forEach((file, index) => {
+          if (file instanceof File) {
+            formData.append(`gallery[${index}]`, file);
+          } else if (typeof file === 'string') {
+            formData.append(`gallery[${index}]`, file);
+          }
+        });
+      }
+      
+      // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
+      formData.append('_method', 'PUT');
     }
-
-    // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
-    formData.append('_method', 'PUT');
 
     const url = `${this.baseUrl}/admin/services/${id}`;
     const headers = {};
@@ -355,40 +371,47 @@ class ApiService {
   }
 
   async createPortfolio(data) {
-    // Handle file uploads with FormData
-    const formData = new FormData();
+    // ✅ FIXED: Accept FormData directly or create it
+    let formData;
     
-    Object.keys(data).forEach(key => {
-      if (key !== 'thumbnail' && key !== 'gallery') {
-        if (typeof data[key] === 'object' && data[key] !== null) {
-          formData.append(key, JSON.stringify(data[key]));
-        } else if (data[key] !== null && data[key] !== undefined) {
-          // Convert boolean to string for FormData
-          if (typeof data[key] === 'boolean') {
-            formData.append(key, data[key] ? '1' : '0');
-          } else {
-            formData.append(key, data[key]);
+    if (data instanceof FormData) {
+      formData = data;
+    } else {
+      // Legacy support for object data
+      formData = new FormData();
+      
+      Object.keys(data).forEach(key => {
+        if (key !== 'thumbnail' && key !== 'gallery') {
+          if (typeof data[key] === 'object' && data[key] !== null) {
+            formData.append(key, JSON.stringify(data[key]));
+          } else if (data[key] !== null && data[key] !== undefined) {
+            // Convert boolean to string for FormData
+            if (typeof data[key] === 'boolean') {
+              formData.append(key, data[key] ? '1' : '0');
+            } else {
+              formData.append(key, data[key]);
+            }
           }
         }
-      }
-    });
-    
-    // Handle thumbnail file
-    if (data.thumbnail instanceof File) {
-      formData.append('thumbnail', data.thumbnail);
-    } else if (data.thumbnail && typeof data.thumbnail === 'string') {
-      formData.append('thumbnail', data.thumbnail);
-    }
-    
-    // Handle gallery files array
-    if (Array.isArray(data.gallery)) {
-      data.gallery.forEach((file, index) => {
-        if (file instanceof File) {
-          formData.append(`gallery[${index}]`, file);
-        } else if (typeof file === 'string') {
-          formData.append(`gallery[${index}]`, file);
-        }
       });
+      
+      // Handle thumbnail file
+      if (data.thumbnail instanceof File) {
+        formData.append('thumbnail', data.thumbnail);
+      } else if (data.thumbnail && typeof data.thumbnail === 'string') {
+        formData.append('thumbnail', data.thumbnail);
+      }
+      
+      // Handle gallery files array
+      if (Array.isArray(data.gallery)) {
+        data.gallery.forEach((file, index) => {
+          if (file instanceof File) {
+            formData.append(`gallery[${index}]`, file);
+          } else if (typeof file === 'string') {
+            formData.append(`gallery[${index}]`, file);
+          }
+        });
+      }
     }
 
     const url = `${this.baseUrl}/admin/portfolios`;
@@ -413,57 +436,60 @@ class ApiService {
   }
 
   async updatePortfolio(id, data) {
-    // Handle file uploads with FormData
-    const formData = new FormData();
+    // ✅ FIXED: Accept FormData directly or create it
+    let formData;
     
-    Object.keys(data).forEach(key => {
-      if (key !== 'thumbnail' && key !== 'gallery') {
-        const value = data[key];
-        // Skip null, undefined, and empty strings for optional fields
-        if (value === null || value === undefined || value === '') {
-          return; // Skip this field
-        }
-        
-        if (typeof value === 'object' && !Array.isArray(value)) {
-          formData.append(key, JSON.stringify(value));
-        } else if (Array.isArray(value)) {
-          formData.append(key, JSON.stringify(value));
-        } else {
-          // Convert boolean to string for FormData
-          if (typeof value === 'boolean') {
-            formData.append(key, value ? '1' : '0');
+    if (data instanceof FormData) {
+      formData = data;
+      // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
+      formData.append('_method', 'PUT');
+    } else {
+      // Legacy support for object data
+      formData = new FormData();
+      
+      Object.keys(data).forEach(key => {
+        if (key !== 'thumbnail' && key !== 'gallery') {
+          const value = data[key];
+          // Skip null, undefined, and empty strings for optional fields
+          if (value === null || value === undefined || value === '') {
+            return; // Skip this field
+          }
+          
+          if (typeof value === 'object' && !Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
           } else {
-            formData.append(key, value);
+            // Convert boolean to string for FormData
+            if (typeof value === 'boolean') {
+              formData.append(key, value ? '1' : '0');
+            } else {
+              formData.append(key, value);
+            }
           }
         }
-      }
-    });
-    
-    // Handle thumbnail file
-    if (data.thumbnail instanceof File) {
-      formData.append('thumbnail', data.thumbnail);
-    } else if (data.thumbnail && typeof data.thumbnail === 'string') {
-      formData.append('thumbnail', data.thumbnail);
-    }
-    
-    // Handle gallery files array
-    if (Array.isArray(data.gallery)) {
-      data.gallery.forEach((file, index) => {
-        if (file instanceof File) {
-          formData.append(`gallery[${index}]`, file);
-        } else if (typeof file === 'string') {
-          formData.append(`gallery[${index}]`, file);
-        }
       });
-    }
-
-    // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
-    formData.append('_method', 'PUT');
-
-    // Debug FormData
-    console.log('FormData contents:');
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
+      
+      // Handle thumbnail file
+      if (data.thumbnail instanceof File) {
+        formData.append('thumbnail', data.thumbnail);
+      } else if (data.thumbnail && typeof data.thumbnail === 'string') {
+        formData.append('thumbnail', data.thumbnail);
+      }
+      
+      // Handle gallery files array
+      if (Array.isArray(data.gallery)) {
+        data.gallery.forEach((file, index) => {
+          if (file instanceof File) {
+            formData.append(`gallery[${index}]`, file);
+          } else if (typeof file === 'string') {
+            formData.append(`gallery[${index}]`, file);
+          }
+        });
+      }
+      
+      // Add method spoofing for FormData (browsers don't support PUT with multipart/form-data)
+      formData.append('_method', 'PUT');
     }
 
     const url = `${this.baseUrl}/admin/portfolios/${id}`;

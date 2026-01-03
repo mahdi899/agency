@@ -21,7 +21,7 @@ class BlogPostResource extends JsonResource
             'excerpt' => $this->excerpt,
             'content' => $this->content,
             'content_blocks' => $this->content_blocks ? (is_array($this->content_blocks) ? $this->generateHtmlFromBlocks($this->content_blocks) : $this->content_blocks) : '',
-            'thumbnail' => $this->thumbnail ? url($this->thumbnail) : null,
+            'thumbnail' => $this->thumbnail ? asset($this->thumbnail) : null,
             'featured_image_alt' => $this->featured_image_alt,
             'featured_image_caption' => $this->featured_image_caption,
             'category' => $this->category,
@@ -30,7 +30,7 @@ class BlogPostResource extends JsonResource
                 return $this->tagsRelation->pluck('name')->toArray();
             }, $this->tags ?? []),
             'author' => $this->author,
-            'author_avatar' => $this->author_avatar ? url($this->author_avatar) : null,
+            'author_avatar' => $this->author_avatar ? asset($this->author_avatar) : null,
             'author_bio' => $this->author_bio,
             'read_time' => $this->read_time ?? 5,
             'word_count' => $this->word_count ?? 0,

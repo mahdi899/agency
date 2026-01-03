@@ -47,7 +47,7 @@ class PortfolioController extends Controller
                 'description' => 'required|string',
                 'category' => 'required|string',
                 'type' => 'nullable|string',
-                'thumbnail' => 'required|file|mimes:jpg,jpeg,png,webp|max:2048',
+                'thumbnail' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048', // ✅ OPTIONAL: Image upload
                 'video_url' => 'nullable|string',
                 'gallery' => 'nullable|array',
                 'client_name' => 'nullable|string',
@@ -58,6 +58,7 @@ class PortfolioController extends Controller
                 'is_featured' => 'boolean',
                 'is_active' => 'boolean',
                 'order' => 'nullable|integer',
+                'slug' => 'nullable|string', // ✅ FIXED: Changed to nullable
             ])->validate();
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -67,7 +68,16 @@ class PortfolioController extends Controller
             ], 422);
         }
 
-        $validated['slug'] = Str::slug($validated['title']);
+        // ✅ FIXED: Auto-generate slug if not provided
+        if (empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['title']);
+        }
+
+        // ✅ FIXED: Set default values for database fields
+        $validated['type'] = $validated['type'] ?? 'video';
+        $validated['is_featured'] = $validated['is_featured'] ?? false;
+        $validated['is_active'] = $validated['is_active'] ?? true;
+        $validated['order'] = $validated['order'] ?? 0;
         
         // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
@@ -118,6 +128,11 @@ class PortfolioController extends Controller
                 }
             }
             $validated['gallery'] = json_encode($gallery);
+        }
+
+        // ✅ FIXED: Encode JSON fields
+        if (isset($validated['tags']) && is_array($validated['tags'])) {
+            $validated['tags'] = json_encode($validated['tags']);
         }
         
         $portfolio = Portfolio::create($validated);

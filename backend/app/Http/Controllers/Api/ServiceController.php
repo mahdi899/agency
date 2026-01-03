@@ -48,13 +48,14 @@ class ServiceController extends Controller
             'full_description' => 'nullable|string',
             'icon' => 'nullable|string',
             'color' => 'nullable|string',
-            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048', // ✅ FIXED: Accept file instead of string
+            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048', // ✅ OPTIONAL: Image upload
             'features' => 'nullable|array',
             'process' => 'nullable|array',
             'gallery' => 'nullable|array',
             'order' => 'nullable|integer',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'slug' => 'nullable|string', // ✅ FIXED: Changed to nullable
         ]);
 
         // ✅ FIXED: Handle file upload
@@ -108,9 +109,16 @@ class ServiceController extends Controller
             $validated['gallery'] = json_encode($gallery);
         }
 
+        // ✅ FIXED: Auto-generate slug if not provided
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
+
+        // ✅ FIXED: Set default values for database fields
+        $validated['order'] = $validated['order'] ?? 0;
+        $validated['is_active'] = $validated['is_active'] ?? true;
+        $validated['is_featured'] = $validated['is_featured'] ?? false;
+        $validated['color'] = $validated['color'] ?? 'from-primary-500 to-secondary-500';
 
         $service = Service::create($validated);
 

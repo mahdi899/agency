@@ -40,35 +40,67 @@ const Portfolios = () => {
     setIsSubmitting(true);
     setErrors({});
     
-    // Map form fields to API fields
-    const apiData = {
-      title: formData.title,
-      description: formData.description,
-      category: formData.category,
-      type: formData.type,
-      thumbnail: formData.thumbnail,
-      video_url: formData.video_url,
-      client_name: formData.client || '',
-      industry: formData.industry,
-      views: formData.views,
-      growth: formData.growth,
-      services: formData.services,
-      tags: formData.tags,
-      gallery: formData.gallery,
-      is_featured: formData.is_featured,
-      is_active: formData.is_active,
-      order: formData.order,
-    };
-    
-    console.log('Submitting portfolio data:', apiData);
     try {
+      // ✅ FIXED: Create proper FormData for PHP/Laravel
+      const submissionData = new FormData();
+      
+      // Append text fields
+      submissionData.append('title', formData.title);
+      submissionData.append('description', formData.description);
+      submissionData.append('full_description', formData.full_description || '');
+      submissionData.append('category', formData.category);
+      submissionData.append('type', formData.type || 'video');
+      submissionData.append('video_url', formData.video_url || '');
+      submissionData.append('client_name', formData.client || '');
+      submissionData.append('industry', formData.industry || '');
+      submissionData.append('views', formData.views || '');
+      submissionData.append('growth', formData.growth || '');
+      submissionData.append('order', formData.order || 0);
+      
+      // ✅ FIXED: Convert booleans to strings for FormData
+      submissionData.append('is_active', formData.is_active ? '1' : '0');
+      submissionData.append('is_featured', formData.is_featured ? '1' : '0');
+      
+      // ✅ FIXED: Handle arrays properly for PHP
+      if (Array.isArray(formData.services)) {
+        formData.services.forEach((service, index) => {
+          if (service && service.trim()) {
+            submissionData.append(`services[${index}]`, service.trim());
+          }
+        });
+      }
+      
+      if (Array.isArray(formData.tags)) {
+        formData.tags.forEach((tag, index) => {
+          if (tag && tag.trim()) {
+            submissionData.append(`tags[${index}]`, tag.trim());
+          }
+        });
+      }
+      
+      // ✅ FIXED: Handle image files only if they are File objects
+      if (formData.thumbnail instanceof File) {
+        submissionData.append('thumbnail', formData.thumbnail);
+      } else if (formData.thumbnail && typeof formData.thumbnail === 'string') {
+        submissionData.append('thumbnail', formData.thumbnail);
+      }
+      
+      if (formData.cover_image instanceof File) {
+        submissionData.append('cover_image', formData.cover_image);
+      } else if (formData.cover_image && typeof formData.cover_image === 'string') {
+        submissionData.append('cover_image', formData.cover_image);
+      }
+      
       if (editingItem) {
-        await api.updatePortfolio(editingItem.id, apiData);
+        // Add method spoofing for PUT
+        submissionData.append('_method', 'PUT');
+        await api.updatePortfolio(editingItem.id, submissionData);
         setToast({ message: 'نمونه کار با موفقیت بروزرسانی شد', type: 'success' });
       } else {
-        await api.createPortfolio(apiData);
+        await api.createPortfolio(submissionData);
         setToast({ message: 'نمونه کار با موفقیت ایجاد شد', type: 'success' });
       }
+      
       fetchData();
       closeModal();
     } catch (error) {
