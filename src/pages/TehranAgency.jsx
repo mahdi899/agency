@@ -3,6 +3,25 @@ import { Link } from 'react-router-dom';
 import { MapPin, Phone, Clock, CheckCircle, ArrowLeft, Building2, Users, Award, Star, Video, Camera, Palette, TrendingUp, Target, BarChart3, Brain, Zap } from 'lucide-react';
 import { SectionTitle, ScrollReveal } from '../components/ui';
 
+const districts = [
+  { name: 'ولنجک', description: 'خدمات تولید محتوا و فیلمبرداری در ولنجک' },
+  { name: 'الهیه', description: 'آژانس دیجیتال مارکتینگ الهیه' },
+  { name: 'جردن', description: 'تولید محتوای ویدیویی در جردن' },
+  { name: 'ونک', description: 'خدمات سوشال مدیا در ونک' },
+  { name: 'سعادت‌آباد', description: 'فیلمبرداری حرفه‌ای سعادت‌آباد' },
+  { name: 'شهرک غرب', description: 'تولید محتوا در شهرک غرب' },
+  { name: 'پونک', description: 'آژانس تبلیغاتی پونک' },
+  { name: 'تجریش', description: 'خدمات دیجیتال مارکتینگ تجریش' },
+  { name: 'نیاوران', description: 'تولید محتوای ویدیویی نیاوران' },
+  { name: 'زعفرانیه', description: 'فیلمبرداری حرفه‌ای زعفرانیه' },
+  { name: 'فرمانیه', description: 'آژانس amonix فرمانیه' },
+  { name: 'قیطریه', description: 'خدمات تولید محتوا قیطریه' },
+  { name: 'پاسداران', description: 'دیجیتال مارکتینگ پاسداران' },
+  { name: 'میرداماد', description: 'تولید ویدیو میرداماد' },
+  { name: 'آرژانتین', description: 'آژانس تبلیغاتی آرژانتین' },
+  { name: 'یوسف‌آباد', description: 'خدمات سوشال مدیا یوسف‌آباد' },
+];
+
 const competitiveAdvantages = [
   { title: 'تحلیل استراتژیک بازار تهران', description: 'شناخت عمیق از الگوهای رفتاری مخاطب تهرانی و تحلیل رقبا', icon: Target, color: 'from-blue-500 to-cyan-500' },
   { title: 'تبلیغات داده‌محور', description: 'تصمیم‌گیری بر اساس تحلیل دقیق داده‌ها و نرخ تبدیل واقعی', icon: BarChart3, color: 'from-green-500 to-emerald-500' },
@@ -264,6 +283,39 @@ const TehranAgency = () => {
                 >
                   <h3 className="text-lg font-bold text-primary-400 mb-3">{item.title}</h3>
                   <p className="text-dark-300 text-sm leading-relaxed">{item.description}</p>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-padding bg-dark-900/50">
+        <div className="container-custom mx-auto">
+          <ScrollReveal>
+            <SectionTitle
+              subtitle="مناطق تحت پوشش"
+              title="خدمات در تمام مناطق تهران"
+              description="ما در تمام محلات و مناطق تهران به شما خدمات ارائه می‌دهیم"
+            />
+          </ScrollReveal>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {districts.map((district, index) => (
+              <ScrollReveal key={index} delay={index * 0.03}>
+                <motion.div
+                  whileHover={{ y: -3 }}
+                  className="p-4 rounded-xl bg-white/[0.03] border border-white/10 group cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-primary-400" />
+                    <h3 className="text-white font-medium group-hover:text-primary-400 transition-colors">
+                      {district.name}
+                    </h3>
+                  </div>
+                  <p className="text-dark-400 text-xs line-clamp-2">
+                    {district.description}
+                  </p>
                 </motion.div>
               </ScrollReveal>
             ))}
