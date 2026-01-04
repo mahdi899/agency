@@ -2,14 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Industry;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
-class IndustriesSnapshotSeeder extends Seeder
+class IndustriesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $industries = [
@@ -31,8 +28,6 @@ class IndustriesSnapshotSeeder extends Seeder
                 'seo_keywords' => null,
                 'order' => 0,
                 'is_active' => 1,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
                 'id' => 2,
@@ -52,8 +47,6 @@ class IndustriesSnapshotSeeder extends Seeder
                 'seo_keywords' => null,
                 'order' => 0,
                 'is_active' => 1,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
                 'id' => 3,
@@ -73,8 +66,6 @@ class IndustriesSnapshotSeeder extends Seeder
                 'seo_keywords' => null,
                 'order' => 0,
                 'is_active' => 1,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
                 'id' => 4,
@@ -94,8 +85,6 @@ class IndustriesSnapshotSeeder extends Seeder
                 'seo_keywords' => null,
                 'order' => 0,
                 'is_active' => 1,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
                 'id' => 5,
@@ -115,8 +104,6 @@ class IndustriesSnapshotSeeder extends Seeder
                 'seo_keywords' => null,
                 'order' => 0,
                 'is_active' => 1,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
                 'id' => 6,
@@ -136,16 +123,11 @@ class IndustriesSnapshotSeeder extends Seeder
                 'seo_keywords' => null,
                 'order' => 0,
                 'is_active' => 1,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
         ];
 
         foreach ($industries as $industry) {
-            DB::table('industries')->updateOrInsert(
-                ['id' => $industry['id']],
-                $industry
-            );
+            Industry::create($industry);
         }
     }
 }

@@ -2,19 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\Service;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
-class ServicesSnapshotSeeder extends Seeder
+class ServicesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $services = [
             [
-                'id' => 2,
                 'title' => 'فیلمبرداری و تدوین',
                 'slug' => 'videography-editing',
                 'short_title' => 'تدوین',
@@ -29,11 +25,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
-                'id' => 3,
                 'title' => 'موشن گرافیک',
                 'slug' => 'motion-graphics',
                 'short_title' => 'موشن',
@@ -48,11 +41,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
-                'id' => 4,
                 'title' => 'عکاسی',
                 'slug' => 'photography',
                 'short_title' => 'عکاسی',
@@ -67,11 +57,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
-                'id' => 5,
                 'title' => 'تلگرام',
                 'slug' => 'tlgram',
                 'short_title' => 'محتوا',
@@ -86,11 +73,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:55:44',
             ],
             [
-                'id' => 6,
                 'title' => 'اینستاگرام',
                 'slug' => 'aynstagram',
                 'short_title' => 'سوشال',
@@ -105,11 +89,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:55:52',
             ],
             [
-                'id' => 7,
                 'title' => 'دیجیتال مارکتینگ AI',
                 'slug' => 'dygytal-marktyng-ai',
                 'short_title' => 'مارکتینگ',
@@ -124,11 +105,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:56:02',
             ],
             [
-                'id' => 8,
                 'title' => 'برندینگ',
                 'slug' => 'brndyng',
                 'short_title' => 'برندینگ',
@@ -143,11 +121,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:55:21',
             ],
             [
-                'id' => 9,
                 'title' => 'طراحی سایت',
                 'slug' => 'web-design',
                 'short_title' => 'وب',
@@ -162,11 +137,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
-                'id' => 10,
                 'title' => 'سئو',
                 'slug' => 'seo',
                 'short_title' => 'سئو',
@@ -181,11 +153,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 0,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => '2026-01-04 10:36:43',
-                'updated_at' => '2026-01-04 10:36:43',
             ],
             [
-                'id' => 11,
                 'title' => 'تبلیغات Paid',
                 'slug' => 'paid-ads',
                 'short_title' => null,
@@ -200,11 +169,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 11,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
-                'id' => 12,
                 'title' => 'طراحی اپلیکیشن',
                 'slug' => 'app-design',
                 'short_title' => null,
@@ -219,11 +185,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 12,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
-                'id' => 13,
                 'title' => 'گرافیک',
                 'slug' => 'graphic-design',
                 'short_title' => null,
@@ -238,11 +201,8 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 13,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
-                'id' => 14,
                 'title' => 'تولید محتوا',
                 'slug' => 'content-creation',
                 'short_title' => null,
@@ -257,16 +217,11 @@ class ServicesSnapshotSeeder extends Seeder
                 'order' => 14,
                 'is_active' => 1,
                 'is_featured' => 0,
-                'created_at' => null,
-                'updated_at' => null,
             ],
         ];
 
         foreach ($services as $service) {
-            DB::table('services')->updateOrInsert(
-                ['id' => $service['id']],
-                $service
-            );
+            Service::create($service);
         }
     }
 }
