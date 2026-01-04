@@ -54,25 +54,25 @@ const WebDesignLayout = ({ data }) => {
         </div>
 
         {/* Floating devices */}
-        <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12 px-6">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12 px-6 -mt-20">
           {/* Laptop Frame */}
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
+            className="relative w-full lg:w-auto flex justify-center"
           >
             <div className="relative bg-slate-800 rounded-2xl p-3 shadow-2xl">
               <div className="bg-slate-900 rounded-xl p-2">
-                <div className="w-[500px] h-72 bg-slate-800 rounded-lg overflow-hidden relative">
+                <div className="w-[300px] sm:w-[400px] lg:w-[500px] h-[180px] sm:h-[216px] lg:h-72 bg-slate-800 rounded-lg overflow-hidden relative">
                   <img 
                     src={data.thumbnail || data.cover_image} 
                     alt={data.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-slate-700 rounded-full" />
+                  <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 sm:w-16 lg:w-20 h-1 bg-slate-700 rounded-full" />
                 </div>
               </div>
-              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-40 h-2 bg-slate-700 rounded-full" />
+              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-24 sm:w-32 lg:w-40 h-2 bg-slate-700 rounded-full" />
             </div>
           </motion.div>
 
@@ -80,20 +80,20 @@ const WebDesignLayout = ({ data }) => {
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="relative"
+            className="relative w-full lg:w-auto flex justify-center"
           >
             <div className="relative bg-slate-800 rounded-3xl p-3 shadow-2xl">
               <div className="bg-slate-900 rounded-2xl p-2">
-                <div className="w-40 h-64 bg-slate-800 rounded-2xl overflow-hidden relative">
+                <div className="w-24 sm:w-32 lg:w-40 h-[160px] sm:h-[192px] lg:h-64 bg-slate-800 rounded-2xl overflow-hidden relative">
                   <img 
                     src={data.thumbnail || data.cover_image} 
                     alt={data.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-14 h-1 bg-slate-700 rounded-full" />
+                  <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-8 sm:w-10 lg:w-14 h-1 bg-slate-700 rounded-full" />
                 </div>
               </div>
-              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-slate-700 rounded-full" />
+              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-12 sm:w-16 lg:w-20 h-1 bg-slate-700 rounded-full" />
             </div>
           </motion.div>
         </div>
@@ -104,7 +104,7 @@ const WebDesignLayout = ({ data }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-5xl lg:text-7xl font-bold mb-4"
+            className="text-3xl sm:text-4xl lg:text-5xl xl:text-7xl font-bold mb-4 px-4"
           >
             {data.title}
           </motion.h1>
@@ -112,7 +112,7 @@ const WebDesignLayout = ({ data }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="text-xl text-slate-300 max-w-2xl mx-auto"
+            className="text-sm sm:text-base lg:text-xl text-slate-300 max-w-2xl mx-auto px-4"
           >
             {data.short_description || data.description?.substring(0, 150) + '...'}
           </motion.p>
