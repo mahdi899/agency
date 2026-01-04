@@ -14,6 +14,19 @@ class ServiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $imageUrl = null;
+        if ($this->image) {
+            // 1. If it's already a full URL, leave it alone
+            if (str_contains($this->image, 'http')) {
+                $imageUrl = $this->image;
+            } else {
+                // 2. Remove prefixes AND leading slashes
+                $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $this->image), '/');
+                // 3. Generate correct absolute URL
+                $imageUrl = asset('storage/' . $cleanPath);
+            }
+        }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -23,7 +36,7 @@ class ServiceResource extends JsonResource
             'full_description' => $this->full_description,
             'icon' => $this->icon,
             'color' => $this->color,
-            'image' => $this->image ? asset($this->image) : null,
+            'image' => $imageUrl,
             'features' => $this->features ? (is_string($this->features) ? json_decode($this->features, true) : $this->features) : [],
             'process' => $this->process ? (is_string($this->process) ? json_decode($this->process, true) : $this->process) : [],
             'gallery' => $this->gallery ? $this->processGalleryUrls($this->gallery) : [],
@@ -47,7 +60,15 @@ class ServiceResource extends JsonResource
         }
         
         return array_map(function ($image) {
-            return $image ? asset($image) : null;
+            if (!$image) {
+                return null;
+            }
+            
+            if (str_contains($image, 'http')) {
+                return $image;
+            }
+            
+            return asset('storage/' . ltrim(str_replace(['public/', 'storage/'], '', $image), '/'));
         }, $galleryArray);
     }
 }

@@ -14,6 +14,32 @@ class BlogPostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $thumbnailUrl = null;
+        if ($this->thumbnail) {
+            // 1. If it's already a full URL, leave it alone
+            if (str_contains($this->thumbnail, 'http')) {
+                $thumbnailUrl = $this->thumbnail;
+            } else {
+                // 2. Remove prefixes AND leading slashes
+                $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $this->thumbnail), '/');
+                // 3. Generate correct absolute URL
+                $thumbnailUrl = asset('storage/' . $cleanPath);
+            }
+        }
+
+        $authorAvatarUrl = null;
+        if ($this->author_avatar) {
+            // 1. If it's already a full URL, leave it alone
+            if (str_contains($this->author_avatar, 'http')) {
+                $authorAvatarUrl = $this->author_avatar;
+            } else {
+                // 2. Remove prefixes AND leading slashes
+                $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $this->author_avatar), '/');
+                // 3. Generate correct absolute URL
+                $authorAvatarUrl = asset('storage/' . $cleanPath);
+            }
+        }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -21,7 +47,7 @@ class BlogPostResource extends JsonResource
             'excerpt' => $this->excerpt,
             'content' => $this->content,
             'content_blocks' => $this->content_blocks ? (is_array($this->content_blocks) ? $this->generateHtmlFromBlocks($this->content_blocks) : $this->content_blocks) : '',
-            'thumbnail' => $this->thumbnail ? asset($this->thumbnail) : null,
+            'thumbnail' => $thumbnailUrl,
             'featured_image_alt' => $this->featured_image_alt,
             'featured_image_caption' => $this->featured_image_caption,
             'category' => $this->category,
@@ -30,7 +56,7 @@ class BlogPostResource extends JsonResource
                 return $this->tagsRelation->pluck('name')->toArray();
             }, $this->tags ?? []),
             'author' => $this->author,
-            'author_avatar' => $this->author_avatar ? asset($this->author_avatar) : null,
+            'author_avatar' => $authorAvatarUrl,
             'author_bio' => $this->author_bio,
             'read_time' => $this->read_time ?? 5,
             'word_count' => $this->word_count ?? 0,

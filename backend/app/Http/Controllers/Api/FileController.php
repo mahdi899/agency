@@ -37,12 +37,19 @@ class FileController extends Controller
             // Log success
             \Log::info('File uploaded successfully', [
                 'path' => $path,
-                'url' => Storage::disk('public')->url($path)
+                'url' => Storage::disk('public')->url($path),
+                'asset_url' => asset('storage/' . $path)
             ]);
+            
+            // Ensure we return the full absolute URL
+            $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $path), '/');
+            $fullUrl = asset('storage/' . $cleanPath);
             
             return response()->json([
                 'success' => true,
-                'path' => '/storage/' . $path,
+                'url' => $fullUrl,
+                'full_url' => $fullUrl, // Additional field for clarity
+                'path' => $path,
                 'filename' => $filename,
             ]);
         } catch (\Exception $e) {
@@ -115,9 +122,15 @@ class FileController extends Controller
             // ✅ FIXED: Use Storage facade to handle directory creation automatically
             $path = $file->storeAs($fullFolder, $filename, 'public');
             
+            // Ensure we return the full absolute URL
+            $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $path), '/');
+            $fullUrl = asset('storage/' . $cleanPath);
+            
             return response()->json([
                 'success' => true,
-                'path' => '/storage/' . $path,
+                'url' => $fullUrl,
+                'full_url' => $fullUrl, // Additional field for clarity
+                'path' => $path,
                 'filename' => $filename,
                 'type' => $type,
             ]);

@@ -14,6 +14,19 @@ class PortfolioResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $thumbnailUrl = null;
+        if ($this->thumbnail) {
+            // 1. If it's already a full URL, leave it alone
+            if (str_contains($this->thumbnail, 'http')) {
+                $thumbnailUrl = $this->thumbnail;
+            } else {
+                // 2. Remove prefixes AND leading slashes
+                $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $this->thumbnail), '/');
+                // 3. Generate correct absolute URL
+                $thumbnailUrl = asset('storage/' . $cleanPath);
+            }
+        }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -21,7 +34,7 @@ class PortfolioResource extends JsonResource
             'description' => $this->description,
             'category' => $this->category,
             'type' => $this->type,
-            'thumbnail' => $this->thumbnail ? asset($this->thumbnail) : null,
+            'thumbnail' => $thumbnailUrl,
             'video_url' => $this->video_url,
             'gallery' => $this->gallery ? $this->processGalleryUrls($this->gallery) : [],
             'client_name' => $this->client_name,
@@ -49,7 +62,15 @@ class PortfolioResource extends JsonResource
         }
         
         return array_map(function ($image) {
-            return $image ? asset($image) : null;
+            if (!$image) {
+                return null;
+            }
+            
+            if (str_contains($image, 'http')) {
+                return $image;
+            }
+            
+            return asset('storage/' . ltrim(str_replace(['public/', 'storage/'], '', $image), '/'));
         }, $galleryArray);
     }
 }

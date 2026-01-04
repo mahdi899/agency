@@ -70,8 +70,6 @@ const Services = () => {
       // ✅ FIXED: Handle image file only if it's a File object
       if (formData.image instanceof File) {
         submissionData.append('image', formData.image);
-      } else if (formData.image && typeof formData.image === 'string') {
-        submissionData.append('image', formData.image);
       }
       
       if (editingService) {

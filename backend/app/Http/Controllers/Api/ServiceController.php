@@ -48,7 +48,7 @@ class ServiceController extends Controller
             'full_description' => 'nullable|string',
             'icon' => 'nullable|string',
             'color' => 'nullable|string',
-            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048', // ✅ OPTIONAL: Image upload
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // ✅ FIXED: Proper image validation
             'features' => 'nullable|array',
             'process' => 'nullable|array',
             'gallery' => 'nullable|array',
@@ -138,7 +138,7 @@ class ServiceController extends Controller
             'full_description' => 'nullable|string',
             'icon' => 'nullable|string',
             'color' => 'nullable|string',
-            'image' => 'nullable',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // ✅ FIXED: Proper image validation
             'features' => 'nullable',
             'process' => 'nullable',
             'gallery' => 'nullable',

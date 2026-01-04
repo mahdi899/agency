@@ -27,7 +27,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Globe',
                 'color' => 'from-blue-500 to-cyan-500',
-                'image' => '/storage/services/web-design.jpg',
+                'image' => 'services/web-design.jpg',
                 'is_active' => true,
                 'order' => 1
             ],
@@ -42,7 +42,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'TrendingUp',
                 'color' => 'from-green-500 to-emerald-500',
-                'image' => '/storage/services/web-design.jpg',
+                'image' => 'services/web-design.jpg',
                 'is_active' => true,
                 'order' => 2
             ],
@@ -57,7 +57,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Search',
                 'color' => 'from-purple-500 to-pink-500',
-                'image' => '/storage/services/seo.jpg',
+                'image' => 'services/seo.jpg',
                 'is_active' => true,
                 'order' => 3
             ],
@@ -72,7 +72,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Smartphone',
                 'color' => 'from-indigo-500 to-blue-500',
-                'image' => '/storage/services/web-design.jpg',
+                'image' => 'services/web-design.jpg',
                 'is_active' => true,
                 'order' => 4
             ],
@@ -87,7 +87,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Palette',
                 'color' => 'from-orange-500 to-red-500',
-                'image' => '/storage/services/branding.jpg',
+                'image' => 'services/branding.jpg',
                 'is_active' => true,
                 'order' => 5
             ],
@@ -102,7 +102,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Lightbulb',
                 'color' => 'from-yellow-500 to-orange-500',
-                'image' => '/storage/services/content-creation.jpg',
+                'image' => 'services/content-creation.jpg',
                 'is_active' => true,
                 'order' => 6
             ],
@@ -117,7 +117,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Sparkles',
                 'color' => 'from-cyan-500 to-blue-500',
-                'image' => '/storage/services/digital-marketing.jpg',
+                'image' => 'services/digital-marketing.jpg',
                 'is_active' => true,
                 'order' => 7
             ],
@@ -132,7 +132,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Film',
                 'color' => 'from-pink-500 to-purple-500',
-                'image' => '/storage/services/motion-graphics.jpg',
+                'image' => 'services/motion-graphics.jpg',
                 'is_active' => true,
                 'order' => 8
             ],
@@ -147,7 +147,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Video',
                 'color' => 'from-red-500 to-pink-500',
-                'image' => '/storage/services/video-production.jpg',
+                'image' => 'services/video-production.jpg',
                 'is_active' => true,
                 'order' => 9
             ],
@@ -162,7 +162,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Film',
                 'color' => 'from-teal-500 to-green-500',
-                'image' => '/storage/services/video-editing.jpg',
+                'image' => 'services/video-editing.jpg',
                 'is_active' => true,
                 'order' => 10
             ],
@@ -177,7 +177,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Camera',
                 'color' => 'from-amber-500 to-yellow-500',
-                'image' => '/storage/services/photography.jpg',
+                'image' => 'services/photography.jpg',
                 'is_active' => true,
                 'order' => 11
             ],
@@ -192,7 +192,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Megaphone',
                 'color' => 'from-rose-500 to-pink-500',
-                'image' => '/storage/services/digital-marketing.jpg',
+                'image' => 'services/digital-marketing.jpg',
                 'is_active' => true,
                 'order' => 12
             ],
@@ -207,7 +207,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Users',
                 'color' => 'from-purple-500 to-indigo-500',
-                'image' => '/storage/services/social-media.jpg',
+                'image' => 'services/social-media.jpg',
                 'is_active' => true,
                 'order' => 13
             ],
@@ -222,7 +222,7 @@ class ServiceSeeder extends Seeder
                 ],
                 'icon' => 'Share2',
                 'color' => 'from-blue-500 to-cyan-500',
-                'image' => '/storage/services/social-media.jpg',
+                'image' => 'services/social-media.jpg',
                 'is_active' => true,
                 'order' => 14
             ]

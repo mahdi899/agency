@@ -1,0 +1,151 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class IndustriesSnapshotSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $industries = [
+            [
+                'id' => 1,
+                'title' => 'کافه و رستوران',
+                'slug' => 'cafe-restaurant',
+                'short_title' => 'کافه و رستوران',
+                'description' => 'تولید محتوای حرفه‌ای برای کافه‌ها و رستوران‌ها',
+                'full_description' => 'با تیم متخصص ما، کافه یا رستوران خود را به یک برند محبوب در فضای مجازی تبدیل کنید.',
+                'icon' => 'Coffee',
+                'color' => 'from-amber-500 to-orange-500',
+                'image' => '/storage/industries/cafe-restaurant.jpg',
+                'hero_image' => null,
+                'services' => json_encode(['عکاسی غذا', 'فیلمبرداری', 'ساخت ریلز', 'مدیریت پیج'], JSON_UNESCAPED_UNICODE),
+                'results' => null,
+                'case_study' => null,
+                'testimonial' => null,
+                'seo_keywords' => null,
+                'order' => 0,
+                'is_active' => 1,
+                'created_at' => '2026-01-04 10:36:43',
+                'updated_at' => '2026-01-04 10:36:43',
+            ],
+            [
+                'id' => 2,
+                'title' => 'خودرو',
+                'slug' => 'automotive',
+                'short_title' => 'خودرو',
+                'description' => 'تولید محتوای تخصصی برای نمایشگاه‌های خودرو',
+                'full_description' => 'با فیلمبرداری سینمایی و عکاسی حرفه‌ای از خودروها، برند شما را متمایز می‌کنیم.',
+                'icon' => 'Car',
+                'color' => 'from-blue-500 to-indigo-500',
+                'image' => '/storage/industries/automotive.jpg',
+                'hero_image' => null,
+                'services' => json_encode(['فیلمبرداری خودرو', 'عکاسی صنعتی', 'تیزر تبلیغاتی', 'مدیریت پیج'], JSON_UNESCAPED_UNICODE),
+                'results' => null,
+                'case_study' => null,
+                'testimonial' => null,
+                'seo_keywords' => null,
+                'order' => 0,
+                'is_active' => 1,
+                'created_at' => '2026-01-04 10:36:43',
+                'updated_at' => '2026-01-04 10:36:43',
+            ],
+            [
+                'id' => 3,
+                'title' => 'کلینیک زیبایی و سلامت',
+                'slug' => 'beauty-clinic',
+                'short_title' => 'زیبایی و سلامت',
+                'description' => 'تولید محتوای تخصصی برای سالن‌های زیبایی و کلینیک‌ها',
+                'full_description' => 'با محتوای حرفه‌ای و جذاب، مشتریان جدید جذب کنید.',
+                'icon' => 'Scissors',
+                'color' => 'from-pink-500 to-rose-500',
+                'image' => '/storage/industries/beauty-clinic.jpg',
+                'hero_image' => null,
+                'services' => json_encode(['عکاسی پرتره', 'فیلمبرداری', 'ریلز آموزشی', 'مدیریت پیج'], JSON_UNESCAPED_UNICODE),
+                'results' => null,
+                'case_study' => null,
+                'testimonial' => null,
+                'seo_keywords' => null,
+                'order' => 0,
+                'is_active' => 1,
+                'created_at' => '2026-01-04 10:36:43',
+                'updated_at' => '2026-01-04 10:36:43',
+            ],
+            [
+                'id' => 4,
+                'title' => 'پزشکان',
+                'slug' => 'medical',
+                'short_title' => 'پزشکی',
+                'description' => 'تولید محتوای تخصصی برای پزشکان و کلینیک‌ها',
+                'full_description' => 'با رعایت اصول اخلاق پزشکی و تولید محتوای علمی و قابل اعتماد.',
+                'icon' => 'Stethoscope',
+                'color' => 'from-cyan-500 to-teal-500',
+                'image' => '/storage/industries/medical.jpg',
+                'hero_image' => null,
+                'services' => json_encode(['ویدیو آموزشی', 'معرفی خدمات', 'مدیریت پیج', 'سئو پزشکی'], JSON_UNESCAPED_UNICODE),
+                'results' => null,
+                'case_study' => null,
+                'testimonial' => null,
+                'seo_keywords' => null,
+                'order' => 0,
+                'is_active' => 1,
+                'created_at' => '2026-01-04 10:36:43',
+                'updated_at' => '2026-01-04 10:36:43',
+            ],
+            [
+                'id' => 5,
+                'title' => 'مد و پوشاک',
+                'slug' => 'fashion',
+                'short_title' => 'مد و پوشاک',
+                'description' => 'تولید محتوای خلاقانه برای برندهای مد',
+                'full_description' => 'با عکاسی مد حرفه‌ای و لوک‌بوک، برند پوشاک شما را به سطح بین‌المللی می‌رسانیم.',
+                'icon' => 'ShoppingBag',
+                'color' => 'from-purple-500 to-violet-500',
+                'image' => '/storage/industries/fashion.jpg',
+                'hero_image' => null,
+                'services' => json_encode(['عکاسی مد', 'لوک‌بوک', 'فیلمبرداری', 'اینفلوئنسر مارکتینگ'], JSON_UNESCAPED_UNICODE),
+                'results' => null,
+                'case_study' => null,
+                'testimonial' => null,
+                'seo_keywords' => null,
+                'order' => 0,
+                'is_active' => 1,
+                'created_at' => '2026-01-04 10:36:43',
+                'updated_at' => '2026-01-04 10:36:43',
+            ],
+            [
+                'id' => 6,
+                'title' => 'ورزش و فیتنس',
+                'slug' => 'fitness',
+                'short_title' => 'ورزش و فیتنس',
+                'description' => 'تولید محتوای انگیزشی و آموزشی برای باشگاه‌ها',
+                'full_description' => 'با ویدیوهای آموزشی و چالش‌های ورزشی، جامعه فیتنس خود را بسازید.',
+                'icon' => 'Dumbbell',
+                'color' => 'from-green-500 to-emerald-500',
+                'image' => '/storage/industries/fitness.jpg',
+                'hero_image' => null,
+                'services' => json_encode(['فیلمبرداری ورزشی', 'ویدیو آموزشی', 'مدیریت پیج', 'چالش‌های ورزشی'], JSON_UNESCAPED_UNICODE),
+                'results' => null,
+                'case_study' => null,
+                'testimonial' => null,
+                'seo_keywords' => null,
+                'order' => 0,
+                'is_active' => 1,
+                'created_at' => '2026-01-04 10:36:43',
+                'updated_at' => '2026-01-04 10:36:43',
+            ],
+        ];
+
+        foreach ($industries as $industry) {
+            DB::table('industries')->updateOrInsert(
+                ['id' => $industry['id']],
+                $industry
+            );
+        }
+    }
+}
