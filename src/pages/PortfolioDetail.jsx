@@ -4,6 +4,8 @@ import { ArrowRight, Eye, TrendingUp, Users, Heart, Play, Quote } from 'lucide-r
 import { Button, Card, SectionTitle } from '../components/ui';
 import api from '../services/api';
 import { useState, useEffect } from 'react';
+import WebDesignLayout from './portfolios/layouts/WebDesignLayout';
+import VideoLayout from './portfolios/layouts/VideoLayout';
 
 const PortfolioDetail = () => {
   const { portfolioId } = useParams();
@@ -57,6 +59,36 @@ const PortfolioDetail = () => {
         </div>
       </div>
     );
+  }
+
+  // Check if this is a web design project
+  const isWebDesignProject = project.category === 'web-design' || 
+                            project.layout_type === 'web-design' ||
+                            project.services?.includes('طراحی وب سایت') ||
+                            project.services?.includes('Web Design');
+
+  // Check if this is a video project (enhanced logic)
+  const isVideoProject = project.category === 'video' || 
+                        project.video_type ||
+                        project.video_url ||
+                        project.services?.includes('فیلمبرداری') ||
+                        project.services?.includes('تدوین') ||
+                        project.services?.includes('موشن گرافیک') ||
+                        project.services?.includes('تولید محتوای ویدیویی') ||
+                        project.services?.includes('ویدیو مارکتینگ') ||
+                        project.tags?.includes('ریلز') ||
+                        project.tags?.includes('ویدیو') ||
+                        project.tags?.includes('موشن گرافیک') ||
+                        project.type === 'video';
+
+  // Use specialized layout for video projects
+  if (isVideoProject) {
+    return <VideoLayout data={project} />;
+  }
+
+  // Use specialized layout for web design projects
+  if (isWebDesignProject) {
+    return <WebDesignLayout data={project} />;
   }
 
   const stats = [
